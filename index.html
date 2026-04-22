@@ -315,7 +315,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 // ═══════════════════════════════════════════════
 //  CONFIG Y API
 // ═══════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVZEDpC1LdVC_NtIVvVeZkkovgUZNoowvkUa_AGLzgOaaKZ6-a2SRERuByoAlQQ_19/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrMsbQm7f7fGE4jjrZ99MTtjnNo06RQT6N4pwWK66m5aVI3E0XG9dHuwvciMQd_ui0/exec';
 async function api(params){const r=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params));return r.json();}
 async function apiPost(body){const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});return r.json();}
 
