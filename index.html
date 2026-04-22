@@ -2,38 +2,33 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <meta name="theme-color" content="#1A1A1A"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <title>Data Es Plata</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--mg:#C0157A;--mg2:#8A0F57;--blk:#1A1A1A;--cr:14px;--sb:env(safe-area-inset-bottom,0px)}
 html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-#app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden;box-shadow:0 0 50px rgba(0,0,0,.15)}
+#app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .screen.active{display:flex}
-
-/* TOPBAR */
 .topbar{background:#1A1A1A;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .tlogo{font-size:14px;font-weight:800;color:#fff;letter-spacing:.05em;text-transform:uppercase}
 .tlogo span{color:#C0157A}
-.bpts{background:#C0157A;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;transition:transform .15s}
-
-/* BOTTOM NAV */
+.bpts{background:#C0157A;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px}
 .bnav{display:flex;border-top:1.5px solid #1A1A1A;background:#fff;padding-bottom:var(--sb);flex-shrink:0}
-.nb{flex:1;padding:10px 0 8px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.04em;transition:color .15s}
+.nb{flex:1;padding:10px 0 8px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.04em}
 .nb.on{color:#C0157A}
 .ni{font-size:20px;line-height:1}
 
 /* LOGIN */
 #s-login{background:#fff;justify-content:flex-start;overflow-y:auto}
 .login-wrap{display:flex;flex-direction:column;align-items:center;padding:0 24px 32px;gap:16px}
-.beans-stage{width:100%;height:170px;position:relative;flex-shrink:0;overflow:hidden}
+.beans-stage{width:100%;height:160px;position:relative;flex-shrink:0;overflow:hidden}
 .bbean{position:absolute;bottom:0;object-fit:contain}
-.bbean.frijo{left:-6px;width:135px;animation:bobF 2.2s ease-in-out infinite}
-.bbean.lito{right:-6px;width:118px;animation:bobL 2.6s ease-in-out infinite;animation-delay:.4s}
+.bbean.frijo{left:-6px;width:132px;animation:bobF 2.2s ease-in-out infinite}
+.bbean.lito{right:-6px;width:115px;animation:bobL 2.6s ease-in-out infinite;animation-delay:.4s}
 @keyframes bobF{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
 @keyframes bobL{0%,100%{transform:translateY(-5px) rotate(4deg)}50%{transform:translateY(7px) rotate(-4deg)}}
 .brand{text-align:center}
@@ -41,82 +36,89 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .d2{font-size:24px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
 .d2 .mg{color:#C0157A}
 .slogan{font-size:11px;background:#1A1A1A;color:#fff;font-weight:700;padding:4px 16px;border-radius:20px;letter-spacing:.1em;margin-top:6px;display:inline-block;text-transform:uppercase}
-.inp{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;color:#1A1A1A;background:#fff;outline:none;transition:border-color .15s}
+.inp{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;color:#1A1A1A;background:#fff;outline:none}
 .inp:focus{border-color:#C0157A}
-.btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em;transition:background .15s}
-.btn-mg:hover{background:#8A0F57}
+.btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
 .btn-mg:disabled{background:#ddd;cursor:default}
-.btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
+.btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;display:none}
 .geo-hint{font-size:12px;color:#888;text-align:center}
 .geo-hint b{color:#C0157A}
-.login-error{font-size:13px;color:#C0157A;text-align:center;display:none;padding:0 8px}
-.cookie-banner{background:#F5D0E8;border:1px solid #C0157A;border-radius:10px;padding:12px 14px;font-size:12px;color:#8A0F57;text-align:center;line-height:1.5;display:none}
-.cookie-banner b{font-weight:700}
+.login-err{font-size:13px;color:#C0157A;text-align:center;display:none}
+.ret-banner{background:#F5D0E8;border:1px solid #C0157A;border-radius:10px;padding:12px;font-size:12px;color:#8A0F57;text-align:center;line-height:1.5;display:none}
 
 /* SWIPER */
 #s-swiper{overflow:hidden}
 .sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .sw-title{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.04em}
-.sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:16px 16px 12px;gap:12px;overflow:hidden;min-height:0}
+.sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
 .sw-hint{font-size:13px;color:#888;text-align:center;flex-shrink:0}
 .sw-prog-wrap{width:100%;height:5px;background:#eee;border-radius:5px;overflow:hidden;flex-shrink:0}
-.sw-prog-fill{height:100%;background:#C0157A;border-radius:5px;transition:width .3s}
-.card-stack{position:relative;width:100%;max-width:290px;height:0;flex:1;flex-shrink:0;min-height:240px;max-height:320px}
-.swipe-card{position:absolute;inset:0;background:#fff;border:1.5px solid #1A1A1A;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 18px;transition:transform .3s,opacity .3s;cursor:grab;user-select:none;will-change:transform}
+.sw-prog{height:100%;background:#C0157A;border-radius:5px;transition:width .3s}
+.card-stack{position:relative;width:100%;max-width:290px;flex:1;min-height:220px;max-height:310px;flex-shrink:0}
+.swipe-card{position:absolute;inset:0;background:#fff;border:1.5px solid #1A1A1A;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px 16px;transition:transform .32s,opacity .32s;cursor:grab;user-select:none;will-change:transform}
 .swipe-card:active{cursor:grabbing}
-.swipe-card.gone{transform:translateX(-140%) rotate(-22deg);opacity:0;pointer-events:none;transition:transform .35s,opacity .35s}
-.swipe-card.liked{transform:translateX(140%) rotate(22deg);opacity:0;pointer-events:none;transition:transform .35s,opacity .35s}
-.card-emoji{font-size:58px;line-height:1;flex-shrink:0}
+.swipe-card.gone{transform:translateX(-140%) rotate(-22deg)!important;opacity:0;pointer-events:none}
+.swipe-card.liked{transform:translateX(140%) rotate(22deg)!important;opacity:0;pointer-events:none}
+.card-emoji{font-size:56px;line-height:1}
 .card-name{font-size:17px;font-weight:700;color:#1A1A1A;text-align:center}
 .card-brand{font-size:13px;color:#888;text-align:center}
-.ind{position:absolute;top:14px;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;opacity:0;transition:opacity .12s;pointer-events:none;text-transform:uppercase;letter-spacing:.05em}
+.card-cat{font-size:11px;padding:3px 10px;border-radius:20px;background:#F5D0E8;color:#8A0F57;font-weight:700}
+.ind{position:absolute;top:14px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;opacity:0;transition:opacity .1s;pointer-events:none;text-transform:uppercase;letter-spacing:.05em}
 .ind-y{right:14px;background:#C0157A;color:#fff}
 .ind-n{left:14px;background:#1A1A1A;color:#fff}
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
 .sw-empty.show{display:flex}
-.sw-btns{display:flex;gap:22px;flex-shrink:0}
-.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.sw-btns{display:flex;gap:20px;flex-shrink:0}
+.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
-.sw-btn.yes:active{background:#F5D0E8}
-.sw-btn.no:active{background:#f5f5f5}
-.sw-btn:active{transform:scale(.92)}
+.sw-btn:active{transform:scale(.9)}
 .sw-count{font-size:12px;color:#aaa;flex-shrink:0}
 .sw-nav{display:flex;border-top:1.5px solid #1A1A1A;flex-shrink:0}
 .sw-nav-btn{flex:1;padding:11px 0;background:none;border:none;cursor:pointer;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:5px}
 .sw-nav-btn:first-child{border-right:1px solid #eee}
 
-/* PROMOS + CONCURSOS */
+/* SCROLL BODY */
 .scrollbody{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;min-height:0}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
 .slbl:first-child{margin-top:0}
-.pc{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid #1A1A1A;border-radius:var(--cr);margin-bottom:10px;background:#fff;cursor:pointer;transition:border-color .15s}
-.pc:active{border-color:#C0157A;background:#FFF5FA}
-.pc.locked{border-color:#e0e0e0;opacity:.6;cursor:default;pointer-events:none}
+
+/* PROMO CARD — siempre visible, estado varía */
+.pc{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid #1A1A1A;border-radius:var(--cr);margin-bottom:10px;background:#fff;cursor:pointer;position:relative;overflow:hidden}
+.pc.sin-pts{border-color:#e0e0e0;cursor:default}
+.pc.sin-pts:active{transform:none}
+.pc:active{border-color:#C0157A}
 .pci{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1px solid #eee}
+.pc.sin-pts .pci{opacity:.55;filter:grayscale(.4)}
 .pci-info{flex:1;min-width:0}
 .pci-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pci-meta{font-size:11px;color:#888;margin-top:2px}
 .ptag{font-size:10px;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .ptag-ok{background:#C0157A;color:#fff}
 .ptag-lk{background:#eee;color:#999}
-.cc{border:1.5px solid #1A1A1A;border-radius:var(--cr);padding:14px;margin-bottom:12px}
-.cc.locked{border-color:#e0e0e0;opacity:.62}
-.cc-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+
+/* mensaje faltan X puntos */
+.faltan-msg{display:none;margin-top:6px;padding:6px 10px;background:#FFF5FA;border:1px solid #F4C0D1;border-radius:8px;font-size:11px;color:#8A0F57;font-weight:600}
+
+/* CONCURSO CARD */
+.cc{border:1.5px solid #1A1A1A;border-radius:var(--cr);padding:14px;margin-bottom:12px;cursor:pointer}
+.cc.sin-pts{border-color:#e0e0e0;cursor:default}
+.cc-hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .cc-em{font-size:28px;line-height:1}
 .cc-title{font-size:14px;font-weight:700;color:#1A1A1A}
 .cc-sub{font-size:11px;color:#888;margin-top:2px}
 .prow{display:flex;align-items:center;gap:8px;margin-top:6px}
 .pbar{flex:1;height:7px;background:#eee;border-radius:5px;overflow:hidden}
-.pfill{height:100%;border-radius:5px;background:#C0157A;transition:width .5s ease}
-.pfill.lk{background:#ccc}
+.pfill{height:100%;border-radius:5px;background:#C0157A;transition:width .5s}
+.pfill.lk{background:#ddd}
 .plbl{font-size:11px;color:#888;white-space:nowrap;min-width:64px;text-align:right;font-weight:600}
 .plbl.win{color:#C0157A}
-.empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px;line-height:1.6}
+.empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px;line-height:1.7}
 
 /* PROFILE */
 #s-profile .scrollbody{display:flex;flex-direction:column;gap:14px}
 .ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:var(--cr)}
-.av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0}
+.av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
 .pname{font-size:16px;font-weight:700;color:#fff}
 .prole{font-size:12px;color:#aaa;margin-top:2px}
 .ptsc{padding:14px;background:#1A1A1A;border-radius:var(--cr);display:flex;align-items:center;gap:14px}
@@ -124,15 +126,22 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .ptsub{font-size:12px;color:#aaa;margin-top:2px}
 .pflex{flex:1}
 .pnivel-label{font-size:10px;color:#aaa;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.pfill2{height:8px;background:#C0157A}
 .ipills{display:flex;flex-wrap:wrap;gap:8px}
-.ipill{font-size:12px;padding:5px 13px;border-radius:20px;background:#F5D0E8;color:#8A0F57;font-weight:700;border:1px solid #C0157A}
+.ipill{font-size:12px;padding:5px 12px;border-radius:20px;background:#F5D0E8;color:#8A0F57;font-weight:700;border:1px solid #C0157A}
 .georow{display:flex;align-items:center;gap:8px;font-size:13px;color:#888;padding:11px 13px;background:#f9f9f9;border-radius:10px;border:1px solid #eee}
 .slbl2{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.updbtn{padding:12px;border:1.5px solid #1A1A1A;border-radius:10px;background:none;color:#1A1A1A;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;letter-spacing:.04em;transition:background .15s}
-.updbtn:active{background:#f5f5f5}
-.logoutbtn{padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#bbb;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;letter-spacing:.04em}
-.cookie-info{font-size:11px;color:#aaa;padding:10px 13px;background:#f9f9f9;border-radius:8px;line-height:1.5}
-.cookie-info b{color:#888}
+.updbtn{padding:12px;border:1.5px solid #1A1A1A;border-radius:10px;background:none;color:#1A1A1A;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase}
+.logoutbtn{padding:12px;border:1.5px solid #eee;border-radius:10px;background:none;color:#bbb;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase}
+.prof-form{display:flex;flex-direction:column;gap:10px}
+.prof-field{display:flex;flex-direction:column;gap:4px}
+.prof-field label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.04em}
+.prof-field input,.prof-field select{padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;color:#1A1A1A;background:#fff;outline:none;width:100%}
+.prof-field input:focus,.prof-field select:focus{border-color:#C0157A}
+.prof-avatar-wrap{display:flex;align-items:center;gap:14px}
+.avatar-big{width:72px;height:72px;border-radius:50%;background:#F5D0E8;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#C0157A;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px dashed #C0157A}
+.avatar-big img{width:100%;height:100%;object-fit:cover}
+.avatar-hint{font-size:12px;color:#888;line-height:1.5}
 
 /* MODAL UNLOCK */
 .umodal-wrap{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:20px}
@@ -144,17 +153,24 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .utitle{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
 .usub{font-size:12px;color:#888;margin-bottom:12px;line-height:1.5}
 .ucode{font-size:24px;font-weight:800;letter-spacing:.15em;color:#C0157A;margin:10px 0;padding:12px;background:#F5D0E8;border-radius:12px}
-.uclose{width:100%;padding:13px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase;margin-top:4px}
+.uclose{width:100%;padding:13px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase}
 
-/* LOADER */
+/* MODAL FALTAN PUNTOS */
+.pts-modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
+.pts-modal-wrap.show{display:flex}
+.pts-modal-box{background:#fff;border-radius:18px;border:2px solid #e0e0e0;padding:24px 20px;width:100%;max-width:300px;text-align:center}
+.pts-modal-ico{font-size:48px;margin-bottom:10px}
+.pts-modal-title{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:6px}
+.pts-modal-msg{font-size:13px;color:#888;line-height:1.6;margin-bottom:16px}
+.pts-modal-pts{font-size:28px;font-weight:800;color:#C0157A;margin:8px 0}
+.pts-modal-close{width:100%;padding:12px;background:#1A1A1A;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase}
+
+/* LOADER + TOAST */
 .loader{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .loader.hide{opacity:0;pointer-events:none}
 .loader-img{width:88px;animation:bobF 1.5s ease-in-out infinite}
-.loader-txt{font-size:13px;color:#888;font-weight:600;letter-spacing:.04em}
 .spinner{width:28px;height:28px;border:3px solid #eee;border-top-color:#C0157A;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* TOAST */
 .pts-toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity .2s;z-index:150;pointer-events:none}
 .pts-toast.show{opacity:1}
 </style>
@@ -162,42 +178,35 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 <body>
 <div id="app">
 
-  <!-- LOADER -->
   <div class="loader" id="loader">
-    <img src="assets/baile-frijo.gif" class="loader-img" alt="Cargando"/>
+    <img src="assets/FRIJO-1-CABECEO.gif" class="loader-img" alt=""/>
     <div class="spinner"></div>
-    <div class="loader-txt">Cargando...</div>
   </div>
-
-  <!-- TOAST -->
   <div class="pts-toast" id="pts-toast">+1 punto 🫘</div>
 
-  <!-- ══ LOGIN ══ -->
+  <!-- LOGIN -->
   <div class="screen active" id="s-login">
     <div class="login-wrap">
       <div class="beans-stage">
-        <img src="assets/baile-frijo.gif" class="bbean frijo" alt="Frijo"/>
-        <img src="assets/baile-lito.gif" class="bbean lito" alt="Lito"/>
+        <img src="assets/FRIJO-1-CABECEO.gif" class="bbean frijo" alt="Frijo"/>
+        <img src="assets/brillo-lito.gif" class="bbean lito" alt="Lito"/>
       </div>
       <div class="brand">
         <div class="d1">DATA</div>
         <div class="d2"><span class="mg">ES</span> PLATA</div>
         <div class="slogan">Los frijoles de la data</div>
       </div>
-      <!-- Banner si ya existe sesión por cookie -->
-      <div class="cookie-banner" id="cookie-banner">
-        👋 <b>¡Bienvenido de vuelta!</b><br>Detectamos tu sesión anterior.
-      </div>
+      <div class="ret-banner" id="ret-banner">👋 <b>¡Bienvenido de vuelta!</b><br>Recuperamos tu sesión anterior.</div>
       <input class="inp" type="email" id="inp-email" placeholder="Correo corporativo" autocomplete="email"/>
-      <input class="inp" type="text" id="inp-nombre" placeholder="Tu nombre" autocomplete="name" id="inp-nombre"/>
-      <div class="login-error" id="login-error">Correo requerido</div>
+      <input class="inp" type="text"  id="inp-nombre" placeholder="Tu nombre" autocomplete="name"/>
+      <div class="login-err" id="login-err"></div>
       <button class="btn-mg" id="btn-login" onclick="doLogin()">Entrar 🫘</button>
-      <button class="btn-ghost" id="btn-cookie-login" onclick="loginPorCookie()" style="display:none">Continuar sin correo →</button>
+      <button class="btn-ghost" id="btn-cookie" onclick="loginPorCookie()">Continuar sin correo →</button>
       <div class="geo-hint" id="geo-hint">📍 Detectando ubicación...</div>
     </div>
   </div>
 
-  <!-- ══ SWIPER ══ -->
+  <!-- SWIPER -->
   <div class="screen" id="s-swiper">
     <div class="sw-hdr">
       <span class="sw-title">¡Desliza y gana! 🫘</span>
@@ -205,12 +214,12 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
     <div class="sw-body">
       <div class="sw-hint">1 punto por tarjeta • Acumula y canjea</div>
-      <div class="sw-prog-wrap"><div class="sw-prog-fill" id="sw-prog" style="width:0%"></div></div>
+      <div class="sw-prog-wrap"><div class="sw-prog" id="sw-prog" style="width:0%"></div></div>
       <div class="card-stack" id="card-stack"></div>
       <div class="sw-empty" id="sw-empty">
-        <img src="assets/brillo-frijo.gif" style="width:88px;height:88px;object-fit:contain" alt="Frijo"/>
+        <img src="assets/brillo-frijo.gif" style="width:88px;height:88px;object-fit:contain" alt=""/>
         <div style="font-size:16px;font-weight:700;color:#1A1A1A">¡Ya las viste todas!</div>
-        <div style="font-size:13px;color:#888;line-height:1.6">Pronto habrá más productos.<br/>Revisa tus recompensas mientras.</div>
+        <div style="font-size:13px;color:#888;line-height:1.6">Pronto habrá más.<br>Revisa tus recompensas mientras.</div>
         <button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:6px" onclick="goTab('promos')">Ver recompensas 🎁</button>
       </div>
       <div class="sw-btns" id="sw-btns">
@@ -225,12 +234,9 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- ══ PROMOS ══ -->
+  <!-- PROMOS -->
   <div class="screen" id="s-promos">
-    <div class="topbar">
-      <span class="tlogo">Data <span>Es</span> Plata</span>
-      <span class="bpts" id="promo-pts">0 PTS</span>
-    </div>
+    <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="promo-pts">0 PTS</span></div>
     <div class="scrollbody" id="promos-body"><div class="empty-state">Cargando...</div></div>
     <div class="bnav">
       <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
@@ -240,12 +246,9 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- ══ CONCURSOS ══ -->
+  <!-- CONCURSOS -->
   <div class="screen" id="s-contests">
-    <div class="topbar">
-      <span class="tlogo">Data <span>Es</span> Plata</span>
-      <span class="bpts" id="contest-pts">0 PTS</span>
-    </div>
+    <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="contest-pts">0 PTS</span></div>
     <div class="scrollbody" id="contests-body"><div class="empty-state">Cargando...</div></div>
     <div class="bnav">
       <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
@@ -255,12 +258,9 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- ══ PROFILE ══ -->
+  <!-- PROFILE -->
   <div class="screen" id="s-profile">
-    <div class="topbar">
-      <span class="tlogo">Data <span>Es</span> Plata</span>
-      <span class="bpts" id="prof-pts">0 PTS</span>
-    </div>
+    <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="prof-pts">0 PTS</span></div>
     <div class="scrollbody" id="prof-body"></div>
     <div class="bnav">
       <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
@@ -270,73 +270,91 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- ══ UNLOCK MODAL ══ -->
+  <!-- MODAL CANJE EXITOSO -->
   <div class="umodal-wrap" id="umodal">
     <canvas id="conf-cvs"></canvas>
     <div class="ubox">
       <div class="dance-row">
-        <img src="assets/baile-frijo.gif" class="db" alt="Frijo baila"/>
-        <img src="assets/baile-lito.gif" class="db" alt="Lito baila"/>
+        <img src="assets/baile-frijo.gif" class="db" alt=""/>
+        <img src="assets/baile-lito.gif"  class="db" alt=""/>
       </div>
       <div style="font-size:40px;margin-bottom:8px" id="u-ico">🎁</div>
       <div class="utitle" id="u-title">¡Recompensa canjeada!</div>
-      <div class="usub" id="u-sub"></div>
+      <div class="usub"   id="u-sub"></div>
       <div class="ucode">DEP-<span id="u-code">0000</span></div>
       <button class="uclose" onclick="closeUnlock()">¡Entendido! 🫘</button>
     </div>
   </div>
 
-</div><!-- #app -->
+  <!-- MODAL FALTAN PUNTOS -->
+  <div class="pts-modal-wrap" id="pts-modal">
+    <div class="pts-modal-box">
+      <div class="pts-modal-ico" id="pts-modal-ico">🔒</div>
+      <div class="pts-modal-title" id="pts-modal-title">Todavía no puedes canjear esto</div>
+      <div class="pts-modal-pts" id="pts-modal-pts">-50 pts</div>
+      <div class="pts-modal-msg" id="pts-modal-msg">Sigue deslizando tarjetas para acumular más puntos.</div>
+      <button class="pts-modal-close" onclick="closePtsModal()">Seguir ganando puntos 🃏</button>
+    </div>
+  </div>
+
+</div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-//  CONFIG — pon tu URL de Apps Script aquí
-// ══════════════════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6fIdDT1mG9ekTVRZXivkRBjrqmOW_bTERSBSo0nnSM5FUyXClTcPz9rkM8D5JC7Vs/exec';
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/PEGA_TU_URL_AQUI/exec';
 
-// ══════════════════════════════════════════════════════════
-//  COOKIE HELPERS
-//  Generamos un UUID único y lo guardamos como cookie
-//  persistente (1 año). Este ID se envía en CADA llamada
-//  al backend, permitiendo retargeting sin login.
-// ══════════════════════════════════════════════════════════
-const COOKIE_NAME = 'dep_uid';
-const COOKIE_DAYS = 365;
+// ═══════════════════════════════════════════════
+//  ID PERSISTENTE — estrategia multicapa
+//
+//  Capa 1: localStorage  (90% de casos, borra al limpiar datos)
+//  Capa 2: Cookie        (fallback, mismo UUID)
+//  Capa 3: sessionStorage (mientras dura la sesión)
+//  → Los tres se sincronizan entre sí para máxima persistencia
+// ═══════════════════════════════════════════════
+const ID_KEY = 'dep_uid';
 
-function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
-}
-
-function getCookie(name) {
-  return document.cookie.split('; ').reduce((acc, c) => {
-    const [k, v] = c.split('=');
-    return k === name ? v : acc;
-  }, null);
-}
-
-function generateUUID() {
+function genUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random() * 16 | 0;
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    const r = Math.random()*16|0;
+    return (c==='x'?r:(r&0x3|0x8)).toString(16);
   });
 }
 
-// Obtener o crear cookie de sesión
-function getOrCreateCookieId() {
-  let id = getCookie(COOKIE_NAME);
-  if (!id) {
-    id = generateUUID();
-    setCookie(COOKIE_NAME, id, COOKIE_DAYS);
-  }
+function setCookie(name, val, days) {
+  const exp = new Date(Date.now() + days*864e5).toUTCString();
+  document.cookie = `${name}=${val};expires=${exp};path=/;SameSite=Lax`;
+}
+
+function getCookie(name) {
+  return document.cookie.split('; ').reduce((a,c)=>{
+    const [k,v]=c.split('='); return k===name?v:a;
+  }, null);
+}
+
+function getOrCreateUID() {
+  // Intentar recuperar de las 3 capas
+  let id = null;
+  try { id = localStorage.getItem(ID_KEY); } catch(e){}
+  if (!id) id = getCookie(ID_KEY);
+  if (!id) { try { id = sessionStorage.getItem(ID_KEY); } catch(e){} }
+
+  if (!id) id = genUUID(); // Nuevo
+
+  // Sincronizar las 3 capas
+  try { localStorage.setItem(ID_KEY, id); } catch(e){}
+  setCookie(ID_KEY, id, 365);
+  try { sessionStorage.setItem(ID_KEY, id); } catch(e){}
+
   return id;
 }
 
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  ESTADO GLOBAL
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const st = {
-  cookieId: null,
+  uid: null,          // ID persistente multicapa
   usuario: null,
   puntos: 0,
   ciudad: 'todas',
@@ -344,565 +362,567 @@ const st = {
   recompensas: [],
   concursos: [],
   swipeIdx: 0,
-  interesesAcum: []
+  interesesAcum: [],
+  avatarUrl: null,
 };
 
-// ══════════════════════════════════════════════════════════
-//  UTILIDADES UI
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════
 const $ = id => document.getElementById(id);
-const ALL_SCREENS = ['s-login','s-swiper','s-promos','s-contests','s-profile'];
+const SCREENS = ['s-login','s-swiper','s-promos','s-contests','s-profile'];
 
 function showScreen(id) {
-  ALL_SCREENS.forEach(s => {
-    const el = $(s);
-    if (el) el.classList.remove('active');
-  });
-  const t = $(id);
-  if (t) t.classList.add('active');
+  SCREENS.forEach(s => { const e=$(s); if(e)e.classList.remove('active'); });
+  const t=$(id); if(t)t.classList.add('active');
 }
 
 function goTab(t) {
-  const map = { promos:'s-promos', contests:'s-contests', profile:'s-profile' };
+  const map={promos:'s-promos',contests:'s-contests',profile:'s-profile'};
   showScreen(map[t]);
-  if (t === 'promos')   renderPromos();
-  if (t === 'contests') renderConcursos();
-  if (t === 'profile')  renderProfile();
+  if(t==='promos')   renderPromos();
+  if(t==='contests') renderConcursos();
+  if(t==='profile')  renderProfile();
 }
 
 function goMain() { showScreen('s-swiper'); }
 
 function updatePts() {
-  const p = st.puntos + ' PTS';
-  ['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id => {
-    const el = $(id); if (el) el.textContent = p;
-  });
+  const p = st.puntos+' PTS';
+  ['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{ const e=$(id); if(e)e.textContent=p; });
 }
 
 function showToast(msg) {
-  const t = $('pts-toast'); if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 1900);
+  const t=$('pts-toast'); if(!t)return;
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1900);
 }
 
 function escH(s) {
-  return String(s)
+  return String(s||'')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// ══════════════════════════════════════════════════════════
+function loaderShow() { const l=$('loader'); if(l){l.style.display='flex';l.classList.remove('hide');} }
+function loaderHide() { const l=$('loader'); if(l){l.classList.add('hide');setTimeout(()=>l.style.display='none',350);} }
+
+// ═══════════════════════════════════════════════
 //  API
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 async function api(params) {
-  const url = SCRIPT_URL + '?' + new URLSearchParams(params);
+  const url = SCRIPT_URL+'?'+new URLSearchParams(params);
   const r = await fetch(url);
   return r.json();
 }
-
 async function apiPost(body) {
-  const r = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  });
+  const r = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(body) });
   return r.json();
 }
 
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  GEOLOCALIZACIÓN
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function detectarCiudad() {
   if (!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(async pos => {
     try {
-      const { latitude: lat, longitude: lon } = pos.coords;
-      const r = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
-        { headers: { 'Accept-Language': 'es' } }
-      );
+      const {latitude:lat,longitude:lon} = pos.coords;
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+        {headers:{'Accept-Language':'es'}});
       const d = await r.json();
-      const ciudad = d.address?.city || d.address?.town || d.address?.state || 'San José';
-      st.ciudad = ciudad;
-      const h = $('geo-hint');
-      if (h) h.innerHTML = `📍 Detectado: <b>${escH(ciudad)}</b>`;
-    } catch(e) {}
-  }, () => {});
+      st.ciudad = d.address?.city || d.address?.town || d.address?.state || 'San José';
+      const h=$('geo-hint'); if(h) h.innerHTML=`📍 <b>${escH(st.ciudad)}</b>`;
+    } catch(e){}
+  }, ()=>{});
 }
 
-// ══════════════════════════════════════════════════════════
-//  INIT — se ejecuta al cargar la página
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
 async function init() {
-  // 1. Generar/recuperar cookie
-  st.cookieId = getOrCreateCookieId();
-
-  // 2. Detectar ciudad en paralelo
+  st.uid = getOrCreateUID();
   detectarCiudad();
 
-  // 3. Intentar recuperar sesión por cookie
   try {
-    const r = await api({ action: 'por_cookie', cookie: st.cookieId });
+    const r = await api({ action:'por_cookie', cookie:st.uid });
     if (r.ok && r.usuario) {
-      // Sesión recuperada — mostrar banner y opción de continuar
       st.usuario = r.usuario;
-      st.puntos  = Number(r.usuario.puntos) || 0;
+      // Columna es id_email en tu Sheet
+      const email = r.usuario.id_email || r.usuario.email || '';
+      st.puntos = Number(r.usuario.puntos)||0;
 
-      const banner = $('cookie-banner');
+      const banner=$('ret-banner');
       if (banner) {
-        const nombre = r.usuario.nombre || r.usuario.email || '';
-        if (nombre) banner.innerHTML = `👋 <b>¡Hola de nuevo, ${escH(nombre.split(' ')[0])}!</b><br>Recuperamos tu sesión anterior.`;
-        banner.style.display = 'block';
+        const n = r.usuario.nombre || email.split('@')[0] || '';
+        if (n) banner.innerHTML=`👋 <b>¡Hola de nuevo, ${escH(n.split(' ')[0])}!</b><br>Recuperamos tu sesión.`;
+        banner.style.display='block';
       }
-
-      // Pre-rellenar email si existe
-      if (r.usuario.email && $('inp-email')) {
-        $('inp-email').value = r.usuario.email;
-      }
-
-      // Mostrar botón de continuar sin correo
-      const btnCookie = $('btn-cookie-login');
-      if (btnCookie) btnCookie.style.display = 'block';
+      if (email && $('inp-email')) $('inp-email').value = email;
+      const btnC=$('btn-cookie'); if(btnC)btnC.style.display='block';
     }
-  } catch(e) {}
+  } catch(e){}
 
-  // 4. Ocultar loader
-  const loader = $('loader');
-  if (loader) { loader.classList.add('hide'); setTimeout(() => loader.style.display='none', 350); }
+  loaderHide();
 }
 
-// ══════════════════════════════════════════════════════════
-//  LOGIN CON EMAIL
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════
 async function doLogin() {
-  const email  = ($('inp-email')?.value || '').trim();
-  const nombre = ($('inp-nombre')?.value || '').trim();
-  const errEl  = $('login-error');
-
-  if (!email || !email.includes('@')) {
-    errEl.textContent = 'Correo corporativo requerido';
-    errEl.style.display = 'block';
-    return;
+  const email  = ($('inp-email')?.value||'').trim();
+  const nombre = ($('inp-nombre')?.value||'').trim();
+  const errEl  = $('login-err');
+  if (!email||!email.includes('@')) {
+    errEl.textContent='Correo corporativo requerido'; errEl.style.display='block'; return;
   }
-  errEl.style.display = 'none';
-  $('btn-login').disabled = true;
-  $('loader').style.display = 'flex';
-  $('loader').classList.remove('hide');
-
+  errEl.style.display='none';
+  $('btn-login').disabled=true;
+  loaderShow();
   try {
-    const r = await apiPost({
-      action: 'registro',
-      email, nombre,
-      ciudad: st.ciudad,
-      cookie_id: st.cookieId   // ← vincular cookie al usuario
-    });
-
-    if (!r.ok) throw new Error(r.error || 'Error al registrar');
-
+    const r = await apiPost({ action:'registro', email, nombre, ciudad:st.ciudad, cookie_id:st.uid });
+    if (!r.ok) throw new Error(r.error||'Error');
     st.usuario = r.usuario;
-    st.puntos  = Number(r.usuario.puntos) || 0;
-
-    // Si el usuario ya existía sin cookie, vincularla ahora
-    if (!r.usuario.cookie_id && st.cookieId) {
-      apiPost({ action: 'cookie', email, cookie_id: st.cookieId }).catch(() => {});
+    st.puntos  = Number(r.usuario?.puntos||r.usuario?.Puntos||0);
+    // Vincular cookie si el usuario existía sin ella
+    if (!r.usuario.cookie_id) {
+      apiPost({ action:'cookie', email, cookie_id:st.uid }).catch(()=>{});
     }
-
     await cargarDatos();
-    $('loader').classList.add('hide');
-    setTimeout(() => $('loader').style.display='none', 350);
-    updatePts();
-    showScreen('s-swiper');
-    renderSwiper();
+    loaderHide(); updatePts();
+    showScreen('s-swiper'); renderSwiper();
   } catch(e) {
-    $('loader').classList.add('hide');
-    setTimeout(() => $('loader').style.display='none', 350);
-    errEl.textContent = 'Error: ' + e.message;
-    errEl.style.display = 'block';
+    loaderHide();
+    errEl.textContent='Error: '+e.message; errEl.style.display='block';
   }
-  $('btn-login').disabled = false;
+  $('btn-login').disabled=false;
 }
 
-// ══════════════════════════════════════════════════════════
-//  LOGIN DIRECTO POR COOKIE (sin email)
-// ══════════════════════════════════════════════════════════
 async function loginPorCookie() {
   if (!st.usuario) return;
-  $('loader').style.display = 'flex';
-  $('loader').classList.remove('hide');
+  loaderShow();
   await cargarDatos();
-  $('loader').classList.add('hide');
-  setTimeout(() => $('loader').style.display='none', 350);
-  updatePts();
-  showScreen('s-swiper');
-  renderSwiper();
+  loaderHide(); updatePts();
+  showScreen('s-swiper'); renderSwiper();
 }
 
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  CARGA DE DATOS
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 async function cargarDatos() {
-  const email  = st.usuario?.email  || '';
-  const cookie = st.cookieId || '';
-  const ciudad = st.ciudad   || 'todas';
-
-  const [rT, rR, rC] = await Promise.all([
-    api({ action: 'tarjetas',    email, cookie, ciudad }),
-    api({ action: 'recompensas', ciudad }),
-    api({ action: 'concursos' })
+  const email  = st.usuario?.id_email || st.usuario?.email || '';
+  const cookie = st.uid || '';
+  const ciudad = st.ciudad || 'todas';
+  const [rT,rR,rC] = await Promise.all([
+    api({ action:'tarjetas',    email, cookie, ciudad }),
+    api({ action:'recompensas', ciudad }),
+    api({ action:'concursos' })
   ]);
-
   st.tarjetas    = rT.tarjetas    || [];
   st.recompensas = rR.recompensas || [];
   st.concursos   = rC.concursos   || [];
   st.swipeIdx    = 0;
 }
 
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SWIPER
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function renderSwiper() {
-  const stack = $('card-stack');
-  const empty = $('sw-empty');
-  const btns  = $('sw-btns');
-  const count = $('sw-count');
+  const stack=$('card-stack'), empty=$('sw-empty'), btns=$('sw-btns'), count=$('sw-count');
   if (!stack) return;
-
-  stack.innerHTML = '';
+  stack.innerHTML='';
   const pendientes = st.tarjetas.slice(st.swipeIdx);
 
-  if (pendientes.length === 0) {
+  if (!pendientes.length) {
     empty.classList.add('show');
-    btns.style.display = 'none';
-    count.textContent = 'Sin más tarjetas por ahora';
-    $('sw-prog').style.width = '100%';
+    if(btns){btns.style.display='none';}
+    if(count) count.textContent='Sin más tarjetas por ahora';
+    $('sw-prog').style.width='100%';
     return;
   }
 
   empty.classList.remove('show');
-  btns.style.display = '';
+  if(btns)btns.style.display='';
 
-  const visible = pendientes.slice(0, 5).reverse();
-  visible.forEach((t, vi) => {
-    const div = document.createElement('div');
-    div.className = 'swipe-card';
-    div.id = 'sc-' + t.id;
-    div.dataset.id = t.id;
-    div.innerHTML = `
+  pendientes.slice(0,5).reverse().forEach((t, vi) => {
+    const div=document.createElement('div');
+    div.className='swipe-card';
+    div.id='sc-'+t.id;
+    div.dataset.id=t.id;
+    div.dataset.cat=t.categoria||'';
+    div.innerHTML=`
       <div class="ind ind-y">Me late ♥</div>
       <div class="ind ind-n">Paso ✕</div>
-      <div class="card-emoji">${t.emoji || '🎁'}</div>
+      <div class="card-emoji">${t.emoji||'🎁'}</div>
       <div class="card-name">${escH(t.nombre)}</div>
-      <div class="card-brand">${escH(t.descripcion || '')}</div>`;
-
-    const depth = visible.length - 1 - vi;
-    div.style.zIndex = vi + 1;
-    if (depth > 0) div.style.transform = `scale(${1 - depth*.03}) translateY(${depth*5}px)`;
-
+      <div class="card-brand">${escH(t.descripcion||t.descripcion||'')}</div>
+      ${t.categoria?`<div class="card-cat">${escH(t.categoria)}</div>`:''}`;
+    const depth = Math.min(4, pendientes.length-1) - vi;
+    div.style.zIndex=vi+1;
+    if(depth>0) div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
     attachDrag(div);
     stack.appendChild(div);
   });
 
-  const total   = st.tarjetas.length;
-  const vistas  = st.swipeIdx;
-  count.textContent = (total - vistas) + ' tarjeta' + (total - vistas !== 1 ? 's' : '') + ' restante' + (total - vistas !== 1 ? 's' : '');
-  $('sw-prog').style.width = (vistas / Math.max(total, 1) * 100) + '%';
+  const total=st.tarjetas.length, vistas=st.swipeIdx;
+  if(count) count.textContent=(total-vistas)+' tarjeta'+(total-vistas!==1?'s':'')+' restante'+(total-vistas!==1?'s':'');
+  $('sw-prog').style.width=(vistas/Math.max(total,1)*100)+'%';
 }
 
 function attachDrag(card) {
-  let sx=0, sy=0, drag=false;
-
-  const onStart = e => {
-    sx = (e.touches ? e.touches[0].clientX : e.clientX);
-    drag = true;
-    card.style.transition = 'none';
+  let sx=0, drag=false;
+  const onStart = e => { sx=(e.touches?e.touches[0].clientX:e.clientX); drag=true; card.style.transition='none'; };
+  const onMove  = e => {
+    if(!drag)return;
+    const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
+    card.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;
+    const iy=card.querySelector('.ind-y'), in_=card.querySelector('.ind-n');
+    if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;
+    if(in_)in_.style.opacity=dx<-28?Math.min((-dx-28)/40,1):0;
+    if(e.cancelable)e.preventDefault();
   };
-
-  const onMove = e => {
-    if (!drag) return;
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    const dx = cx - sx;
-    card.style.transform = `translateX(${dx}px) rotate(${dx*.06}deg)`;
-    const iy = card.querySelector('.ind-y');
-    const in_ = card.querySelector('.ind-n');
-    if (iy) iy.style.opacity = dx > 28 ? Math.min((dx-28)/40, 1) : 0;
-    if (in_) in_.style.opacity = dx < -28 ? Math.min((-dx-28)/40, 1) : 0;
-    if (e.cancelable) e.preventDefault();
-  };
-
   const onEnd = e => {
-    if (!drag) return;
-    drag = false;
-    card.style.transition = '';
-    const ex = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
-    const dx = ex - sx;
-    card.querySelectorAll('.ind').forEach(i => i.style.opacity = 0);
-    if (dx > 60) swipeCard(true);
-    else if (dx < -60) swipeCard(false);
-    else card.style.transform = '';
+    if(!drag)return; drag=false; card.style.transition='';
+    const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;
+    card.querySelectorAll('.ind').forEach(i=>i.style.opacity=0);
+    if(dx>60)swipeCard(true); else if(dx<-60)swipeCard(false); else card.style.transform='';
   };
-
-  card.addEventListener('mousedown', onStart);
-  card.addEventListener('touchstart', onStart, { passive: true });
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('mouseup', onEnd);
-  document.addEventListener('touchend', onEnd);
+  card.addEventListener('mousedown',onStart);
+  card.addEventListener('touchstart',onStart,{passive:true});
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('touchmove',onMove,{passive:false});
+  document.addEventListener('mouseup',onEnd);
+  document.addEventListener('touchend',onEnd);
 }
 
 async function swipeCard(like) {
-  if (st.swipeIdx >= st.tarjetas.length) return;
-
+  if (st.swipeIdx>=st.tarjetas.length) return;
   const tarjeta = st.tarjetas[st.swipeIdx];
-  const card = $('sc-' + tarjeta.id);
-  if (card) card.classList.add(like ? 'liked' : 'gone');
+  const card = $('sc-'+tarjeta.id);
+  if(card) card.classList.add(like?'liked':'gone');
 
+  // Acumular intereses si like
   if (like && tarjeta.categoria) {
-    const cat = tarjeta.categoria.trim();
-    if (!st.interesesAcum.includes(cat)) st.interesesAcum.push(cat);
+    const cat=tarjeta.categoria.trim();
+    if(!st.interesesAcum.includes(cat)) st.interesesAcum.push(cat);
   }
 
   st.swipeIdx++;
 
-  // +1 punto al backend (con cookie_id para no perder el contexto)
+  // Persistir en backend
+  const email = st.usuario?.id_email || st.usuario?.email || '';
   apiPost({
-    action: 'swipe',
-    email: st.usuario?.email || '',
-    cookie_id: st.cookieId,
-    tarjeta_id: tarjeta.id
+    action:'swipe',
+    email,
+    cookie_id: st.uid,
+    tarjeta_id: tarjeta.id,
+    like,
+    categoria: tarjeta.categoria||''
   }).then(r => {
-    if (r.ok) {
-      st.puntos = r.puntos;
-      updatePts();
-      showToast('+1 punto 🫘');
-      checkDesbloqueos();
-    }
-  }).catch(() => {
-    st.puntos++;
-    updatePts();
-    showToast('+1 punto 🫘');
-  });
+    if(r.ok) { st.puntos=r.puntos; updatePts(); showToast('+1 punto 🫘'); checkDesbloqueos(); }
+  }).catch(()=>{ st.puntos++; updatePts(); showToast('+1 punto 🫘'); });
 
   // Guardar intereses cada 5 swipes
-  if (st.swipeIdx % 5 === 0 && st.interesesAcum.length) {
-    apiPost({
-      action: 'intereses',
-      email: st.usuario?.email || '',
-      cookie_id: st.cookieId,
-      intereses: st.interesesAcum
-    });
+  if (st.swipeIdx%5===0 && st.interesesAcum.length) {
+    apiPost({ action:'intereses', email, cookie_id:st.uid, intereses:st.interesesAcum });
   }
 
-  setTimeout(renderSwiper, 380);
+  setTimeout(renderSwiper, 350);
 }
 
 function checkDesbloqueos() {
-  const nuevas = st.recompensas.filter(r => Number(r.puntos_requeridos) === st.puntos);
-  if (nuevas.length) setTimeout(() => showToast('🎉 ¡Nueva recompensa desbloqueada!'), 800);
+  const nueva = st.recompensas.find(r=>Number(r.puntos_requeridos)===st.puntos);
+  if(nueva) setTimeout(()=>showToast('🎉 ¡Nueva recompensa disponible!'),800);
 }
 
-// ══════════════════════════════════════════════════════════
-//  RENDER PROMOS
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  RENDER PROMOS — todas visibles, distintas acciones
+// ═══════════════════════════════════════════════
 function renderPromos() {
-  const body = $('promos-body');
-  if (!body) return;
-  $('promo-pts').textContent = st.puntos + ' PTS';
+  const body=$('promos-body'); if(!body)return;
+  $('promo-pts').textContent=st.puntos+' PTS';
 
-  const ok  = st.recompensas.filter(r => st.puntos >= Number(r.puntos_requeridos));
-  const lk  = st.recompensas.filter(r => st.puntos < Number(r.puntos_requeridos));
-  let html  = '';
-
-  if (ok.length) {
-    html += `<div class="slbl">Disponibles para ti 🔥</div>`;
-    ok.forEach(r => {
-      html += `<div class="pc" onclick="unlockPromo('${escH(r.emoji||'🎁')}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}',${r.id})">
-        <div class="pci" style="background:#FFF5FA">${r.emoji||'🎁'}</div>
-        <div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${escH(r.descripcion||'')}</div></div>
-        <span class="ptag ptag-ok">Canjear</span></div>`;
-    });
+  if (!st.recompensas.length) {
+    body.innerHTML='<div class="empty-state">No hay recompensas disponibles.<br>¡Pronto habrá novedades!</div>';
+    return;
   }
 
-  if (lk.length) {
-    html += `<div class="slbl">Próximamente — sigue acumulando 🔒</div>`;
-    lk.forEach(r => {
-      const faltan = Number(r.puntos_requeridos) - st.puntos;
-      html += `<div class="pc locked">
-        <div class="pci" style="background:#f5f5f5">${r.emoji||'🎁'}</div>
-        <div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">Faltan ${faltan} pts · ${escH(r.descripcion||'')}</div></div>
-        <span class="ptag ptag-lk">🔒 ${r.puntos_requeridos}</span></div>`;
-    });
-  }
+  let html='<div class="slbl">Recompensas 🎁</div>';
+  st.recompensas.forEach(r => {
+    const req     = Number(r.puntos_requeridos||0);
+    const tieneP  = st.puntos >= req;
+    const faltan  = req - st.puntos;
+    const pcClass = tieneP ? 'pc' : 'pc sin-pts';
+    const onclick = tieneP
+      ? `onclick="tryUnlock('${escH(r.emoji||'🎁')}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}',${r.id},'recompensa')"`
+      : `onclick="showPtsModal('${escH(r.emoji||'🎁')}','${escH(r.nombre)}',${faltan})"`;
 
-  if (!st.recompensas.length) html = '<div class="empty-state">No hay recompensas aún.<br>¡Sigue deslizando!</div>';
-  body.innerHTML = html;
+    html+=`<div class="${pcClass}" ${onclick}>
+      <div class="pci" style="background:#FFF5FA">${r.emoji||'🎁'}</div>
+      <div class="pci-info">
+        <div class="pci-name">${escH(r.nombre)}</div>
+        <div class="pci-meta">${escH(r.descripcion||'')}${req?' · '+req+' pts':''}</div>
+      </div>
+      <span class="ptag ${tieneP?'ptag-ok':'ptag-lk'}">${tieneP?'Canjear':'🔒 '+req}</span>
+    </div>`;
+  });
+  body.innerHTML=html;
 }
 
-// ══════════════════════════════════════════════════════════
-//  RENDER CONCURSOS
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  RENDER CONCURSOS — todos visibles
+// ═══════════════════════════════════════════════
 function renderConcursos() {
-  const body = $('contests-body');
-  if (!body) return;
-  $('contest-pts').textContent = st.puntos + ' PTS';
+  const body=$('contests-body'); if(!body)return;
+  $('contest-pts').textContent=st.puntos+' PTS';
 
-  const activos = st.concursos.filter(c => st.puntos >= Number(c.puntos_requeridos));
-  const proximos = st.concursos.filter(c => st.puntos < Number(c.puntos_requeridos));
-  let html = '';
-
-  if (activos.length) {
-    html += `<div class="slbl">¡Participas en estos! 🏆</div>`;
-    activos.forEach(c => {
-      html += `<div class="cc">
-        <div class="cc-hd"><div class="cc-em">${c.emoji||'🏆'}</div>
-        <div><div class="cc-title">${escH(c.nombre)}</div><div class="cc-sub">${escH(c.descripcion||'')} · Sorteo ${c.fecha_sorteo||''}</div></div></div>
-        <div style="font-size:11px;color:#C0157A;font-weight:700;margin-bottom:4px">¡Estás participando!</div>
-        <div class="prow"><div class="pbar"><div class="pfill" style="width:100%"></div></div><div class="plbl win">✓</div></div></div>`;
-    });
+  if (!st.concursos.length) {
+    body.innerHTML='<div class="empty-state">No hay concursos activos.<br>¡Pronto habrá novedades!</div>';
+    return;
   }
 
-  if (proximos.length) {
-    html += `<div class="slbl">Próximos concursos 🔒</div>`;
-    proximos.forEach(c => {
-      const pct  = Math.round(st.puntos / Number(c.puntos_requeridos) * 100);
-      const falt = Number(c.puntos_requeridos) - st.puntos;
-      html += `<div class="cc locked">
-        <div class="cc-hd"><div class="cc-em">${c.emoji||'🏆'}</div>
-        <div><div class="cc-title">${escH(c.nombre)}</div><div class="cc-sub">${escH(c.descripcion||'')} · ${c.puntos_requeridos} pts</div></div></div>
-        <div style="font-size:11px;color:#aaa;margin-bottom:4px">Faltan ${falt} pts</div>
-        <div class="prow"><div class="pbar"><div class="pfill lk" style="width:${pct}%"></div></div><div class="plbl">🔒 ${pct}%</div></div></div>`;
-    });
-  }
+  let html='<div class="slbl">Concursos 🏅</div>';
+  st.concursos.forEach(c => {
+    const req    = Number(c.puntos_requeridos||0);
+    const tieneP = st.puntos >= req;
+    const faltan = req - st.puntos;
+    const pct    = req>0 ? Math.min(Math.round(st.puntos/req*100),100) : 100;
+    const onclick= tieneP
+      ? `onclick="tryUnlock('${escH(c.emoji||'🏅')}','${escH(c.nombre)}','Sorteo: ${escH(c.fecha_sorteo||'')}',${c.id},'concurso')"`
+      : `onclick="showPtsModal('${escH(c.emoji||'🏅')}','${escH(c.nombre)}',${faltan})"`;
 
-  if (!st.concursos.length) html = '<div class="empty-state">No hay concursos activos.<br>¡Pronto habrá novedades!</div>';
-  body.innerHTML = html;
+    html+=`<div class="cc ${tieneP?'':'sin-pts'}" ${onclick}>
+      <div class="cc-hd">
+        <div class="cc-em">${c.emoji||'🏅'}</div>
+        <div>
+          <div class="cc-title">${escH(c.nombre)}</div>
+          <div class="cc-sub">${escH(c.descripcion||'')}${c.fecha_sorteo?' · Sorteo '+escH(c.fecha_sorteo):''}</div>
+        </div>
+      </div>
+      ${tieneP
+        ? '<div style="font-size:11px;color:#C0157A;font-weight:700;margin-bottom:4px">✓ ¡Estás participando!</div>'
+        : `<div style="font-size:11px;color:#aaa;margin-bottom:4px">Faltan ${faltan} pts para participar</div>`}
+      <div class="prow">
+        <div class="pbar"><div class="pfill ${tieneP?'':'lk'}" style="width:${pct}%"></div></div>
+        <div class="plbl ${tieneP?'win':''}">${tieneP?'✓':pct+'%'}</div>
+      </div>
+    </div>`;
+  });
+  body.innerHTML=html;
 }
 
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  MODAL FALTAN PUNTOS
+// ═══════════════════════════════════════════════
+function showPtsModal(ico, nombre, faltan) {
+  $('pts-modal-ico').textContent=ico;
+  $('pts-modal-title').textContent='Todavía no puedes canjear esto';
+  $('pts-modal-pts').textContent='Faltan '+faltan+' pts';
+  $('pts-modal-msg').textContent=`Necesitas ${faltan} puntos más para "${nombre}". ¡Sigue deslizando!`;
+  $('pts-modal').classList.add('show');
+}
+function closePtsModal() {
+  $('pts-modal').classList.remove('show');
+  goMain();
+}
+
+// ═══════════════════════════════════════════════
+//  CANJE
+// ═══════════════════════════════════════════════
+async function tryUnlock(ico, title, instrucciones, id, tipo) {
+  const email  = st.usuario?.id_email || st.usuario?.email || '';
+  let codigo   = Math.floor(1000+Math.random()*9000);
+  try {
+    const r = await apiPost({ action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo });
+    if(r.ok && r.codigo) codigo=r.codigo.replace('DEP-','');
+  } catch(e){}
+
+  $('u-ico').textContent=ico;
+  $('u-title').textContent=title;
+  $('u-sub').textContent=instrucciones||'Muestra este código al momento del canje';
+  $('u-code').textContent=codigo;
+  $('umodal').classList.add('show');
+  setTimeout(startConf,60);
+}
+
+function closeUnlock() { $('umodal').classList.remove('show'); stopConf(); }
+
+// ═══════════════════════════════════════════════
 //  RENDER PROFILE
-// ══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function renderProfile() {
-  const body = $('prof-body');
-  if (!body) return;
-  $('prof-pts').textContent = st.puntos + ' PTS';
-
-  const u = st.usuario || {};
-  const nombre   = u.nombre || u.email || 'Usuario';
-  const initials = nombre.split(' ').map(p => p[0]||'').join('').toUpperCase().slice(0,2) || 'U';
-  const intereses = String(u.intereses || st.interesesAcum.join(',') || '').split(',').filter(Boolean);
-
-  let nivel = 'Bronce', nextPts = 500, nextNivel = 'Plata';
-  if (st.puntos >= 1000) { nivel = 'Oro';   nextPts = 9999; nextNivel = 'Máximo'; }
-  else if (st.puntos >= 500) { nivel = 'Plata'; nextPts = 1000; nextNivel = 'Oro'; }
-  const pct = Math.min(Math.round(st.puntos / nextPts * 100), 100);
-
-  const pillsHtml = intereses.length
-    ? intereses.map(i => `<span class="ipill">${escH(i)}</span>`).join('')
+  const body=$('prof-body'); if(!body)return;
+  $('prof-pts').textContent=st.puntos+' PTS';
+  const u = st.usuario||{};
+  const email    = u.id_email||u.email||'';
+  const nombre   = u.nombre||email.split('@')[0]||'Usuario';
+  const initials = nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
+  const intereses= String(u.intereses||st.interesesAcum.join(',')||'').split(',').filter(Boolean);
+  let nivel='Bronce', nextPts=500, nextNivel='Plata';
+  if(st.puntos>=1000){nivel='Oro';nextPts=9999;nextNivel='Máximo';}
+  else if(st.puntos>=500){nivel='Plata';nextPts=1000;nextNivel='Oro';}
+  const pct=Math.min(Math.round(st.puntos/nextPts*100),100);
+  const pills=intereses.length
+    ? intereses.map(i=>`<span class="ipill">${escH(i)}</span>`).join('')
     : '<span style="font-size:12px;color:#aaa">Desliza tarjetas para descubrir tus intereses</span>';
 
-  const cookieShort = st.cookieId ? st.cookieId.split('-')[0] + '...' : '—';
-
-  body.innerHTML = `
+  body.innerHTML=`
     <div class="ph">
-      <div class="av">${escH(initials)}</div>
-      <div><div class="pname">${escH(nombre)}</div><div class="prole">Nivel ${nivel} 🫘</div></div>
+      <div class="av" id="av-circle" onclick="triggerAvatarUpload()">${st.avatarUrl?`<img src="${st.avatarUrl}" alt=""/>`:escH(initials)}</div>
+      <div>
+        <div class="pname">${escH(nombre)}</div>
+        <div class="prole">Nivel ${nivel} 🫘 · ${escH(email)}</div>
+      </div>
     </div>
     <div class="ptsc">
       <div><div class="ptbig">${st.puntos}</div><div class="ptsub">puntos</div></div>
       <div class="pflex">
         <div class="pnivel-label">Próximo: ${nextNivel} (${nextPts} pts)</div>
-        <div class="pbar" style="height:8px"><div class="pfill" style="width:${pct}%"></div></div>
-        <div style="font-size:11px;color:#C0157A;font-weight:700;margin-top:4px">${st.puntos < 9999 ? 'Faltan '+(nextPts-st.puntos)+' pts' : '¡Nivel máximo!'}</div>
+        <div class="pbar" style="height:8px"><div class="pfill2 pfill" style="width:${pct}%"></div></div>
+        <div style="font-size:11px;color:#C0157A;font-weight:700;margin-top:4px">${st.puntos<9999?'Faltan '+(nextPts-st.puntos)+' pts':'¡Nivel máximo!'}</div>
       </div>
     </div>
-    <div><div class="slbl2">Mis intereses</div><div class="ipills">${pillsHtml}</div></div>
+    <div><div class="slbl2">Mis intereses</div><div class="ipills">${pills}</div></div>
     <div class="georow">📍 <span>Ubicación: <b>${escH(st.ciudad)}</b></span></div>
-    <div class="cookie-info">🍪 ID de sesión: <b>${escH(cookieShort)}</b><br>Este ID permite que recordemos tus preferencias entre visitas.</div>
+
+    <!-- Datos de perfil -->
+    <div>
+      <div class="slbl2">Mi perfil</div>
+      <div class="prof-form" id="prof-form">
+        <div class="prof-field">
+          <label>Nombre completo</label>
+          <input type="text" id="pf-nombre" value="${escH(nombre)}" placeholder="Tu nombre"/>
+        </div>
+        <div class="prof-field">
+          <label>Género</label>
+          <select id="pf-genero">
+            <option value="">Prefiero no decir</option>
+            <option value="hombre" ${u.genero==='hombre'?'selected':''}>Hombre</option>
+            <option value="mujer"  ${u.genero==='mujer'?'selected':''}>Mujer</option>
+            <option value="otro"   ${u.genero==='otro'?'selected':''}>Otro</option>
+          </select>
+        </div>
+        <div class="prof-field">
+          <label>Fecha de nacimiento</label>
+          <input type="date" id="pf-nacimiento" value="${u.fecha_nacimiento||''}"/>
+        </div>
+        <div class="prof-field">
+          <label>Situación sentimental</label>
+          <select id="pf-sentimental">
+            <option value="">Prefiero no decir</option>
+            <option value="soltero/a"    ${u.situacion_sentimental==='soltero/a'?'selected':''}>Soltero/a</option>
+            <option value="en pareja"    ${u.situacion_sentimental==='en pareja'?'selected':''}>En pareja</option>
+            <option value="casado/a"     ${u.situacion_sentimental==='casado/a'?'selected':''}>Casado/a</option>
+            <option value="divorciado/a" ${u.situacion_sentimental==='divorciado/a'?'selected':''}>Divorciado/a</option>
+          </select>
+        </div>
+        <div class="prof-field">
+          <label>¿Tienes hijos?</label>
+          <select id="pf-hijos">
+            <option value="">Prefiero no decir</option>
+            <option value="no"  ${u.hijos==='no'?'selected':''}>No</option>
+            <option value="1"   ${u.hijos==='1'?'selected':''}>1</option>
+            <option value="2"   ${u.hijos==='2'?'selected':''}>2</option>
+            <option value="3+"  ${u.hijos==='3+'?'selected':''}>3 o más</option>
+          </select>
+        </div>
+        <div class="prof-field">
+          <label>¿Tienes mascotas?</label>
+          <select id="pf-mascotas">
+            <option value="">Prefiero no decir</option>
+            <option value="no"   ${u.mascotas==='no'?'selected':''}>No</option>
+            <option value="perro"${u.mascotas==='perro'?'selected':''}>Perro</option>
+            <option value="gato" ${u.mascotas==='gato'?'selected':''}>Gato</option>
+            <option value="otro" ${u.mascotas==='otro'?'selected':''}>Otra mascota</option>
+          </select>
+        </div>
+        <div class="prof-field">
+          <label>Idiomas que hablas</label>
+          <input type="text" id="pf-idiomas" value="${escH(u.idiomas||'')}" placeholder="Ej: Español, Inglés, Francés"/>
+        </div>
+        <button class="btn-mg" style="margin-top:4px" onclick="guardarPerfil()">Guardar perfil</button>
+      </div>
+    </div>
+
+    <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="onAvatarChange(this)"/>
     <div><div class="slbl2">Opciones</div><button class="updbtn" onclick="goMain()">Volver a las tarjetas 🃏</button></div>
     <button class="logoutbtn" onclick="logout()">Cerrar sesión</button>`;
 }
 
-// ══════════════════════════════════════════════════════════
-//  UNLOCK / CANJE
-// ══════════════════════════════════════════════════════════
-async function unlockPromo(ico, title, instrucciones, recompensaId) {
-  let codigo = Math.floor(1000 + Math.random() * 9000);
+// Avatar
+function triggerAvatarUpload() { $('avatar-input')?.click(); }
+function onAvatarChange(input) {
+  const file=input.files?.[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    st.avatarUrl=e.target.result;
+    const av=$('av-circle'); if(av) av.innerHTML=`<img src="${st.avatarUrl}" alt=""/>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function guardarPerfil() {
+  const email=st.usuario?.id_email||st.usuario?.email||'';
+  const perfil={
+    nombre:           $('pf-nombre')?.value||'',
+    genero:           $('pf-genero')?.value||'',
+    fecha_nacimiento: $('pf-nacimiento')?.value||'',
+    situacion_sentimental: $('pf-sentimental')?.value||'',
+    hijos:            $('pf-hijos')?.value||'',
+    mascotas:         $('pf-mascotas')?.value||'',
+    idiomas:          $('pf-idiomas')?.value||'',
+  };
+  // Actualizar nombre en estado
+  if (perfil.nombre && st.usuario) st.usuario.nombre=perfil.nombre;
+
   try {
-    const r = await apiPost({
-      action: 'canje',
-      email: st.usuario?.email || '',
-      cookie_id: st.cookieId,
-      recompensa_id: recompensaId
-    });
-    if (r.ok && r.codigo) codigo = r.codigo.replace('DEP-', '');
-  } catch(e) {}
-
-  $('u-ico').textContent   = ico;
-  $('u-title').textContent = title;
-  $('u-sub').textContent   = instrucciones || 'Muestra este código al momento del canje';
-  $('u-code').textContent  = codigo;
-  $('umodal').classList.add('show');
-  setTimeout(startConf, 60);
+    await apiPost({ action:'perfil', email, cookie_id:st.uid, perfil });
+    showToast('✓ Perfil guardado');
+  } catch(e){ showToast('Error al guardar'); }
 }
 
-function closeUnlock() {
-  $('umodal').classList.remove('show');
-  stopConf();
+// ═══════════════════════════════════════════════
+//  CONFETTI
+// ═══════════════════════════════════════════════
+let cP=[],cR=null,cC=null,cX=null;
+const COLS=['#C0157A','#1A1A1A','#F5D0E8','#FFD700','#00C2A8','#FF6B35','#fff','#8A0F57'];
+function startConf(){
+  cC=$('conf-cvs'); if(!cC)return;
+  const m=$('umodal'); cC.width=m.offsetWidth||390; cC.height=m.offsetHeight||700;
+  cX=cC.getContext('2d'); cP=[];
+  for(let i=0;i<160;i++) cP.push({
+    x:Math.random()*cC.width, y:-Math.random()*cC.height*.5,
+    w:Math.random()*12+5, h:Math.random()*5+3,
+    color:COLS[Math.random()*COLS.length|0],
+    r:Math.random()*Math.PI*2, vx:(Math.random()-.5)*3.5,
+    vy:Math.random()*4+1.5, vr:(Math.random()-.5)*.22
+  });
+  if(cR)cancelAnimationFrame(cR); animConf();
+}
+function animConf(){
+  if(!cX||!cC)return; cX.clearRect(0,0,cC.width,cC.height);
+  let alive=false;
+  cP.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.vy+=.06;
+    if(p.y<cC.height+20)alive=true;
+    cX.save(); cX.translate(p.x,p.y); cX.rotate(p.r);
+    cX.fillStyle=p.color; cX.globalAlpha=Math.max(0,1-p.y/cC.height*.85);
+    cX.fillRect(-p.w/2,-p.h/2,p.w,p.h); cX.restore();
+  });
+  if(alive)cR=requestAnimationFrame(animConf);
+}
+function stopConf(){
+  if(cR)cancelAnimationFrame(cR);
+  if(cX&&cC)cX.clearRect(0,0,cC.width,cC.height);
 }
 
-function logout() {
-  // Borramos estado pero NO la cookie (para retargeting)
-  Object.assign(st, { usuario:null, puntos:0, ciudad:'todas', tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, interesesAcum:[] });
-  if ($('inp-email')) $('inp-email').value = '';
-  if ($('inp-nombre')) $('inp-nombre').value = '';
+function logout(){
+  Object.assign(st,{usuario:null,puntos:0,ciudad:'todas',tarjetas:[],recompensas:[],concursos:[],swipeIdx:0,interesesAcum:[],avatarUrl:null});
+  if($('inp-email'))$('inp-email').value='';
+  if($('inp-nombre'))$('inp-nombre').value='';
   showScreen('s-login');
 }
 
-// ══════════════════════════════════════════════════════════
-//  CONFETTI
-// ══════════════════════════════════════════════════════════
-let cParts=[], cRAF=null, cCvs=null, cCtx=null;
-const COLS=['#C0157A','#1A1A1A','#F5D0E8','#FFD700','#00C2A8','#FF6B35','#fff','#8A0F57'];
-
-function startConf() {
-  cCvs = $('conf-cvs'); if (!cCvs) return;
-  const modal = $('umodal');
-  cCvs.width = modal.offsetWidth || 390;
-  cCvs.height = modal.offsetHeight || 700;
-  cCtx = cCvs.getContext('2d');
-  cParts = Array.from({length:160}, () => ({
-    x: Math.random()*cCvs.width, y: -Math.random()*cCvs.height*.5,
-    w: Math.random()*12+5, h: Math.random()*5+3,
-    color: COLS[Math.random()*COLS.length|0],
-    r: Math.random()*Math.PI*2,
-    vx: (Math.random()-.5)*3.5, vy: Math.random()*4+1.5, vr: (Math.random()-.5)*.22
-  }));
-  if (cRAF) cancelAnimationFrame(cRAF);
-  animConf();
-}
-function animConf() {
-  if (!cCtx||!cCvs) return;
-  cCtx.clearRect(0,0,cCvs.width,cCvs.height);
-  let alive = false;
-  cParts.forEach(p => {
-    p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.vy+=.06;
-    if (p.y < cCvs.height+20) alive = true;
-    cCtx.save();
-    cCtx.translate(p.x,p.y); cCtx.rotate(p.r);
-    cCtx.fillStyle = p.color;
-    cCtx.globalAlpha = Math.max(0, 1-p.y/cCvs.height*.85);
-    cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-    cCtx.restore();
-  });
-  if (alive) cRAF = requestAnimationFrame(animConf);
-}
-function stopConf() {
-  if (cRAF) cancelAnimationFrame(cRAF);
-  if (cCtx&&cCvs) cCtx.clearRect(0,0,cCvs.width,cCvs.height);
-}
-
-// ══════════════════════════════════════════════════════════
-//  ARRANQUE
-// ══════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
