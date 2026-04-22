@@ -75,14 +75,15 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-count{font-size:12px;color:#aaa;flex-shrink:0}
 
-/* LISTAS PROMOS Y PERFIL */
+/* LISTAS PROMOS, CONCURSOS Y PERFIL */
 .scrollbody{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;min-height:0}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin:16px 0 8px}
 .slbl:first-child{margin-top:0}
 .empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px}
+
 .pc{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid #1A1A1A;border-radius:14px;margin-bottom:10px;background:#fff;cursor:pointer}
 .pc.locked{border-color:#e0e0e0;opacity:.75}
-.pci{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid #eee}
+.pci{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid #eee;flex-shrink:0}
 .pci-info{flex:1;min-width:0}
 .pci-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pci-meta{font-size:11px;color:#888;margin-top:2px}
@@ -98,6 +99,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .pts-title{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:6px}
 .pts-num{font-size:30px;font-weight:800;color:#C0157A;margin:8px 0}
 .pts-msg{font-size:13px;color:#888;line-height:1.6;margin-bottom:16px}
+
 .umodal{position:absolute;inset:0;background:rgba(0,0,0,.78);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:16px}
 .umodal.show{display:flex}
 .ubox{background:#fff;border-radius:20px;border:2px solid #C0157A;padding:22px 18px 18px;width:100%;max-width:300px;text-align:center;position:relative;z-index:202}
@@ -105,7 +107,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 
 /* PERFIL FORMULARIO ORIGINAL */
 .ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:14px;margin-bottom:14px}
-.av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer}
+.av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;flex-shrink:0}
 .av img{width:100%;height:100%;object-fit:cover}
 .pname{font-size:16px;font-weight:700;color:#fff}
 .prole{font-size:12px;color:#aaa;margin-top:2px}
@@ -172,19 +174,45 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
       <div class="sw-btns" id="sw-btns"><button class="sw-btn no" onclick="swipeCard(false)">✕</button><button class="sw-btn yes" onclick="swipeCard(true)">♥</button></div>
       <div class="sw-count" id="sw-count"></div>
     </div>
-    <div class="bnav"><button class="nb on"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
+    <div class="bnav">
+      <button class="nb on" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
+      <button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
+      <button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
+      <button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
+    </div>
   </div>
 
   <div class="screen" id="s-promos">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="promo-pts">0 PTS</span></div>
     <div class="scrollbody" id="promos-body"></div>
-    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb on"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
+    <div class="bnav">
+      <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
+      <button class="nb on" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
+      <button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
+      <button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
+    </div>
+  </div>
+
+  <div class="screen" id="s-contests">
+    <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="contest-pts">0 PTS</span></div>
+    <div class="scrollbody" id="contests-body"></div>
+    <div class="bnav">
+      <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
+      <button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
+      <button class="nb on" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
+      <button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
+    </div>
   </div>
 
   <div class="screen" id="s-profile">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="prof-pts">0 PTS</span></div>
     <div class="scrollbody" id="prof-body"></div>
-    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb on"><span class="ni">🫘</span>Perfil</button></div>
+    <div class="bnav">
+      <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
+      <button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
+      <button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
+      <button class="nb on" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
+    </div>
   </div>
 
   <div class="pts-modal" id="conf-modal">
@@ -212,7 +240,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 // ═══════════════════════════════════════════════
 //  API Y CONFIGURACIÓN
 // ═══════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrMsbQm7f7fGE4jjrZ99MTtjnNo06RQT6N4pwWK66m5aVI3E0XG9dHuwvciMQd_ui0/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVZEDpC1LdVC_NtIVvVeZkkovgUZNoowvkUa_AGLzgOaaKZ6-a2SRERuByoAlQQ_19/exec';
 async function api(params){const r=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params));return r.json();}
 async function apiPost(body){const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});return r.json();}
 
@@ -220,17 +248,18 @@ const UID_KEY = 'dep_uid';
 function genUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)});}
 function getOrCreateUID(){let id=localStorage.getItem(UID_KEY);if(!id){id=genUUID();localStorage.setItem(UID_KEY,id);}return id;}
 
-const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], swipeIdx:0, avatarUrl:null};
+const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null};
 const $=id=>document.getElementById(id);
 
-function showScreen(id){['s-login','s-swiper','s-promos','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
-function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='profile') renderProfile();}
+function showScreen(id){['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
+function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='contests') renderConcursos(); if(t==='profile') renderProfile();}
 function goMain(){showScreen('s-swiper');}
-function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
+function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
 function showToast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
 function loaderShow(){$('loader').style.display='flex';$('loader').classList.remove('hide');}
 function loaderHide(){$('loader').classList.add('hide');setTimeout(()=>$('loader').style.display='none',350);}
 function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display=msg?'block':'none';}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 // ═══════════════════════════════════════════════
 //  INIT
@@ -278,8 +307,6 @@ async function enviarCodigoRegistro() {
   try {
     const r = await apiPost({action:'enviar_otp', email});
     if(!r.ok) throw new Error(r.error);
-    
-    // Si el correo se envía, pasamos a validar
     $('step-register').style.display='none';
     $('step-otp').style.display='flex';
     $('otp-email-show').textContent = email;
@@ -327,13 +354,18 @@ async function procesarLoginExitoso(usuario) {
 
 async function cargarDatos(){
   const email=st.usuario?.id_email||st.usuario?.email||'';
-  const[rT,rR]=await Promise.all([api({action:'tarjetas',email,cookie:st.uid}),api({action:'recompensas'})]);
+  const[rT,rR,rC]=await Promise.all([
+    api({action:'tarjetas',email,cookie:st.uid}),
+    api({action:'recompensas'}),
+    api({action:'concursos'})
+  ]);
   st.tarjetas = rT.tarjetas || [];
   st.recompensas = rR.recompensas || [];
+  st.concursos = rC.concursos || [];
 }
 
 // ═══════════════════════════════════════════════
-//  SWIPER (Suma de puntos garantizada)
+//  SWIPER
 // ═══════════════════════════════════════════════
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
@@ -366,10 +398,7 @@ async function swipeCard(like){
   const t=st.tarjetas[st.swipeIdx]; const card=$('sc-'+t.id); if(card)card.classList.add(like?'liked':'gone');
   st.swipeIdx++;
   const email=st.usuario?.id_email||st.usuario?.email||'';
-  
-  // Actualización instantánea en frontend (optimista)
   st.puntos++; updatePts(); showToast('+1 punto 🫘');
-  
   apiPost({action:'swipe',email,cookie_id:st.uid,tarjeta_id:t.id,like})
     .then(r=>{if(r.ok){st.puntos=r.puntos_restantes; updatePts();}}).catch(()=>{});
   setTimeout(renderSwiper,300);
@@ -378,29 +407,104 @@ async function swipeCard(like){
 // ═══════════════════════════════════════════════
 //  RECOMPENSAS Y CANJE
 // ═══════════════════════════════════════════════
+function getUnlockCode(id, tipo) {
+  if(!st.usuario || !st.usuario.canjes) return null;
+  const canjes = String(st.usuario.canjes).split(',');
+  const found = canjes.find(c => c.startsWith(tipo + ':' + id + ':'));
+  return found ? found.split(':')[2] : null;
+}
+
 function renderPromos(){
   const body=$('promos-body');if(!body)return;
   $('promo-pts').textContent=st.puntos+' PTS';
   if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.</div>';return;}
 
-  const activas=st.recompensas.filter(r=>st.puntos>=Number(r.puntos_requeridos||r['puntos requeridos']||0));
-  const bloqueadas=st.recompensas.filter(r=>st.puntos<Number(r.puntos_requeridos||r['puntos requeridos']||0));
+  let html='';
+  st.recompensas.forEach(r=>{
+    const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0);
+    const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
+    const faltan = Math.max(pts - st.puntos, 0);
+    
+    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
+    const unlockedCode = getUnlockCode(r.id, 'recompensa');
+
+    if (unlockedCode) {
+       statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Desbloqueado</span>`;
+       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Código: DEP-${unlockedCode}</div>`;
+       clickAction = `onclick="alert('Ya canjeaste esta recompensa. Tu código es DEP-${unlockedCode}')"`;
+       barColor = `style="width:100%;background:#4CAF50"`;
+    } else if (st.puntos >= pts) {
+       statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
+       clickAction = `onclick="tryUnlock('${r.emoji||'🎁'}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}','${r.id}','recompensa',${pts})"`;
+       barColor = `style="width:100%;background:#C0157A"`;
+    } else {
+       statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
+       clickAction = `onclick="$('pts-num').textContent='Faltan '+${faltan}+' pts';$('pts-modal').classList.add('show')"`;
+       barColor = `style="width:${pct}%;background:#C0157A"`;
+    }
+
+    html += `
+    <div class="pc" ${clickAction}>
+      <div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div>
+      <div class="pci-info">
+        <div class="pci-name">${escH(r.nombre)}</div>
+        <div class="pci-meta">${pts} pts</div>
+        ${codeDisplay}
+        <div class="prow" style="display:flex;align-items:center;gap:8px;margin-top:6px">
+          <div class="pbar" style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div class="pfill" ${barColor}></div></div>
+          <div class="plbl" style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div>
+        </div>
+      </div>
+      ${statusTag}
+    </div>`;
+  });
+  body.innerHTML=html;
+}
+
+function renderConcursos(){
+  const body=$('contests-body');if(!body)return;
+  $('contest-pts').textContent=st.puntos+' PTS';
+  if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos disponibles.</div>';return;}
 
   let html='';
-  if(activas.length){
-    html+=`<div class="slbl">Disponibles 🔥</div>`;
-    activas.forEach(r=>{
-      const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0);
-      html+=`<div class="pc" onclick="tryUnlock('${r.emoji||'🎁'}','${r.nombre}','${r.instrucciones_canje||''}','${r.id}','recompensa',${pts})"><div class="pci" style="background:#FFF5FA">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${r.nombre}</div><div class="pci-meta">${pts} pts</div></div><span class="ptag ptag-ok">Canjear</span></div>`;
-    });
-  }
-  if(bloqueadas.length){
-    html+=`<div class="slbl">Bloqueadas 🔒</div>`;
-    bloqueadas.forEach(r=>{
-      const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0); const faltan = pts-st.puntos;
-      html+=`<div class="pc locked" onclick="$('pts-num').textContent='Faltan '+${faltan}+' pts';$('pts-modal').classList.add('show')"><div class="pci">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${r.nombre}</div><div class="pci-meta">Faltan ${faltan} pts</div></div><span class="ptag ptag-lk">🔒 ${pts}</span></div>`;
-    });
-  }
+  st.concursos.forEach(c=>{
+    const pts = Number(c.puntos_requeridos||c['puntos requeridos']||0);
+    const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
+    const faltan = Math.max(pts - st.puntos, 0);
+    
+    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
+    const unlockedCode = getUnlockCode(c.id, 'concurso');
+
+    if (unlockedCode) {
+       statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Participando</span>`;
+       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Ticket: DEP-${unlockedCode}</div>`;
+       clickAction = `onclick="alert('Ya estás participando en este concurso. Tu ticket es DEP-${unlockedCode}')"`;
+       barColor = `style="width:100%;background:#4CAF50"`;
+    } else if (st.puntos >= pts) {
+       statusTag = `<span class="ptag ptag-ok">Participar</span>`;
+       clickAction = `onclick="tryUnlock('${c.emoji||'🏅'}','${escH(c.nombre)}','${escH(c.descripcion||'')}','${c.id}','concurso',${pts})"`;
+       barColor = `style="width:100%;background:#C0157A"`;
+    } else {
+       statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
+       clickAction = `onclick="$('pts-num').textContent='Faltan '+${faltan}+' pts';$('pts-modal').classList.add('show')"`;
+       barColor = `style="width:${pct}%;background:#C0157A"`;
+    }
+
+    html += `
+    <div class="pc" ${clickAction}>
+      <div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div>
+      <div class="pci-info">
+        <div class="pci-name">${escH(c.nombre)}</div>
+        <div class="pci-meta">${pts} pts</div>
+        ${codeDisplay}
+        <div class="prow" style="display:flex;align-items:center;gap:8px;margin-top:6px">
+          <div class="pbar" style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div class="pfill" ${barColor}></div></div>
+          <div class="plbl" style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div>
+        </div>
+      </div>
+      ${statusTag}
+    </div>`;
+  });
   body.innerHTML=html;
 }
 
@@ -420,18 +524,20 @@ async function executeCanje() {
   try {
     const r = await apiPost({action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo});
     if(r.ok) {
-      st.puntos = r.puntos_restantes; updatePts();
+      st.puntos = r.puntos_restantes; 
+      if(r.canjes) st.usuario.canjes = r.canjes;
+      updatePts();
       $('conf-modal').classList.remove('show');
       $('u-ico').textContent = ico; $('u-title').textContent = title; $('u-sub').textContent = instrucciones; $('u-code').textContent = r.codigo;
       $('umodal').classList.add('show'); setTimeout(startConf, 60);
-      renderPromos();
+      if(tipo === 'recompensa') renderPromos(); else renderConcursos();
     } else { alert("Error: " + r.error); $('conf-modal').classList.remove('show'); }
   } catch(e) { alert("Error de conexión"); $('conf-modal').classList.remove('show'); }
   $('conf-btn-yes').disabled = false; $('conf-btn-yes').textContent = 'Sí, canjear';
 }
 
 // ═══════════════════════════════════════════════
-//  PERFIL COMPLETO (Restaurado)
+//  PERFIL COMPLETO
 // ═══════════════════════════════════════════════
 function renderProfile(){
   const body=$('prof-body');if(!body)return;
@@ -469,7 +575,7 @@ async function guardarPerfil(){
 }
 
 function logout(){
-  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.swipeIdx=0;
+  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0;
   $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
   showScreen('s-login');
 }
