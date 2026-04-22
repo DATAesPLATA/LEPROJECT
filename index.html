@@ -333,7 +333,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 // ═══════════════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxI4rG93nEJx3Oy26OzEeCGgH5T_ex7Efh0DNqLrIM3vAcUUrnEBbYLnNPjSQ6NMg/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVZEDpC1LdVC_NtIVvVeZkkovgUZNoowvkUa_AGLzgOaaKZ6-a2SRERuByoAlQQ_19/exec';
 
 // ═══════════════════════════════════════════════
 //  ID PERSISTENTE MULTICAPA
@@ -667,7 +667,7 @@ function renderPromos(){
   if(activas.length){
     html+=`<div class="slbl">Disponibles para ti 🔥</div>`;
     activas.forEach(r=>{
-      html+=`<div class="pc" onclick="tryUnlock('${escH(r.emoji||'🎁')}','${escH(r.nombre)}','${escH(r.instrucciones_canje||r['instrucciones_canje']||'')}',${r.id||r.ID||0},'recompensa')">
+      html+=`<div class="pc" onclick="tryUnlock('${escH(r.emoji||'🎁')}','${escH(r.nombre)}','${escH(r.instrucciones_canje||r['instrucciones_canje']||'')}','${escH(r.id||r.ID||'')}','recompensa')">
         <div class="pci" style="background:#FFF5FA">${r.emoji||'🎁'}</div>
         <div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${escH(r.descripcion||'')}${getPts(r)?' · '+getPts(r)+' pts':''}</div></div>
         <span class="ptag ptag-ok">Activo</span></div>`;
@@ -706,7 +706,7 @@ function renderConcursos(){
   if(activos.length){
     html+=`<div class="slbl">¡Participas en estos! 🏆</div>`;
     activos.forEach(c=>{
-      html+=`<div class="cc" onclick="tryUnlock('${escH(c.emoji||'🏅')}','${escH(c.nombre)}','Sorteo: ${escH(c.fecha_sorteo||'')}',${c.id||0},'concurso')">
+      html+=`<div class="cc" onclick="tryUnlock('${escH(c.emoji||'🏅')}','${escH(c.nombre)}','Sorteo: ${escH(c.fecha_sorteo||'')}','${escH(c.id||'')}','concurso')">
         <div class="cc-hd"><div class="cc-em">${c.emoji||'🏅'}</div><div><div class="cc-title">${escH(c.nombre)}</div><div class="cc-sub">${escH(c.descripcion||'')}${c.fecha_sorteo?' · Sorteo '+escH(c.fecha_sorteo):''}</div></div></div>
         <div style="font-size:11px;color:#C0157A;font-weight:700;margin-bottom:4px">✓ ¡Estás participando!</div>
         <div class="prow"><div class="pbar"><div class="pfill" style="width:100%"></div></div><div class="plbl win">✓</div></div></div>`;
