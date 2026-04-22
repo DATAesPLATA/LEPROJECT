@@ -3,20 +3,17 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-<meta name="theme-color" content="#1A1A1A"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
 <title>Data Es Plata</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--mg:#C0157A;--mg2:#8A0F57;--blk:#1A1A1A;--sb:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+:root{--mg:#C0157A;--blk:#1A1A1A;--sb:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 #app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .screen.active{display:flex}
 
-/* TOPBAR & NAV */
-.topbar{background:#1A1A1A;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.tlogo{font-size:14px;font-weight:800;color:#fff;letter-spacing:.05em;text-transform:uppercase}
+.topbar{background:#1A1A1A;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tlogo{font-size:14px;font-weight:800;color:#fff;letter-spacing:.05em}
 .tlogo span{color:#C0157A}
 .bpts{background:#C0157A;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px}
 .bnav{display:flex;border-top:1.5px solid #1A1A1A;background:#fff;padding-bottom:var(--sb);flex-shrink:0}
@@ -24,7 +21,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .nb.on{color:#C0157A}
 .ni{font-size:20px;line-height:1}
 
-/* FORMS Y BOTONES */
 .login-wrap{display:flex;flex-direction:column;align-items:center;padding:0 24px 32px;gap:14px;overflow-y:auto;height:100%}
 .beans-stage{width:100%;height:160px;position:relative;flex-shrink:0;overflow:hidden}
 .bbean{position:absolute;bottom:0;object-fit:contain}
@@ -33,93 +29,55 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 @keyframes bobF{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
 @keyframes bobL{0%,100%{transform:translateY(-5px) rotate(4deg)}50%{transform:translateY(7px) rotate(-4deg)}}
 .brand{text-align:center;margin-bottom:10px}
-.d1{font-size:24px;font-weight:800;color:#1A1A1A;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
-.d2{font-size:24px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
-.d2 .mg{color:#C0157A}
-.slogan{font-size:11px;background:#1A1A1A;color:#fff;font-weight:700;padding:4px 16px;border-radius:20px;margin-top:6px;display:inline-block;text-transform:uppercase}
-.inp{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;color:#1A1A1A;background:#fff;outline:none;transition:border-color .15s}
+.d1{font-size:24px;font-weight:800;color:#1A1A1A}
+.d2{font-size:24px;font-weight:800}.d2 .mg{color:#C0157A}
+.inp{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none}
 .inp:focus{border-color:#C0157A}
-.btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase}
-.btn-mg:disabled{background:#ddd;cursor:default}
-.btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase}
+.btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer}
 .login-err{font-size:13px;color:#C0157A;text-align:center;display:none;padding:8px;background:#FCEBEB;border-radius:8px;width:100%}
+.otp-inputs{display:flex;gap:8px;justify-content:center}
+.otp-input{width:44px;height:54px;border:1.5px solid #e0e0e0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;outline:none}
 
-/* OTP INPUTS */
-.otp-inputs{display:flex;gap:8px;justify-content:center;margin:10px 0}
-.otp-input{width:44px;height:54px;border:1.5px solid #e0e0e0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#1A1A1A;outline:none}
-.otp-input:focus{border-color:#C0157A}
-
-/* SWIPER */
 #s-swiper{overflow:hidden}
 .sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.sw-title{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase}
+.sw-title{font-size:13px;font-weight:700;color:#fff}
 .sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
-.sw-hint{font-size:13px;color:#888;text-align:center;flex-shrink:0}
 .sw-prog-wrap{width:100%;height:5px;background:#eee;border-radius:5px;overflow:hidden;flex-shrink:0}
 .sw-prog{height:100%;background:#C0157A;border-radius:5px;transition:width .3s}
 .card-stack{position:relative;width:100%;max-width:290px;flex:1;min-height:220px;max-height:310px;flex-shrink:0}
-.swipe-card{position:absolute;inset:0;background:#fff;border:1.5px solid #1A1A1A;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px 16px;transition:transform .32s,opacity .32s;cursor:grab;user-select:none;will-change:transform}
-.swipe-card:active{cursor:grabbing}
-.swipe-card.gone{transform:translateX(-140%) rotate(-22deg)!important;opacity:0;pointer-events:none}
-.swipe-card.liked{transform:translateX(140%) rotate(22deg)!important;opacity:0;pointer-events:none}
-.card-emoji{font-size:56px;line-height:1}
-.card-name{font-size:17px;font-weight:700;color:#1A1A1A;text-align:center}
-.card-brand{font-size:13px;color:#888;text-align:center}
-.ind{position:absolute;top:14px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;opacity:0;transition:opacity .1s;pointer-events:none;text-transform:uppercase}
+.swipe-card{position:absolute;inset:0;background:#fff;border:1.5px solid #1A1A1A;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px 16px;transition:transform .32s,opacity .32s;cursor:grab;user-select:none}
+.swipe-card.gone{transform:translateX(-140%) rotate(-22deg)!important;opacity:0}
+.swipe-card.liked{transform:translateX(140%) rotate(22deg)!important;opacity:0}
+.ind{position:absolute;top:14px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;opacity:0;transition:opacity .1s}
 .ind-y{right:14px;background:#C0157A;color:#fff}
 .ind-n{left:14px;background:#1A1A1A;color:#fff}
-.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
-.sw-empty.show{display:flex}
 .sw-btns{display:flex;gap:20px;flex-shrink:0}
 .sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.sw-btn.yes{border-color:#C0157A;color:#C0157A}
-.sw-count{font-size:12px;color:#aaa;flex-shrink:0}
+.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
 
-/* LISTAS PROMOS, CONCURSOS Y PERFIL */
-.scrollbody{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;min-height:0}
+.scrollbody{flex:1;overflow-y:auto;padding:14px}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin:16px 0 8px}
-.slbl:first-child{margin-top:0}
-.empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px}
-
-.pc{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid #1A1A1A;border-radius:14px;margin-bottom:10px;background:#fff;cursor:pointer}
-.pc.locked{border-color:#e0e0e0;opacity:.75}
+.pc{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #1A1A1A;border-radius:14px;margin-bottom:10px;background:#fff;cursor:pointer}
 .pci{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid #eee;flex-shrink:0}
 .pci-info{flex:1;min-width:0}
 .pci-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pci-meta{font-size:11px;color:#888;margin-top:2px}
 .ptag{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;text-transform:uppercase}
-.ptag-ok{background:#C0157A;color:#fff}
-.ptag-lk{background:#eee;color:#999}
 
-/* MODALES */
-.pts-modal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
-.pts-modal.show{display:flex}
-.pts-box{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:300px;text-align:center}
-.pts-ico{font-size:48px;margin-bottom:10px}
-.pts-title{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:6px}
-.pts-num{font-size:30px;font-weight:800;color:#C0157A;margin:8px 0}
-.pts-msg{font-size:13px;color:#888;line-height:1.6;margin-bottom:16px}
-
-.umodal{position:absolute;inset:0;background:rgba(0,0,0,.78);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:16px}
-.umodal.show{display:flex}
-.ubox{background:#fff;border-radius:20px;border:2px solid #C0157A;padding:22px 18px 18px;width:100%;max-width:300px;text-align:center;position:relative;z-index:202}
-.ucode{font-size:24px;font-weight:800;letter-spacing:.15em;color:#C0157A;margin:10px 0;padding:12px;background:#F5D0E8;border-radius:12px}
-
-/* PERFIL FORMULARIO ORIGINAL */
 .ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:14px;margin-bottom:14px}
 .av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;flex-shrink:0}
 .av img{width:100%;height:100%;object-fit:cover}
 .pname{font-size:16px;font-weight:700;color:#fff}
-.prole{font-size:12px;color:#aaa;margin-top:2px}
 .pf-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .pf-field label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase}
 .pf-field input,.pf-field select{padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%}
-.updbtn{padding:12px;border:1.5px solid #1A1A1A;border-radius:10px;background:none;color:#1A1A1A;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase}
 
 .loader{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .loader.hide{opacity:0;pointer-events:none}
 .toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity .2s;z-index:150}
-.toast.show{opacity:1}
+.pts-modal,.umodal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
+.pts-box,.ubox{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:300px;text-align:center}
 </style>
 </head>
 <body>
@@ -172,7 +130,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
       <div class="card-stack" id="card-stack"></div>
       <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px" onclick="goTab('promos')">Ver recompensas</button></div>
       <div class="sw-btns" id="sw-btns"><button class="sw-btn no" onclick="swipeCard(false)">✕</button><button class="sw-btn yes" onclick="swipeCard(true)">♥</button></div>
-      <div class="sw-count" id="sw-count"></div>
     </div>
     <div class="bnav">
       <button class="nb on" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
@@ -185,54 +142,39 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   <div class="screen" id="s-promos">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="promo-pts">0 PTS</span></div>
     <div class="scrollbody" id="promos-body"></div>
-    <div class="bnav">
-      <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
-      <button class="nb on" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
-      <button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
-      <button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
-    </div>
+    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb on"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
   </div>
 
   <div class="screen" id="s-contests">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="contest-pts">0 PTS</span></div>
     <div class="scrollbody" id="contests-body"></div>
-    <div class="bnav">
-      <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
-      <button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
-      <button class="nb on" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
-      <button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
-    </div>
+    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb on"><span class="ni">🏅</span>Concursos</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
   </div>
 
   <div class="screen" id="s-profile">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="prof-pts">0 PTS</span></div>
     <div class="scrollbody" id="prof-body"></div>
-    <div class="bnav">
-      <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
-      <button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
-      <button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button>
-      <button class="nb on" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button>
-    </div>
+    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb on"><span class="ni">🫘</span>Perfil</button></div>
   </div>
 
-  <div class="pts-modal" id="conf-modal">
+  <div class="pts-modal" id="conf-modal" style="display:none">
     <div class="pts-box">
-      <div class="pts-ico">⚠️</div><div class="pts-title">¿Confirmar canje?</div>
-      <div class="pts-msg" id="conf-msg"></div>
-      <div style="display:flex;gap:10px"><button style="flex:1;padding:12px;border:none;border-radius:10px;background:#eee" onclick="$('conf-modal').classList.remove('show')">Cancelar</button><button id="conf-btn-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#C0157A;color:#fff;font-weight:bold" onclick="executeCanje()">Sí, canjear</button></div>
+      <div style="font-size:48px;margin-bottom:10px">⚠️</div><div style="font-size:16px;font-weight:bold;margin-bottom:6px">¿Confirmar canje?</div>
+      <div id="conf-msg" style="font-size:13px;color:#888;margin-bottom:16px"></div>
+      <div style="display:flex;gap:10px"><button style="flex:1;padding:12px;border:none;border-radius:10px;background:#eee" onclick="$('conf-modal').style.display='none'">Cancelar</button><button id="conf-btn-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#C0157A;color:#fff;font-weight:bold" onclick="executeCanje()">Sí, canjear</button></div>
     </div>
   </div>
   
   <div class="umodal" id="umodal">
     <canvas id="conf-cvs" style="position:absolute;inset:0;pointer-events:none;z-index:201"></canvas>
     <div class="ubox">
-      <div class="u-ico-big" id="u-ico">🎁</div><div class="utitle" id="u-title"></div>
-      <div class="usub" id="u-sub"></div><div class="ucode">DEP-<span id="u-code"></span></div>
-      <button class="btn-mg" onclick="$('umodal').classList.remove('show');stopConf()">¡Entendido!</button>
+      <div style="font-size:40px" id="u-ico">🎁</div><div style="font-size:16px;font-weight:bold;margin-bottom:4px" id="u-title"></div>
+      <div style="font-size:12px;color:#888;margin-bottom:12px" id="u-sub"></div>
+      <div style="font-size:24px;font-weight:bold;color:#C0157A;padding:12px;background:#F5D0E8;border-radius:12px;margin-bottom:12px">DEP-<span id="u-code"></span></div>
+      <button class="btn-mg" onclick="$('umodal').style.display='none';stopConf()">¡Entendido!</button>
     </div>
   </div>
-
-  <div class="pts-modal" id="pts-modal"><div class="pts-box"><div class="pts-ico">🔒</div><div class="pts-title">Faltan puntos</div><div class="pts-num" id="pts-num"></div><button class="btn-mg" onclick="$('pts-modal').classList.remove('show');goMain()">Deslizar tarjetas</button></div></div>
+  <div class="pts-modal" id="pts-modal" style="display:none"><div class="pts-box"><div style="font-size:48px">🔒</div><div style="font-size:16px;font-weight:bold">Faltan puntos</div><div style="font-size:24px;color:#C0157A;font-weight:bold;margin:10px 0" id="pts-num"></div><button class="btn-mg" onclick="$('pts-modal').style.display='none';goMain()">Seguir deslizando</button></div></div>
 
 </div>
 
@@ -266,8 +208,10 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // ═══════════════════════════════════════════════
 async function init(){
   const savedEmail = localStorage.getItem('dep_saved_email');
-  if(savedEmail) $('inp-email').value = savedEmail;
-
+  if(savedEmail) {
+    $('inp-email').value = savedEmail;
+    st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
+  }
   try{
     const r=await api({action:'por_cookie',cookie:st.uid});
     if(r.ok&&r.usuario) await procesarLoginExitoso(r.usuario);
@@ -291,6 +235,7 @@ async function hacerLogin() {
     const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
     localStorage.setItem('dep_saved_email', email);
+    st.avatarUrl = localStorage.getItem('dep_avatar_'+email);
     await procesarLoginExitoso(r.usuario);
   } catch(e) { showErr('login-err', e.message); }
   $('btn-login').disabled = false; loaderHide();
@@ -344,7 +289,8 @@ function setupOTPInputs(){
 
 async function procesarLoginExitoso(usuario) {
   st.usuario = usuario;
-  st.puntos = Number(usuario.puntos_restantes||usuario.puntos||0);
+  // BUSCA CORRECTAMENTE POR NOMBRE O NORMALIZADO
+  st.puntos = Number(usuario.puntos_restantes||usuario['puntos_restantes']||usuario.puntos||0);
   st.swipeIdx=0; 
   await cargarDatos();
   updatePts();
@@ -365,21 +311,23 @@ async function cargarDatos(){
 }
 
 // ═══════════════════════════════════════════════
-//  SWIPER
+//  SWIPER (Pasa datos para Auto-Perfilado)
 // ═══════════════════════════════════════════════
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
   stack.innerHTML=''; const pend=st.tarjetas.slice(st.swipeIdx);
-  if(!pend.length){empty.classList.add('show');btns.style.display='none';$('sw-prog').style.width='100%';return;}
-  empty.classList.remove('show');btns.style.display='';
+  if(!pend.length){empty.style.display='flex';btns.style.display='none';$('sw-prog').style.width='100%';return;}
+  empty.style.display='none';btns.style.display='';
   pend.slice(0,5).reverse().forEach((t,vi)=>{
     const div=document.createElement('div'); div.className='swipe-card'; div.id='sc-'+t.id;
+    // Guardamos datos para auto-perfilado en el DOM
+    div.dataset.pcampo = t.perfil_campo || '';
+    div.dataset.pvalor = t.perfil_valor || '';
     div.innerHTML=`<div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div><div class="card-emoji">${t.emoji||'🎁'}</div><div class="card-name">${t.nombre}</div><div class="card-brand">${t.descripcion||''}</div>`;
     const depth=Math.min(4,pend.length-1)-vi; div.style.zIndex=vi+1;
     if(depth>0)div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
     attachDrag(div);stack.appendChild(div);
   });
-  $('sw-count').textContent=(st.tarjetas.length-st.swipeIdx)+' restantes';
   $('sw-prog').style.width=(st.swipeIdx/Math.max(st.tarjetas.length,1)*100)+'%';
 }
 
@@ -396,11 +344,19 @@ function attachDrag(c){
 async function swipeCard(like){
   if(st.swipeIdx>=st.tarjetas.length)return;
   const t=st.tarjetas[st.swipeIdx]; const card=$('sc-'+t.id); if(card)card.classList.add(like?'liked':'gone');
+  
+  // Extraer datos de perfil de la tarjeta
+  const pcampo = card ? card.dataset.pcampo : '';
+  const pvalor = card ? card.dataset.pvalor : '';
+  
   st.swipeIdx++;
   const email=st.usuario?.id_email||st.usuario?.email||'';
   st.puntos++; updatePts(); showToast('+1 punto 🫘');
-  apiPost({action:'swipe',email,cookie_id:st.uid,tarjeta_id:t.id,like})
+  
+  // Enviar a la API
+  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like, perfil_campo:pcampo, perfil_valor:pvalor})
     .then(r=>{if(r.ok){st.puntos=r.puntos_restantes; updatePts();}}).catch(()=>{});
+    
   setTimeout(renderSwiper,300);
 }
 
@@ -418,20 +374,18 @@ function renderPromos(){
   const body=$('promos-body');if(!body)return;
   $('promo-pts').textContent=st.puntos+' PTS';
   if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.</div>';return;}
-
   let html='';
   st.recompensas.forEach(r=>{
     const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
-    
     let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
     const unlockedCode = getUnlockCode(r.id, 'recompensa');
 
     if (unlockedCode) {
        statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Desbloqueado</span>`;
-       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Código: DEP-${unlockedCode}</div>`;
-       clickAction = `onclick="alert('Ya canjeaste esta recompensa. Tu código es DEP-${unlockedCode}')"`;
+       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">DEP-${unlockedCode}</div>`;
+       clickAction = `onclick="alert('Ya canjeaste esta recompensa. Código: DEP-${unlockedCode}')"`;
        barColor = `style="width:100%;background:#4CAF50"`;
     } else if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
@@ -439,24 +393,10 @@ function renderPromos(){
        barColor = `style="width:100%;background:#C0157A"`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
-       clickAction = `onclick="$('pts-num').textContent='Faltan '+${faltan}+' pts';$('pts-modal').classList.add('show')"`;
+       clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barColor = `style="width:${pct}%;background:#C0157A"`;
     }
-
-    html += `
-    <div class="pc" ${clickAction}>
-      <div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div>
-      <div class="pci-info">
-        <div class="pci-name">${escH(r.nombre)}</div>
-        <div class="pci-meta">${pts} pts</div>
-        ${codeDisplay}
-        <div class="prow" style="display:flex;align-items:center;gap:8px;margin-top:6px">
-          <div class="pbar" style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div class="pfill" ${barColor}></div></div>
-          <div class="plbl" style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div>
-        </div>
-      </div>
-      ${statusTag}
-    </div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
@@ -465,20 +405,18 @@ function renderConcursos(){
   const body=$('contests-body');if(!body)return;
   $('contest-pts').textContent=st.puntos+' PTS';
   if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos disponibles.</div>';return;}
-
   let html='';
   st.concursos.forEach(c=>{
     const pts = Number(c.puntos_requeridos||c['puntos requeridos']||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
-    
     let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
     const unlockedCode = getUnlockCode(c.id, 'concurso');
 
     if (unlockedCode) {
        statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Participando</span>`;
        codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Ticket: DEP-${unlockedCode}</div>`;
-       clickAction = `onclick="alert('Ya estás participando en este concurso. Tu ticket es DEP-${unlockedCode}')"`;
+       clickAction = `onclick="alert('Ya estás participando. Ticket: DEP-${unlockedCode}')"`;
        barColor = `style="width:100%;background:#4CAF50"`;
     } else if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Participar</span>`;
@@ -486,24 +424,10 @@ function renderConcursos(){
        barColor = `style="width:100%;background:#C0157A"`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
-       clickAction = `onclick="$('pts-num').textContent='Faltan '+${faltan}+' pts';$('pts-modal').classList.add('show')"`;
+       clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barColor = `style="width:${pct}%;background:#C0157A"`;
     }
-
-    html += `
-    <div class="pc" ${clickAction}>
-      <div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div>
-      <div class="pci-info">
-        <div class="pci-name">${escH(c.nombre)}</div>
-        <div class="pci-meta">${pts} pts</div>
-        ${codeDisplay}
-        <div class="prow" style="display:flex;align-items:center;gap:8px;margin-top:6px">
-          <div class="pbar" style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div class="pfill" ${barColor}></div></div>
-          <div class="plbl" style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div>
-        </div>
-      </div>
-      ${statusTag}
-    </div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
@@ -512,7 +436,7 @@ let pendingCanje = null;
 function tryUnlock(ico, title, instrucciones, id, tipo, coste){
   pendingCanje = {ico, title, instrucciones, id, tipo};
   $('conf-msg').innerHTML = `Se descontarán <b style="color:#C0157A;font-size:16px">${coste} frijoles</b> de tu saldo.`;
-  $('conf-modal').classList.add('show');
+  $('conf-modal').style.display='flex';
 }
 
 async function executeCanje() {
@@ -520,24 +444,22 @@ async function executeCanje() {
   const {ico, title, instrucciones, id, tipo} = pendingCanje;
   $('conf-btn-yes').disabled = true; $('conf-btn-yes').textContent = 'Procesando...';
   const email = st.usuario?.id_email || st.usuario?.email || '';
-  
   try {
     const r = await apiPost({action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo});
     if(r.ok) {
-      st.puntos = r.puntos_restantes; 
-      if(r.canjes) st.usuario.canjes = r.canjes;
+      st.puntos = r.puntos_restantes; if(r.canjes) st.usuario.canjes = r.canjes;
       updatePts();
-      $('conf-modal').classList.remove('show');
+      $('conf-modal').style.display='none';
       $('u-ico').textContent = ico; $('u-title').textContent = title; $('u-sub').textContent = instrucciones; $('u-code').textContent = r.codigo;
-      $('umodal').classList.add('show'); setTimeout(startConf, 60);
+      $('umodal').style.display='flex'; setTimeout(startConf, 60);
       if(tipo === 'recompensa') renderPromos(); else renderConcursos();
-    } else { alert("Error: " + r.error); $('conf-modal').classList.remove('show'); }
-  } catch(e) { alert("Error de conexión"); $('conf-modal').classList.remove('show'); }
+    } else { alert("Error: " + r.error); $('conf-modal').style.display='none'; }
+  } catch(e) { alert("Error de conexión"); $('conf-modal').style.display='none'; }
   $('conf-btn-yes').disabled = false; $('conf-btn-yes').textContent = 'Sí, canjear';
 }
 
 // ═══════════════════════════════════════════════
-//  PERFIL COMPLETO
+//  PERFIL COMPLETO Y MASCOTAS CHECKBOX
 // ═══════════════════════════════════════════════
 function renderProfile(){
   const body=$('prof-body');if(!body)return;
@@ -545,31 +467,56 @@ function renderProfile(){
   const u=st.usuario||{}; const email=u.id_email||u.email||''; const nombre=u.nombre||email.split('@')[0]||'Usuario';
   const initials=nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
   
+  // Format Date for HTML Input
+  let fNac = u.fecha_nacimiento || u['fecha de nacimiento'] || '';
+  if(fNac.length > 10) { try { fNac = new Date(fNac).toISOString().split('T')[0]; } catch(e){} }
+  
+  // Mascotas logic
+  const mList = ['Perros', 'Gatos', 'Roedores', 'Exóticos', 'Caballos', 'Ganadería', 'No tengo'];
+  const userMascotas = String(u.mascotas||'').split(',').map(s=>s.trim());
+  let mHtml = '';
+  mList.forEach(m => {
+     const checked = userMascotas.includes(m) ? 'checked' : '';
+     mHtml += `<label style="background:#f9f9f9;padding:8px 12px;border-radius:20px;border:1px solid #eee;display:flex;align-items:center;gap:6px;font-size:13px"><input type="checkbox" value="${m}" ${checked} class="mascota-cb"/> ${m}</label>`;
+  });
+  
   body.innerHTML=`
     <div class="ph">
       <div class="av" onclick="$('avatar-inp').click()">${st.avatarUrl?`<img src="${st.avatarUrl}"/>`:initials}</div>
       <div><div class="pname">${nombre}</div><div class="prole">${email}</div></div>
     </div>
-    
     <div class="slbl">Mis Datos</div>
     <div class="pf-field"><label>Nombre</label><input type="text" id="pf-nombre" value="${u.nombre||''}"/></div>
     <div class="pf-field"><label>Género</label><select id="pf-genero"><option value="">Selecciona</option><option value="Hombre" ${u.genero==='Hombre'?'selected':''}>Hombre</option><option value="Mujer" ${u.genero==='Mujer'?'selected':''}>Mujer</option><option value="Otro" ${u.genero==='Otro'?'selected':''}>Otro</option></select></div>
-    <div class="pf-field"><label>Fecha de nacimiento</label><input type="date" id="pf-nacimiento" value="${u.fecha_nacimiento||''}"/></div>
+    <div class="pf-field"><label>Fecha de nacimiento</label><input type="date" id="pf-nacimiento" value="${fNac}"/></div>
     <div class="pf-field"><label>Situación sentimental</label><select id="pf-sentimental"><option value="">Selecciona</option><option value="Soltero/a" ${u.situacion_sentimental==='Soltero/a'?'selected':''}>Soltero/a</option><option value="En pareja" ${u.situacion_sentimental==='En pareja'?'selected':''}>En pareja</option></select></div>
     <div class="pf-field"><label>¿Hijos?</label><select id="pf-hijos"><option value="">Selecciona</option><option value="No" ${u.hijos==='No'?'selected':''}>No</option><option value="Sí" ${u.hijos==='Sí'?'selected':''}>Sí</option></select></div>
-    <div class="pf-field"><label>¿Mascotas?</label><select id="pf-mascotas"><option value="">Selecciona</option><option value="Perro" ${u.mascotas==='Perro'?'selected':''}>Perro</option><option value="Gato" ${u.mascotas==='Gato'?'selected':''}>Gato</option><option value="No" ${u.mascotas==='No'?'selected':''}>No</option></select></div>
+    <div class="pf-field">
+      <label>¿Mascotas?</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">${mHtml}</div>
+    </div>
     <button class="btn-mg" style="margin-top:10px" onclick="guardarPerfil()">Guardar Perfil</button>
     <input type="file" id="avatar-inp" accept="image/*" style="display:none" onchange="onAvatarChange(this)"/>
-    
     <button class="updbtn" style="margin-top:20px" onclick="logout()">Cerrar sesión</button>
   `;
 }
 
-function onAvatarChange(inp){const f=inp.files?.[0];if(!f)return;const r=new FileReader();r.onload=e=>{st.avatarUrl=e.target.result; renderProfile();};r.readAsDataURL(f);}
+function onAvatarChange(inp){
+  const f=inp.files?.[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{
+    st.avatarUrl=e.target.result;
+    const email = st.usuario?.id_email||st.usuario?.email||'';
+    if(email) localStorage.setItem('dep_avatar_'+email, st.avatarUrl); // Guarda el avatar en local
+    renderProfile();
+  };r.readAsDataURL(f);
+}
 
 async function guardarPerfil(){
   const email=st.usuario?.id_email||st.usuario?.email||'';
-  const perfil={nombre:$('pf-nombre').value, genero:$('pf-genero').value, fecha_nacimiento:$('pf-nacimiento').value, situacion_sentimental:$('pf-sentimental').value, hijos:$('pf-hijos').value, mascotas:$('pf-mascotas').value};
+  const mCb = document.querySelectorAll('.mascota-cb:checked');
+  const mascotas = Array.from(mCb).map(cb=>cb.value).join(', ');
+
+  const perfil={nombre:$('pf-nombre').value, genero:$('pf-genero').value, fecha_nacimiento:$('pf-nacimiento').value, situacion_sentimental:$('pf-sentimental').value, hijos:$('pf-hijos').value, mascotas: mascotas};
   if(st.usuario) Object.assign(st.usuario, perfil);
   try{await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});showToast('✓ Guardado');}catch(e){showToast('Error al guardar');}
 }
