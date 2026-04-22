@@ -4,6 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <title>Data Es Plata</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--mg:#C0157A;--blk:#1A1A1A;--sb:env(safe-area-inset-bottom,0px)}
@@ -39,21 +43,98 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .otp-inputs{display:flex;gap:8px;justify-content:center}
 .otp-input{width:44px;height:54px;border:1.5px solid #e0e0e0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;outline:none}
 
+/* SWIPER - REESTRUCTURADO 300x600 */
 #s-swiper{overflow:hidden}
 .sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .sw-title{font-size:13px;font-weight:700;color:#fff}
 .sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
 .sw-prog-wrap{width:100%;height:5px;background:#eee;border-radius:5px;overflow:hidden;flex-shrink:0}
 .sw-prog{height:100%;background:#C0157A;border-radius:5px;transition:width .3s}
-.card-stack{position:relative;width:100%;max-width:290px;flex:1;min-height:220px;max-height:310px;flex-shrink:0}
-.swipe-card{position:absolute;inset:0;background:#fff;border:1.5px solid #1A1A1A;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px 16px;transition:transform .32s,opacity .32s;cursor:grab;user-select:none}
+
+.card-stack{
+  position:relative;
+  width:300px;
+  height:600px; /* Tamaño exacto solicitado */
+  max-height:68vh; /* Para que no se rompa en teléfonos muy pequeños */
+  flex-shrink:0;
+}
+.swipe-card{
+  position:absolute;
+  inset:0;
+  background:#f4f4f4;
+  border-radius:16px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  overflow:hidden; /* Corta la imagen de fondo en los bordes redondeados */
+  transition:transform .32s,opacity .32s;
+  cursor:grab;
+  user-select:none;
+}
 .swipe-card.gone{transform:translateX(-140%) rotate(-22deg)!important;opacity:0}
 .swipe-card.liked{transform:translateX(140%) rotate(22deg)!important;opacity:0}
-.ind{position:absolute;top:14px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;opacity:0;transition:opacity .1s}
-.ind-y{right:14px;background:#C0157A;color:#fff}
-.ind-n{left:14px;background:#1A1A1A;color:#fff}
-.sw-btns{display:flex;gap:20px;flex-shrink:0}
-.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Capa A: Fondo */
+.card-bg{
+  position:absolute;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  background-color:#eee;
+  z-index:1;
+}
+/* Capa D: Recuadro del Logo */
+.card-logo{
+  position:absolute;
+  top:16px;
+  left:16px;
+  width:48px;
+  height:48px;
+  background:#fff;
+  border-radius:10px;
+  padding:4px;
+  z-index:3;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card-logo img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+/* Capas B y C: Nombre y Descripción */
+.card-info{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  /* Gradiente para que el texto sea siempre legible sobre fotos claras/oscuras */
+  background:linear-gradient(to top, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0));
+  padding:40px 20px 20px;
+  z-index:2;
+}
+.card-name{
+  font-family:'Roboto', sans-serif;
+  font-weight:700;
+  color:#000000;
+  font-size:22px;
+  margin-bottom:4px;
+  line-height:1.1;
+}
+.card-brand{
+  font-family:'Roboto', sans-serif;
+  font-weight:400;
+  color:#666666;
+  font-size:15px;
+  line-height:1.4;
+}
+
+.ind{position:absolute;top:16px;font-size:14px;font-weight:700;padding:6px 14px;border-radius:20px;opacity:0;transition:opacity .1s;z-index:4}
+.ind-y{right:16px;background:#C0157A;color:#fff}
+.ind-n{left:16px;background:#1A1A1A;color:#fff}
+.sw-btns{display:flex;gap:20px;flex-shrink:0;margin-top:10px}
+.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
 
 .scrollbody{flex:1;overflow-y:auto;padding:14px}
@@ -92,8 +173,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
       <div class="brand"><div class="d1">DATA</div><div class="d2"><span class="mg">ES</span> PLATA</div></div>
 
       <div id="step-auth" style="width:100%;display:flex;flex-direction:column;gap:12px">
-        <input class="inp" type="email" id="inp-email" placeholder="Correo electrónico"/>
-        <input class="inp" type="password" id="inp-password" placeholder="Contraseña"/>
+        <input class="inp" type="email" id="inp-email" placeholder="Correo electrónico" autocomplete="email"/>
+        <input class="inp" type="password" id="inp-password" placeholder="Contraseña" autocomplete="current-password"/>
         <div class="login-err" id="login-err"></div>
         <button class="btn-mg" id="btn-login" onclick="hacerLogin()">Iniciar Sesión</button>
         <div style="text-align:center;font-size:13px;color:#888;margin-top:10px">¿No tienes cuenta?</div>
@@ -125,10 +206,9 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   <div class="screen" id="s-swiper">
     <div class="sw-hdr"><span class="sw-title">¡Desliza y gana! 🫘</span><span class="bpts" id="sw-pts">0 PTS</span></div>
     <div class="sw-body">
-      <div class="sw-hint">1 punto por tarjeta</div>
       <div class="sw-prog-wrap"><div class="sw-prog" id="sw-prog" style="width:0%"></div></div>
       <div class="card-stack" id="card-stack"></div>
-      <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px" onclick="goTab('promos')">Ver recompensas</button></div>
+      <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700;margin-top:10px">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:10px" onclick="goTab('promos')">Ver recompensas</button></div>
       <div class="sw-btns" id="sw-btns"><button class="sw-btn no" onclick="swipeCard(false)">✕</button><button class="sw-btn yes" onclick="swipeCard(true)">♥</button></div>
     </div>
     <div class="bnav">
@@ -142,19 +222,19 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   <div class="screen" id="s-promos">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="promo-pts">0 PTS</span></div>
     <div class="scrollbody" id="promos-body"></div>
-    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb on"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
+    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb on" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
   </div>
 
   <div class="screen" id="s-contests">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="contest-pts">0 PTS</span></div>
     <div class="scrollbody" id="contests-body"></div>
-    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb on"><span class="ni">🏅</span>Concursos</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
+    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb on" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
   </div>
 
   <div class="screen" id="s-profile">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="prof-pts">0 PTS</span></div>
     <div class="scrollbody" id="prof-body"></div>
-    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb on"><span class="ni">🫘</span>Perfil</button></div>
+    <div class="bnav"><button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button><button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button><button class="nb" onclick="goTab('contests')"><span class="ni">🏅</span>Concursos</button><button class="nb on" onclick="goTab('profile')"><span class="ni">🫘</span>Perfil</button></div>
   </div>
 
   <div class="pts-modal" id="conf-modal" style="display:none">
@@ -204,14 +284,20 @@ function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display=msg?'bl
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 // ═══════════════════════════════════════════════
-//  INIT
+//  INIT & MEMORIA DE AUTOCOMPLETADO
 // ═══════════════════════════════════════════════
 async function init(){
+  // Autocompletar Correo Y Contraseña
   const savedEmail = localStorage.getItem('dep_saved_email');
+  const savedPass = localStorage.getItem('dep_saved_pass');
   if(savedEmail) {
     $('inp-email').value = savedEmail;
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
   }
+  if(savedPass) {
+    $('inp-password').value = savedPass;
+  }
+
   try{
     const r=await api({action:'por_cookie',cookie:st.uid});
     if(r.ok&&r.usuario) await procesarLoginExitoso(r.usuario);
@@ -234,8 +320,12 @@ async function hacerLogin() {
   try {
     const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
+    
+    // GUARDAR EN MEMORIA (Auto-login)
     localStorage.setItem('dep_saved_email', email);
+    localStorage.setItem('dep_saved_pass', pass); 
     st.avatarUrl = localStorage.getItem('dep_avatar_'+email);
+    
     await procesarLoginExitoso(r.usuario);
   } catch(e) { showErr('login-err', e.message); }
   $('btn-login').disabled = false; loaderHide();
@@ -273,7 +363,11 @@ async function verificarYCrear() {
   try {
     const r = await apiPost({action:'registro_otp', email, nombre, password:pass, codigo, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
+    
+    // GUARDAR EN MEMORIA
     localStorage.setItem('dep_saved_email', email);
+    localStorage.setItem('dep_saved_pass', pass);
+    
     await procesarLoginExitoso(r.usuario);
   } catch(e) { showErr('otp-err', e.message); }
   $('btn-verificar').disabled = false; loaderHide();
@@ -289,7 +383,6 @@ function setupOTPInputs(){
 
 async function procesarLoginExitoso(usuario) {
   st.usuario = usuario;
-  // BUSCA CORRECTAMENTE POR NOMBRE O NORMALIZADO
   st.puntos = Number(usuario.puntos_restantes||usuario['puntos_restantes']||usuario.puntos||0);
   st.swipeIdx=0; 
   await cargarDatos();
@@ -311,19 +404,33 @@ async function cargarDatos(){
 }
 
 // ═══════════════════════════════════════════════
-//  SWIPER (Pasa datos para Auto-Perfilado)
+//  SWIPER (CAPAS 300x600 px)
 // ═══════════════════════════════════════════════
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
   stack.innerHTML=''; const pend=st.tarjetas.slice(st.swipeIdx);
   if(!pend.length){empty.style.display='flex';btns.style.display='none';$('sw-prog').style.width='100%';return;}
-  empty.style.display='none';btns.style.display='';
+  empty.style.display='none';btns.style.display='flex';
+  
   pend.slice(0,5).reverse().forEach((t,vi)=>{
     const div=document.createElement('div'); div.className='swipe-card'; div.id='sc-'+t.id;
-    // Guardamos datos para auto-perfilado en el DOM
     div.dataset.pcampo = t.perfil_campo || '';
     div.dataset.pvalor = t.perfil_valor || '';
-    div.innerHTML=`<div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div><div class="card-emoji">${t.emoji||'🎁'}</div><div class="card-name">${t.nombre}</div><div class="card-brand">${t.descripcion||''}</div>`;
+    
+    // ESTRUCTURA DE CAPAS (A, B, C, D)
+    const imgBg = t.img ? t.img : 'https://via.placeholder.com/300x600?text=Falta+Imagen';
+    const logoHtml = t.logo ? `<div class="card-logo"><img src="${t.logo}" alt="Logo"/></div>` : '';
+    
+    div.innerHTML=`
+      <div class="card-bg" style="background-image:url('${imgBg}')"></div>
+      ${logoHtml}
+      <div class="card-info">
+        <div class="card-name">${escH(t.nombre)}</div>
+        <div class="card-brand">${escH(t.descripcion||'')}</div>
+      </div>
+      <div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div>
+    `;
+    
     const depth=Math.min(4,pend.length-1)-vi; div.style.zIndex=vi+1;
     if(depth>0)div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
     attachDrag(div);stack.appendChild(div);
@@ -345,7 +452,6 @@ async function swipeCard(like){
   if(st.swipeIdx>=st.tarjetas.length)return;
   const t=st.tarjetas[st.swipeIdx]; const card=$('sc-'+t.id); if(card)card.classList.add(like?'liked':'gone');
   
-  // Extraer datos de perfil de la tarjeta
   const pcampo = card ? card.dataset.pcampo : '';
   const pvalor = card ? card.dataset.pvalor : '';
   
@@ -353,7 +459,6 @@ async function swipeCard(like){
   const email=st.usuario?.id_email||st.usuario?.email||'';
   st.puntos++; updatePts(); showToast('+1 punto 🫘');
   
-  // Enviar a la API
   apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like, perfil_campo:pcampo, perfil_valor:pvalor})
     .then(r=>{if(r.ok){st.puntos=r.puntos_restantes; updatePts();}}).catch(()=>{});
     
@@ -459,7 +564,7 @@ async function executeCanje() {
 }
 
 // ═══════════════════════════════════════════════
-//  PERFIL COMPLETO Y MASCOTAS CHECKBOX
+//  PERFIL COMPLETO
 // ═══════════════════════════════════════════════
 function renderProfile(){
   const body=$('prof-body');if(!body)return;
@@ -467,11 +572,9 @@ function renderProfile(){
   const u=st.usuario||{}; const email=u.id_email||u.email||''; const nombre=u.nombre||email.split('@')[0]||'Usuario';
   const initials=nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
   
-  // Format Date for HTML Input
   let fNac = u.fecha_nacimiento || u['fecha de nacimiento'] || '';
   if(fNac.length > 10) { try { fNac = new Date(fNac).toISOString().split('T')[0]; } catch(e){} }
   
-  // Mascotas logic
   const mList = ['Perros', 'Gatos', 'Roedores', 'Exóticos', 'Caballos', 'Ganadería', 'No tengo'];
   const userMascotas = String(u.mascotas||'').split(',').map(s=>s.trim());
   let mHtml = '';
@@ -506,7 +609,7 @@ function onAvatarChange(inp){
   const r=new FileReader();r.onload=e=>{
     st.avatarUrl=e.target.result;
     const email = st.usuario?.id_email||st.usuario?.email||'';
-    if(email) localStorage.setItem('dep_avatar_'+email, st.avatarUrl); // Guarda el avatar en local
+    if(email) localStorage.setItem('dep_avatar_'+email, st.avatarUrl);
     renderProfile();
   };r.readAsDataURL(f);
 }
@@ -523,8 +626,14 @@ async function guardarPerfil(){
 
 function logout(){
   st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0;
+  
+  // Limpiamos inputs pero MANTENEMOS la memoria en LocalStorage para el auto-login la próxima vez
   $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
   showScreen('s-login');
+  
+  // Si quisiéramos borrar la memoria al salir, descomentaríamos estas dos líneas:
+  // localStorage.removeItem('dep_saved_email');
+  // localStorage.removeItem('dep_saved_pass');
 }
 
 // CONFETTI
