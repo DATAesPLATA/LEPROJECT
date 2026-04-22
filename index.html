@@ -439,7 +439,7 @@ async function init(){
 // ═══════════════════════════════════════════════
 function setupOTPInputs(){
   for(let i=0;i<6;i++){
-    const inp=$(\'otp\'+i);
+    const inp=$('otp'+i);
     if(!inp)continue;
     inp.addEventListener('input',e=>{
       const v=e.target.value.replace(/\D/g,'');
@@ -458,8 +458,8 @@ function setupOTPInputs(){
   }
 }
 
-function getOTPValue(){return [0,1,2,3,4,5].map(i=>{const t=$(\'otp\'+i);return t?t.value:\'\'}).join(\'\');}
-function clearOTP(){for(let i=0;i<6;i++){const t=$(\'otp\'+i);if(t)t.value=\'\';} $('otp0')?.focus();}
+function getOTPValue(){return [0,1,2,3,4,5].map(i=>{const t=$('otp'+i);return t?t.value:''}).join('');}
+function clearOTP(){for(let i=0;i<6;i++){const t=$('otp'+i);if(t)t.value='';} $('otp0')?.focus();}
 
 // ═══════════════════════════════════════════════
 //  STEP 1: solicitar OTP
