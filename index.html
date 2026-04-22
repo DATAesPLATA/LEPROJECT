@@ -8,15 +8,19 @@
 <title>Data Es Plata</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--mg:#C0157A;--mg2:#8A0F57;--blk:#1A1A1A;--cr:14px;--sb:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+:root{--mg:#C0157A;--mg2:#8A0F57;--blk:#1A1A1A;--sb:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 #app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .screen.active{display:flex}
+
+/* TOPBAR */
 .topbar{background:#1A1A1A;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .tlogo{font-size:14px;font-weight:800;color:#fff;letter-spacing:.05em;text-transform:uppercase}
 .tlogo span{color:#C0157A}
 .bpts{background:#C0157A;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px}
+
+/* BOTTOM NAV */
 .bnav{display:flex;border-top:1.5px solid #1A1A1A;background:#fff;padding-bottom:var(--sb);flex-shrink:0}
 .nb{flex:1;padding:10px 0 8px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.04em}
 .nb.on{color:#C0157A}
@@ -24,7 +28,7 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 
 /* LOGIN */
 #s-login{background:#fff;justify-content:flex-start;overflow-y:auto}
-.login-wrap{display:flex;flex-direction:column;align-items:center;padding:0 24px 32px;gap:16px}
+.login-wrap{display:flex;flex-direction:column;align-items:center;padding:0 24px 32px;gap:14px}
 .beans-stage{width:100%;height:160px;position:relative;flex-shrink:0;overflow:hidden}
 .bbean{position:absolute;bottom:0;object-fit:contain}
 .bbean.frijo{left:-6px;width:132px;animation:bobF 2.2s ease-in-out infinite}
@@ -36,15 +40,25 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .d2{font-size:24px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
 .d2 .mg{color:#C0157A}
 .slogan{font-size:11px;background:#1A1A1A;color:#fff;font-weight:700;padding:4px 16px;border-radius:20px;letter-spacing:.1em;margin-top:6px;display:inline-block;text-transform:uppercase}
-.inp{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;color:#1A1A1A;background:#fff;outline:none}
+.inp{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;color:#1A1A1A;background:#fff;outline:none;transition:border-color .15s}
 .inp:focus{border-color:#C0157A}
 .btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
 .btn-mg:disabled{background:#ddd;cursor:default}
 .btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;display:none}
 .geo-hint{font-size:12px;color:#888;text-align:center}
 .geo-hint b{color:#C0157A}
-.login-err{font-size:13px;color:#C0157A;text-align:center;display:none}
+.login-err{font-size:13px;color:#C0157A;text-align:center;display:none;padding:4px 8px;background:#FCEBEB;border-radius:8px}
+.login-ok{font-size:13px;color:#3B6D11;text-align:center;display:none;padding:4px 8px;background:#EAF3DE;border-radius:8px}
 .ret-banner{background:#F5D0E8;border:1px solid #C0157A;border-radius:10px;padding:12px;font-size:12px;color:#8A0F57;text-align:center;line-height:1.5;display:none}
+
+/* OTP STEP */
+.otp-step{display:none;flex-direction:column;gap:14px;width:100%;align-items:center}
+.otp-step.active{display:flex}
+.otp-desc{font-size:13px;color:#888;text-align:center;line-height:1.6}
+.otp-desc b{color:#1A1A1A}
+.otp-inputs{display:flex;gap:8px;justify-content:center}
+.otp-input{width:44px;height:54px;border:1.5px solid #e0e0e0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#1A1A1A;outline:none;background:#fff}
+.otp-input:focus{border-color:#C0157A}
 
 /* SWIPER */
 #s-swiper{overflow:hidden}
@@ -62,7 +76,7 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .card-emoji{font-size:56px;line-height:1}
 .card-name{font-size:17px;font-weight:700;color:#1A1A1A;text-align:center}
 .card-brand{font-size:13px;color:#888;text-align:center}
-.card-cat{font-size:11px;padding:3px 10px;border-radius:20px;background:#F5D0E8;color:#8A0F57;font-weight:700}
+.card-cat{font-size:11px;padding:3px 10px;border-radius:20px;background:#F5D0E8;color:#8A0F57;font-weight:700;margin-top:2px}
 .ind{position:absolute;top:14px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;opacity:0;transition:opacity .1s;pointer-events:none;text-transform:uppercase;letter-spacing:.05em}
 .ind-y{right:14px;background:#C0157A;color:#fff}
 .ind-n{left:14px;background:#1A1A1A;color:#fff}
@@ -81,27 +95,23 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .scrollbody{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;min-height:0}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
 .slbl:first-child{margin-top:0}
+.empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px;line-height:1.7}
 
-/* PROMO CARD — siempre visible, estado varía */
-.pc{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid #1A1A1A;border-radius:var(--cr);margin-bottom:10px;background:#fff;cursor:pointer;position:relative;overflow:hidden}
-.pc.sin-pts{border-color:#e0e0e0;cursor:default}
-.pc.sin-pts:active{transform:none}
-.pc:active{border-color:#C0157A}
+/* PROMO / CONCURSO CARDS */
+.pc{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1.5px solid #1A1A1A;border-radius:14px;margin-bottom:10px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s}
+.pc:active{border-color:#C0157A;background:#FFF5FA}
+.pc.locked{border-color:#e0e0e0;cursor:default;opacity:.75}
+.pc.locked:active{border-color:#e0e0e0;background:#fff}
 .pci{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1px solid #eee}
-.pc.sin-pts .pci{opacity:.55;filter:grayscale(.4)}
+.pc.locked .pci{filter:grayscale(.5);opacity:.7}
 .pci-info{flex:1;min-width:0}
 .pci-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pci-meta{font-size:11px;color:#888;margin-top:2px}
 .ptag{font-size:10px;padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .ptag-ok{background:#C0157A;color:#fff}
 .ptag-lk{background:#eee;color:#999}
-
-/* mensaje faltan X puntos */
-.faltan-msg{display:none;margin-top:6px;padding:6px 10px;background:#FFF5FA;border:1px solid #F4C0D1;border-radius:8px;font-size:11px;color:#8A0F57;font-weight:600}
-
-/* CONCURSO CARD */
-.cc{border:1.5px solid #1A1A1A;border-radius:var(--cr);padding:14px;margin-bottom:12px;cursor:pointer}
-.cc.sin-pts{border-color:#e0e0e0;cursor:default}
+.cc{border:1.5px solid #1A1A1A;border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;background:#fff}
+.cc.locked{border-color:#e0e0e0;cursor:default;opacity:.75}
 .cc-hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .cc-em{font-size:28px;line-height:1}
 .cc-title{font-size:14px;font-weight:700;color:#1A1A1A}
@@ -112,58 +122,54 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .pfill.lk{background:#ddd}
 .plbl{font-size:11px;color:#888;white-space:nowrap;min-width:64px;text-align:right;font-weight:600}
 .plbl.win{color:#C0157A}
-.empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px;line-height:1.7}
+
+/* UNLOCK MODAL — idéntico al de referencia + animación entrada */
+.umodal{position:absolute;inset:0;background:rgba(0,0,0,.78);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:16px;border-radius:0}
+.umodal.show{display:flex}
+#conf-cvs{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:201}
+.ubox{background:#fff;border-radius:20px;border:2px solid #C0157A;padding:22px 18px 18px;width:100%;max-width:300px;text-align:center;position:relative;z-index:202;animation:popIn .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.dance-row{display:flex;justify-content:center;gap:10px;margin-bottom:10px}
+.db{width:72px;height:72px;object-fit:contain}
+.u-ico-big{font-size:40px;margin-bottom:8px}
+.utitle{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.usub{font-size:12px;color:#888;margin-bottom:12px;line-height:1.6}
+.ucode{font-size:24px;font-weight:800;letter-spacing:.15em;color:#C0157A;margin:10px 0;padding:12px;background:#F5D0E8;border-radius:12px}
+.uclose{width:100%;padding:13px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase;margin-top:4px}
+
+/* MODAL FALTAN PUNTOS */
+.pts-modal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
+.pts-modal.show{display:flex}
+.pts-box{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:300px;text-align:center;animation:popIn .25s ease}
+.pts-ico{font-size:48px;margin-bottom:10px}
+.pts-title{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:6px}
+.pts-num{font-size:30px;font-weight:800;color:#C0157A;margin:8px 0}
+.pts-msg{font-size:13px;color:#888;line-height:1.6;margin-bottom:16px}
+.pts-close{width:100%;padding:12px;background:#1A1A1A;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase}
 
 /* PROFILE */
 #s-profile .scrollbody{display:flex;flex-direction:column;gap:14px}
-.ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:var(--cr)}
-.av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:14px}
+.av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;cursor:pointer}
 .av img{width:100%;height:100%;object-fit:cover}
 .pname{font-size:16px;font-weight:700;color:#fff}
 .prole{font-size:12px;color:#aaa;margin-top:2px}
-.ptsc{padding:14px;background:#1A1A1A;border-radius:var(--cr);display:flex;align-items:center;gap:14px}
+.ptsc{padding:14px;background:#1A1A1A;border-radius:14px;display:flex;align-items:center;gap:14px}
 .ptbig{font-size:32px;font-weight:800;color:#C0157A;line-height:1}
 .ptsub{font-size:12px;color:#aaa;margin-top:2px}
 .pflex{flex:1}
 .pnivel-label{font-size:10px;color:#aaa;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.pfill2{height:8px;background:#C0157A}
 .ipills{display:flex;flex-wrap:wrap;gap:8px}
 .ipill{font-size:12px;padding:5px 12px;border-radius:20px;background:#F5D0E8;color:#8A0F57;font-weight:700;border:1px solid #C0157A}
 .georow{display:flex;align-items:center;gap:8px;font-size:13px;color:#888;padding:11px 13px;background:#f9f9f9;border-radius:10px;border:1px solid #eee}
 .slbl2{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.prof-form{display:flex;flex-direction:column;gap:10px}
+.pf-field{display:flex;flex-direction:column;gap:4px}
+.pf-field label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.04em}
+.pf-field input,.pf-field select{padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;color:#1A1A1A;background:#fff;outline:none;width:100%}
+.pf-field input:focus,.pf-field select:focus{border-color:#C0157A}
 .updbtn{padding:12px;border:1.5px solid #1A1A1A;border-radius:10px;background:none;color:#1A1A1A;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase}
 .logoutbtn{padding:12px;border:1.5px solid #eee;border-radius:10px;background:none;color:#bbb;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase}
-.prof-form{display:flex;flex-direction:column;gap:10px}
-.prof-field{display:flex;flex-direction:column;gap:4px}
-.prof-field label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.04em}
-.prof-field input,.prof-field select{padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;color:#1A1A1A;background:#fff;outline:none;width:100%}
-.prof-field input:focus,.prof-field select:focus{border-color:#C0157A}
-.prof-avatar-wrap{display:flex;align-items:center;gap:14px}
-.avatar-big{width:72px;height:72px;border-radius:50%;background:#F5D0E8;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#C0157A;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px dashed #C0157A}
-.avatar-big img{width:100%;height:100%;object-fit:cover}
-.avatar-hint{font-size:12px;color:#888;line-height:1.5}
-
-/* MODAL UNLOCK */
-.umodal-wrap{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;padding:20px}
-.umodal-wrap.show{display:flex}
-#conf-cvs{position:absolute;inset:0;pointer-events:none;z-index:201}
-.ubox{background:#fff;border-radius:20px;border:2px solid #C0157A;padding:22px 18px 18px;width:100%;max-width:320px;text-align:center;position:relative;z-index:202}
-.dance-row{display:flex;justify-content:center;gap:10px;margin-bottom:10px}
-.db{width:70px;height:70px;object-fit:contain}
-.utitle{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.usub{font-size:12px;color:#888;margin-bottom:12px;line-height:1.5}
-.ucode{font-size:24px;font-weight:800;letter-spacing:.15em;color:#C0157A;margin:10px 0;padding:12px;background:#F5D0E8;border-radius:12px}
-.uclose{width:100%;padding:13px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase}
-
-/* MODAL FALTAN PUNTOS */
-.pts-modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
-.pts-modal-wrap.show{display:flex}
-.pts-modal-box{background:#fff;border-radius:18px;border:2px solid #e0e0e0;padding:24px 20px;width:100%;max-width:300px;text-align:center}
-.pts-modal-ico{font-size:48px;margin-bottom:10px}
-.pts-modal-title{font-size:16px;font-weight:800;color:#1A1A1A;margin-bottom:6px}
-.pts-modal-msg{font-size:13px;color:#888;line-height:1.6;margin-bottom:16px}
-.pts-modal-pts{font-size:28px;font-weight:800;color:#C0157A;margin:8px 0}
-.pts-modal-close{width:100%;padding:12px;background:#1A1A1A;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase}
 
 /* LOADER + TOAST */
 .loader{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
@@ -171,42 +177,64 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 .loader-img{width:88px;animation:bobF 1.5s ease-in-out infinite}
 .spinner{width:28px;height:28px;border:3px solid #eee;border-top-color:#C0157A;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.pts-toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity .2s;z-index:150;pointer-events:none}
-.pts-toast.show{opacity:1}
+.toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity .2s;z-index:150;pointer-events:none}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
 <div id="app">
 
   <div class="loader" id="loader">
-    <img src="assets/brillo-frijo.gif" class="loader-img" alt=""/>
+    <img src="assets/FRIJO-1-CABECEO.gif" class="loader-img" alt=""/>
     <div class="spinner"></div>
   </div>
-  <div class="pts-toast" id="pts-toast">+1 punto 🫘</div>
+  <div class="toast" id="toast">+1 punto 🫘</div>
 
-  <!-- LOGIN -->
+  <!-- ══ LOGIN ══ -->
   <div class="screen active" id="s-login">
     <div class="login-wrap">
       <div class="beans-stage">
-        <img src="assets/brillo-frijo.gif" class="bbean frijo" alt="Frijo"/>
-        <img src="assets/brillo-lito.gif" class="bbean lito" alt="Lito"/>
+        <img src="assets/FRIJO-1-CABECEO.gif" class="bbean frijo" alt="Frijo"/>
+        <img src="assets/brillo-lito.gif"      class="bbean lito"  alt="Lito"/>
       </div>
       <div class="brand">
         <div class="d1">DATA</div>
         <div class="d2"><span class="mg">ES</span> PLATA</div>
         <div class="slogan">Los frijoles de la data</div>
       </div>
-      <div class="ret-banner" id="ret-banner">👋 <b>¡Bienvenido de vuelta!</b><br>Recuperamos tu sesión anterior.</div>
-      <input class="inp" type="email" id="inp-email" placeholder="Correo corporativo" autocomplete="email"/>
-      <input class="inp" type="text"  id="inp-nombre" placeholder="Tu nombre" autocomplete="name"/>
-      <div class="login-err" id="login-err"></div>
-      <button class="btn-mg" id="btn-login" onclick="doLogin()">Entrar 🫘</button>
-      <button class="btn-ghost" id="btn-cookie" onclick="loginPorCookie()">Continuar sin correo →</button>
+      <div class="ret-banner" id="ret-banner"></div>
+
+      <!-- STEP 1: email + nombre -->
+      <div id="step-email" style="width:100%;display:flex;flex-direction:column;gap:14px">
+        <input class="inp" type="email" id="inp-email"  placeholder="Correo corporativo" autocomplete="email"/>
+        <input class="inp" type="text"  id="inp-nombre" placeholder="Tu nombre" autocomplete="name"/>
+        <div class="login-err" id="login-err"></div>
+        <button class="btn-mg" id="btn-continuar" onclick="solicitarOTP()">Continuar →</button>
+        <button class="btn-ghost" id="btn-cookie" onclick="loginPorCookie()">Continuar sin correo →</button>
+      </div>
+
+      <!-- STEP 2: código OTP -->
+      <div class="otp-step" id="step-otp">
+        <div class="otp-desc">Enviamos un código de 6 dígitos a<br/><b id="otp-email-show"></b></div>
+        <div class="otp-inputs">
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp0"/>
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp1"/>
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp2"/>
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp3"/>
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp4"/>
+          <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp5"/>
+        </div>
+        <div class="login-err" id="otp-err"></div>
+        <div class="login-ok"  id="otp-ok"></div>
+        <button class="btn-mg" id="btn-verificar" onclick="verificarOTP()">Verificar y entrar 🫘</button>
+        <button class="btn-ghost" style="display:block" onclick="volverAlEmail()">← Cambiar correo</button>
+      </div>
+
       <div class="geo-hint" id="geo-hint">📍 Detectando ubicación...</div>
     </div>
   </div>
 
-  <!-- SWIPER -->
+  <!-- ══ SWIPER ══ -->
   <div class="screen" id="s-swiper">
     <div class="sw-hdr">
       <span class="sw-title">¡Desliza y gana! 🫘</span>
@@ -219,11 +247,11 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
       <div class="sw-empty" id="sw-empty">
         <img src="assets/brillo-frijo.gif" style="width:88px;height:88px;object-fit:contain" alt=""/>
         <div style="font-size:16px;font-weight:700;color:#1A1A1A">¡Ya las viste todas!</div>
-        <div style="font-size:13px;color:#888;line-height:1.6">Pronto habrá más.<br>Revisa tus recompensas mientras.</div>
+        <div style="font-size:13px;color:#888;line-height:1.6">Pronto habrá más.<br>Revisa tus recompensas.</div>
         <button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:6px" onclick="goTab('promos')">Ver recompensas 🎁</button>
       </div>
       <div class="sw-btns" id="sw-btns">
-        <button class="sw-btn no" onclick="swipeCard(false)">✕</button>
+        <button class="sw-btn no"  onclick="swipeCard(false)">✕</button>
         <button class="sw-btn yes" onclick="swipeCard(true)">♥</button>
       </div>
       <div class="sw-count" id="sw-count"></div>
@@ -234,10 +262,12 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- PROMOS -->
+  <!-- ══ PROMOS ══ -->
   <div class="screen" id="s-promos">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="promo-pts">0 PTS</span></div>
     <div class="scrollbody" id="promos-body"><div class="empty-state">Cargando...</div></div>
+    <!-- Confetti automático cuando hay promos activas -->
+    <canvas id="conf-promos" style="position:absolute;inset:0;pointer-events:none;z-index:10"></canvas>
     <div class="bnav">
       <button class="nb" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
       <button class="nb on"><span class="ni">🎁</span>Recompensas</button>
@@ -246,7 +276,7 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- CONCURSOS -->
+  <!-- ══ CONCURSOS ══ -->
   <div class="screen" id="s-contests">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="contest-pts">0 PTS</span></div>
     <div class="scrollbody" id="contests-body"><div class="empty-state">Cargando...</div></div>
@@ -258,7 +288,7 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- PROFILE -->
+  <!-- ══ PROFILE ══ -->
   <div class="screen" id="s-profile">
     <div class="topbar"><span class="tlogo">Data <span>Es</span> Plata</span><span class="bpts" id="prof-pts">0 PTS</span></div>
     <div class="scrollbody" id="prof-body"></div>
@@ -270,30 +300,30 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
     </div>
   </div>
 
-  <!-- MODAL CANJE EXITOSO -->
-  <div class="umodal-wrap" id="umodal">
+  <!-- UNLOCK MODAL -->
+  <div class="umodal" id="umodal">
     <canvas id="conf-cvs"></canvas>
     <div class="ubox">
       <div class="dance-row">
-        <img src="assets/baile-frijo.gif" class="db" alt=""/>
-        <img src="assets/baile-lito.gif"  class="db" alt=""/>
+        <img src="assets/baile-frijo.gif" class="db" alt="Frijo"/>
+        <img src="assets/baile-lito.gif"  class="db" alt="Lito"/>
       </div>
-      <div style="font-size:40px;margin-bottom:8px" id="u-ico">🎁</div>
-      <div class="utitle" id="u-title">¡Recompensa canjeada!</div>
-      <div class="usub"   id="u-sub"></div>
+      <div class="u-ico-big" id="u-ico">🎁</div>
+      <div class="utitle"    id="u-title">¡Promo desbloqueada!</div>
+      <div class="usub"      id="u-sub"></div>
       <div class="ucode">DEP-<span id="u-code">0000</span></div>
       <button class="uclose" onclick="closeUnlock()">¡Entendido! 🫘</button>
     </div>
   </div>
 
   <!-- MODAL FALTAN PUNTOS -->
-  <div class="pts-modal-wrap" id="pts-modal">
-    <div class="pts-modal-box">
-      <div class="pts-modal-ico" id="pts-modal-ico">🔒</div>
-      <div class="pts-modal-title" id="pts-modal-title">Todavía no puedes canjear esto</div>
-      <div class="pts-modal-pts" id="pts-modal-pts">-50 pts</div>
-      <div class="pts-modal-msg" id="pts-modal-msg">Sigue deslizando tarjetas para acumular más puntos.</div>
-      <button class="pts-modal-close" onclick="closePtsModal()">Seguir ganando puntos 🃏</button>
+  <div class="pts-modal" id="pts-modal">
+    <div class="pts-box">
+      <div class="pts-ico" id="pts-ico">🔒</div>
+      <div class="pts-title">Todavía no puedes canjear esto</div>
+      <div class="pts-num" id="pts-num"></div>
+      <div class="pts-msg" id="pts-msg"></div>
+      <button class="pts-close" onclick="closePtsModal()">Seguir ganando puntos 🃏</button>
     </div>
   </div>
 
@@ -303,289 +333,295 @@ html,body{height:100%;background:#e8e8e8;font-family:-apple-system,BlinkMacSyste
 // ═══════════════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySsZqnnkyuaEg8xsLlXmnTVVyKY94qA_RHDXaVlq3HHpf5enpSXdC5VUuFfqLJffbH/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/PEGA_TU_URL_AQUI/exec';
 
 // ═══════════════════════════════════════════════
-//  ID PERSISTENTE — estrategia multicapa
-//
-//  Capa 1: localStorage  (90% de casos, borra al limpiar datos)
-//  Capa 2: Cookie        (fallback, mismo UUID)
-//  Capa 3: sessionStorage (mientras dura la sesión)
-//  → Los tres se sincronizan entre sí para máxima persistencia
+//  ID PERSISTENTE MULTICAPA
 // ═══════════════════════════════════════════════
-const ID_KEY = 'dep_uid';
-
-function genUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random()*16|0;
-    return (c==='x'?r:(r&0x3|0x8)).toString(16);
-  });
-}
-
-function setCookie(name, val, days) {
-  const exp = new Date(Date.now() + days*864e5).toUTCString();
-  document.cookie = `${name}=${val};expires=${exp};path=/;SameSite=Lax`;
-}
-
-function getCookie(name) {
-  return document.cookie.split('; ').reduce((a,c)=>{
-    const [k,v]=c.split('='); return k===name?v:a;
-  }, null);
-}
-
-function getOrCreateUID() {
-  // Intentar recuperar de las 3 capas
-  let id = null;
-  try { id = localStorage.getItem(ID_KEY); } catch(e){}
-  if (!id) id = getCookie(ID_KEY);
-  if (!id) { try { id = sessionStorage.getItem(ID_KEY); } catch(e){} }
-
-  if (!id) id = genUUID(); // Nuevo
-
-  // Sincronizar las 3 capas
-  try { localStorage.setItem(ID_KEY, id); } catch(e){}
-  setCookie(ID_KEY, id, 365);
-  try { sessionStorage.setItem(ID_KEY, id); } catch(e){}
-
+const UID_KEY = 'dep_uid';
+function genUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)});}
+function setCookie(n,v,d){document.cookie=`${n}=${v};expires=${new Date(Date.now()+d*864e5).toUTCString()};path=/;SameSite=Lax`;}
+function getCookie(n){return document.cookie.split('; ').reduce((a,c)=>{const[k,v]=c.split('=');return k===n?v:a},null);}
+function getOrCreateUID(){
+  let id=null;
+  try{id=localStorage.getItem(UID_KEY);}catch(e){}
+  if(!id)id=getCookie(UID_KEY);
+  if(!id){try{id=sessionStorage.getItem(UID_KEY);}catch(e){}}
+  if(!id)id=genUUID();
+  try{localStorage.setItem(UID_KEY,id);}catch(e){}
+  setCookie(UID_KEY,id,365);
+  try{sessionStorage.setItem(UID_KEY,id);}catch(e){}
   return id;
 }
 
 // ═══════════════════════════════════════════════
-//  ESTADO GLOBAL
+//  ESTADO
 // ═══════════════════════════════════════════════
-const st = {
-  uid: null,          // ID persistente multicapa
-  usuario: null,
-  puntos: 0,
-  ciudad: 'todas',
-  tarjetas: [],
-  recompensas: [],
-  concursos: [],
-  swipeIdx: 0,
-  interesesAcum: [],
-  avatarUrl: null,
+const st={
+  uid:null, usuario:null, puntos:0, ciudad:'todas',
+  tarjetas:[], recompensas:[], concursos:[],
+  swipeIdx:0, interesesAcum:[], avatarUrl:null,
+  otpEmail:'', // email pendiente de verificar
 };
 
 // ═══════════════════════════════════════════════
 //  UI HELPERS
 // ═══════════════════════════════════════════════
-const $ = id => document.getElementById(id);
-const SCREENS = ['s-login','s-swiper','s-promos','s-contests','s-profile'];
-
-function showScreen(id) {
-  SCREENS.forEach(s => { const e=$(s); if(e)e.classList.remove('active'); });
-  const t=$(id); if(t)t.classList.add('active');
-}
-
-function goTab(t) {
+const $=id=>document.getElementById(id);
+const SCREENS=['s-login','s-swiper','s-promos','s-contests','s-profile'];
+function showScreen(id){SCREENS.forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
+function goTab(t){
   const map={promos:'s-promos',contests:'s-contests',profile:'s-profile'};
   showScreen(map[t]);
   if(t==='promos')   renderPromos();
   if(t==='contests') renderConcursos();
   if(t==='profile')  renderProfile();
 }
+function goMain(){showScreen('s-swiper');}
+function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
+function showToast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function loaderShow(){const l=$('loader');if(l){l.style.display='flex';l.classList.remove('hide');}}
+function loaderHide(){const l=$('loader');if(l){l.classList.add('hide');setTimeout(()=>l.style.display='none',350);}}
+function showErr(id,msg){const e=$(id);if(e){e.textContent=msg;e.style.display=msg?'block':'none';}}
 
-function goMain() { showScreen('s-swiper'); }
-
-function updatePts() {
-  const p = st.puntos+' PTS';
-  ['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{ const e=$(id); if(e)e.textContent=p; });
-}
-
-function showToast(msg) {
-  const t=$('pts-toast'); if(!t)return;
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),1900);
-}
-
-function escH(s) {
-  return String(s||'')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-function loaderShow() { const l=$('loader'); if(l){l.style.display='flex';l.classList.remove('hide');} }
-function loaderHide() { const l=$('loader'); if(l){l.classList.add('hide');setTimeout(()=>l.style.display='none',350);} }
+// Helpers para leer puntos_requeridos desde cualquier key
+function getPts(obj){return Number(obj.puntos_requeridos||obj['puntos requeridos']||obj['puntos_requeridos']||0);}
 
 // ═══════════════════════════════════════════════
 //  API
 // ═══════════════════════════════════════════════
-async function api(params) {
-  const url = SCRIPT_URL+'?'+new URLSearchParams(params);
-  const r = await fetch(url);
-  return r.json();
-}
-async function apiPost(body) {
-  const r = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify(body) });
-  return r.json();
-}
+async function api(params){const r=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params));return r.json();}
+async function apiPost(body){const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});return r.json();}
 
 // ═══════════════════════════════════════════════
 //  GEOLOCALIZACIÓN
 // ═══════════════════════════════════════════════
-function detectarCiudad() {
-  if (!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(async pos => {
-    try {
-      const {latitude:lat,longitude:lon} = pos.coords;
-      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
-        {headers:{'Accept-Language':'es'}});
-      const d = await r.json();
-      st.ciudad = d.address?.city || d.address?.town || d.address?.state || 'San José';
-      const h=$('geo-hint'); if(h) h.innerHTML=`📍 <b>${escH(st.ciudad)}</b>`;
-    } catch(e){}
-  }, ()=>{});
+function detectarCiudad(){
+  if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{
+      const{latitude:lat,longitude:lon}=pos.coords;
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,{headers:{'Accept-Language':'es'}});
+      const d=await r.json();
+      st.ciudad=d.address?.city||d.address?.town||d.address?.state||'San José';
+      const h=$('geo-hint');if(h)h.innerHTML=`📍 <b>${escH(st.ciudad)}</b>`;
+    }catch(e){}
+  },()=>{});
 }
 
 // ═══════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════
-async function init() {
-  st.uid = getOrCreateUID();
+async function init(){
+  st.uid=getOrCreateUID();
   detectarCiudad();
-
-  try {
-    const r = await api({ action:'por_cookie', cookie:st.uid });
-    if (r.ok && r.usuario) {
-      st.usuario = r.usuario;
-      // Columna es id_email en tu Sheet
-      const email = r.usuario.id_email || r.usuario.email || '';
-      st.puntos = Number(r.usuario.puntos)||0;
-
+  try{
+    const r=await api({action:'por_cookie',cookie:st.uid});
+    if(r.ok&&r.usuario){
+      st.usuario=r.usuario;
+      st.puntos=Number(r.usuario.puntos||0);
+      const email=r.usuario.id_email||r.usuario.email||'';
+      const nombre=r.usuario.nombre||email.split('@')[0]||'';
       const banner=$('ret-banner');
-      if (banner) {
-        const n = r.usuario.nombre || email.split('@')[0] || '';
-        if (n) banner.innerHTML=`👋 <b>¡Hola de nuevo, ${escH(n.split(' ')[0])}!</b><br>Recuperamos tu sesión.`;
-        banner.style.display='block';
-      }
-      if (email && $('inp-email')) $('inp-email').value = email;
-      const btnC=$('btn-cookie'); if(btnC)btnC.style.display='block';
+      if(banner&&nombre){banner.innerHTML=`👋 <b>¡Hola de nuevo, ${escH(nombre.split(' ')[0])}!</b> Recuperamos tu sesión.`;banner.style.display='block';}
+      if(email&&$('inp-email'))$('inp-email').value=email;
+      const btnC=$('btn-cookie');if(btnC)btnC.style.display='block';
     }
-  } catch(e){}
-
+  }catch(e){}
   loaderHide();
+  // Setup OTP inputs
+  setupOTPInputs();
 }
 
 // ═══════════════════════════════════════════════
-//  LOGIN
+//  OTP: inputs con auto-focus
 // ═══════════════════════════════════════════════
-async function doLogin() {
-  const email  = ($('inp-email')?.value||'').trim();
-  const nombre = ($('inp-nombre')?.value||'').trim();
-  const errEl  = $('login-err');
-  if (!email||!email.includes('@')) {
-    errEl.textContent='Correo corporativo requerido'; errEl.style.display='block'; return;
+function setupOTPInputs(){
+  for(let i=0;i<6;i++){
+    const inp=$(\'otp\'+i);
+    if(!inp)continue;
+    inp.addEventListener('input',e=>{
+      const v=e.target.value.replace(/\D/g,'');
+      e.target.value=v.slice(-1);
+      if(v&&i<5)$('otp'+(i+1))?.focus();
+    });
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Backspace'&&!e.target.value&&i>0)$('otp'+(i-1))?.focus();
+    });
+    inp.addEventListener('paste',e=>{
+      e.preventDefault();
+      const text=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      for(let j=0;j<text.length;j++){const t=$('otp'+j);if(t)t.value=text[j];}
+      $('otp'+(Math.min(text.length,5)))?.focus();
+    });
   }
-  errEl.style.display='none';
-  $('btn-login').disabled=true;
+}
+
+function getOTPValue(){return [0,1,2,3,4,5].map(i=>{const t=$(\'otp\'+i);return t?t.value:\'\'}).join(\'\');}
+function clearOTP(){for(let i=0;i<6;i++){const t=$(\'otp\'+i);if(t)t.value=\'\';} $('otp0')?.focus();}
+
+// ═══════════════════════════════════════════════
+//  STEP 1: solicitar OTP
+// ═══════════════════════════════════════════════
+async function solicitarOTP(){
+  const email=($('inp-email')?.value||'').trim();
+  const nombre=($('inp-nombre')?.value||'').trim();
+  showErr('login-err','');
+  if(!email||!email.includes('@')){showErr('login-err','Correo corporativo requerido');return;}
+  $('btn-continuar').disabled=true;
   loaderShow();
-  try {
-    const r = await apiPost({ action:'registro', email, nombre, ciudad:st.ciudad, cookie_id:st.uid });
-    if (!r.ok) throw new Error(r.error||'Error');
-    st.usuario = r.usuario;
-    st.puntos  = Number(r.usuario?.puntos||r.usuario?.Puntos||0);
-    // Vincular cookie si el usuario existía sin ella
-    if (!r.usuario.cookie_id) {
-      apiPost({ action:'cookie', email, cookie_id:st.uid }).catch(()=>{});
-    }
-    await cargarDatos();
-    loaderHide(); updatePts();
-    showScreen('s-swiper'); renderSwiper();
-  } catch(e) {
+  try{
+    const r=await apiPost({action:'enviar_otp',email});
+    if(!r.ok)throw new Error(r.error||'Error al enviar');
+    st.otpEmail=email;
+    st.otpNombre=nombre;
+    // Mostrar step OTP
+    $('step-email').style.display='none';
+    $('step-otp').classList.add('active');
+    $('otp-email-show').textContent=email;
+    showErr('otp-err','');
+    $('otp-ok').textContent='';$('otp-ok').style.display='none';
+    clearOTP();
     loaderHide();
-    errEl.textContent='Error: '+e.message; errEl.style.display='block';
+    $('otp0')?.focus();
+  }catch(e){
+    loaderHide();
+    showErr('login-err',e.message);
   }
-  $('btn-login').disabled=false;
+  $('btn-continuar').disabled=false;
 }
 
-async function loginPorCookie() {
-  if (!st.usuario) return;
+function volverAlEmail(){
+  $('step-otp').classList.remove('active');
+  $('step-email').style.display='flex';
+  showErr('otp-err','');
+}
+
+// ═══════════════════════════════════════════════
+//  STEP 2: verificar OTP y entrar
+// ═══════════════════════════════════════════════
+async function verificarOTP(){
+  const codigo=getOTPValue();
+  if(codigo.length<6){showErr('otp-err','Introduce los 6 dígitos');return;}
+  showErr('otp-err','');
+  $('btn-verificar').disabled=true;
+  loaderShow();
+  try{
+    const rv=await apiPost({action:'verificar_otp',email:st.otpEmail,codigo});
+    if(!rv.ok)throw new Error(rv.error||'Código incorrecto');
+    // Código válido → registrar/login
+    await completarLogin(st.otpEmail, st.otpNombre||'');
+  }catch(e){
+    loaderHide();
+    showErr('otp-err',e.message);
+    clearOTP();
+  }
+  $('btn-verificar').disabled=false;
+}
+
+// ═══════════════════════════════════════════════
+//  COMPLETAR LOGIN (nuevo usuario o existente)
+//  FIX: nuevo login SIEMPRE sobreescribe estado anterior
+// ═══════════════════════════════════════════════
+async function completarLogin(email, nombre){
+  // IMPORTANTE: reasignar cookie al nuevo usuario
+  const r=await apiPost({action:'registro',email,nombre,ciudad:st.ciudad,cookie_id:st.uid});
+  if(!r.ok)throw new Error(r.error||'Error al registrar');
+
+  // Sobreescribir estado con nuevo usuario
+  st.usuario=r.usuario;
+  st.puntos=Number(r.usuario?.puntos||0);
+  st.swipeIdx=0;
+  st.interesesAcum=[];
+
+  // Vincular cookie si el usuario existía sin ella
+  if(!r.usuario.cookie_id&&st.uid){
+    apiPost({action:'cookie',email,cookie_id:st.uid}).catch(()=>{});
+  }
+
+  await cargarDatos();
+  loaderHide();
+  updatePts();
+  showScreen('s-swiper');
+  renderSwiper();
+}
+
+// ═══════════════════════════════════════════════
+//  LOGIN POR COOKIE (sin email)
+// ═══════════════════════════════════════════════
+async function loginPorCookie(){
+  if(!st.usuario)return;
   loaderShow();
   await cargarDatos();
-  loaderHide(); updatePts();
-  showScreen('s-swiper'); renderSwiper();
+  loaderHide();updatePts();showScreen('s-swiper');renderSwiper();
 }
 
 // ═══════════════════════════════════════════════
 //  CARGA DE DATOS
 // ═══════════════════════════════════════════════
-async function cargarDatos() {
-  const email  = st.usuario?.id_email || st.usuario?.email || '';
-  const cookie = st.uid || '';
-  const ciudad = st.ciudad || 'todas';
-  const [rT,rR,rC] = await Promise.all([
-    api({ action:'tarjetas',    email, cookie, ciudad }),
-    api({ action:'recompensas', ciudad }),
-    api({ action:'concursos' })
+async function cargarDatos(){
+  const email=st.usuario?.id_email||st.usuario?.email||'';
+  const[rT,rR,rC]=await Promise.all([
+    api({action:'tarjetas',email,cookie:st.uid,ciudad:st.ciudad}),
+    api({action:'recompensas',ciudad:st.ciudad}),
+    api({action:'concursos'})
   ]);
-  st.tarjetas    = rT.tarjetas    || [];
-  st.recompensas = rR.recompensas || [];
-  st.concursos   = rC.concursos   || [];
-  st.swipeIdx    = 0;
+  st.tarjetas    =rT.tarjetas    ||[];
+  st.recompensas =rR.recompensas ||[];
+  st.concursos   =rC.concursos   ||[];
+  st.swipeIdx=0;
 }
 
 // ═══════════════════════════════════════════════
 //  SWIPER
 // ═══════════════════════════════════════════════
-function renderSwiper() {
-  const stack=$('card-stack'), empty=$('sw-empty'), btns=$('sw-btns'), count=$('sw-count');
-  if (!stack) return;
+function renderSwiper(){
+  const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns'),count=$('sw-count');
+  if(!stack)return;
   stack.innerHTML='';
-  const pendientes = st.tarjetas.slice(st.swipeIdx);
-
-  if (!pendientes.length) {
-    empty.classList.add('show');
-    if(btns){btns.style.display='none';}
-    if(count) count.textContent='Sin más tarjetas por ahora';
-    $('sw-prog').style.width='100%';
-    return;
+  const pend=st.tarjetas.slice(st.swipeIdx);
+  if(!pend.length){
+    empty.classList.add('show');if(btns)btns.style.display='none';
+    if(count)count.textContent='Sin más tarjetas por ahora';$('sw-prog').style.width='100%';return;
   }
-
-  empty.classList.remove('show');
-  if(btns)btns.style.display='';
-
-  pendientes.slice(0,5).reverse().forEach((t, vi) => {
+  empty.classList.remove('show');if(btns)btns.style.display='';
+  pend.slice(0,5).reverse().forEach((t,vi)=>{
     const div=document.createElement('div');
-    div.className='swipe-card';
-    div.id='sc-'+t.id;
-    div.dataset.id=t.id;
-    div.dataset.cat=t.categoria||'';
-    div.innerHTML=`
-      <div class="ind ind-y">Me late ♥</div>
-      <div class="ind ind-n">Paso ✕</div>
+    div.className='swipe-card';div.id='sc-'+t.id;
+    div.dataset.id=t.id;div.dataset.cat=t.categoria||'';
+    div.innerHTML=`<div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div>
       <div class="card-emoji">${t.emoji||'🎁'}</div>
       <div class="card-name">${escH(t.nombre)}</div>
-      <div class="card-brand">${escH(t.descripcion||t.descripcion||'')}</div>
+      <div class="card-brand">${escH(t.descripcion||'')}</div>
       ${t.categoria?`<div class="card-cat">${escH(t.categoria)}</div>`:''}`;
-    const depth = Math.min(4, pendientes.length-1) - vi;
+    const depth=Math.min(4,pend.length-1)-vi;
     div.style.zIndex=vi+1;
-    if(depth>0) div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
-    attachDrag(div);
-    stack.appendChild(div);
+    if(depth>0)div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
+    attachDrag(div);stack.appendChild(div);
   });
-
-  const total=st.tarjetas.length, vistas=st.swipeIdx;
-  if(count) count.textContent=(total-vistas)+' tarjeta'+(total-vistas!==1?'s':'')+' restante'+(total-vistas!==1?'s':'');
+  const total=st.tarjetas.length,vistas=st.swipeIdx;
+  if(count)count.textContent=(total-vistas)+' tarjeta'+(total-vistas!==1?'s':'')+' restante'+(total-vistas!==1?'s':'');
   $('sw-prog').style.width=(vistas/Math.max(total,1)*100)+'%';
 }
 
-function attachDrag(card) {
-  let sx=0, drag=false;
-  const onStart = e => { sx=(e.touches?e.touches[0].clientX:e.clientX); drag=true; card.style.transition='none'; };
-  const onMove  = e => {
+function attachDrag(card){
+  let sx=0,drag=false;
+  const onStart=e=>{sx=(e.touches?e.touches[0].clientX:e.clientX);drag=true;card.style.transition='none';};
+  const onMove=e=>{
     if(!drag)return;
     const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
     card.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;
-    const iy=card.querySelector('.ind-y'), in_=card.querySelector('.ind-n');
+    const iy=card.querySelector('.ind-y'),in_=card.querySelector('.ind-n');
     if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;
     if(in_)in_.style.opacity=dx<-28?Math.min((-dx-28)/40,1):0;
     if(e.cancelable)e.preventDefault();
   };
-  const onEnd = e => {
-    if(!drag)return; drag=false; card.style.transition='';
+  const onEnd=e=>{
+    if(!drag)return;drag=false;card.style.transition='';
     const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;
     card.querySelectorAll('.ind').forEach(i=>i.style.opacity=0);
-    if(dx>60)swipeCard(true); else if(dx<-60)swipeCard(false); else card.style.transform='';
+    if(dx>60)swipeCard(true);else if(dx<-60)swipeCard(false);else card.style.transform='';
   };
   card.addEventListener('mousedown',onStart);
   card.addEventListener('touchstart',onStart,{passive:true});
@@ -595,148 +631,121 @@ function attachDrag(card) {
   document.addEventListener('touchend',onEnd);
 }
 
-async function swipeCard(like) {
-  if (st.swipeIdx>=st.tarjetas.length) return;
-  const tarjeta = st.tarjetas[st.swipeIdx];
-  const card = $('sc-'+tarjeta.id);
-  if(card) card.classList.add(like?'liked':'gone');
-
-  // Acumular intereses si like
-  if (like && tarjeta.categoria) {
-    const cat=tarjeta.categoria.trim();
-    if(!st.interesesAcum.includes(cat)) st.interesesAcum.push(cat);
-  }
-
+async function swipeCard(like){
+  if(st.swipeIdx>=st.tarjetas.length)return;
+  const tarjeta=st.tarjetas[st.swipeIdx];
+  const card=$('sc-'+tarjeta.id);
+  if(card)card.classList.add(like?'liked':'gone');
+  if(like&&tarjeta.categoria){const cat=tarjeta.categoria.trim();if(!st.interesesAcum.includes(cat))st.interesesAcum.push(cat);}
   st.swipeIdx++;
-
-  // Persistir en backend
-  const email = st.usuario?.id_email || st.usuario?.email || '';
-  apiPost({
-    action:'swipe',
-    email,
-    cookie_id: st.uid,
-    tarjeta_id: tarjeta.id,
-    like,
-    categoria: tarjeta.categoria||''
-  }).then(r => {
-    if(r.ok) { st.puntos=r.puntos; updatePts(); showToast('+1 punto 🫘'); checkDesbloqueos(); }
-  }).catch(()=>{ st.puntos++; updatePts(); showToast('+1 punto 🫘'); });
-
-  // Guardar intereses cada 5 swipes
-  if (st.swipeIdx%5===0 && st.interesesAcum.length) {
-    apiPost({ action:'intereses', email, cookie_id:st.uid, intereses:st.interesesAcum });
-  }
-
-  setTimeout(renderSwiper, 350);
+  const email=st.usuario?.id_email||st.usuario?.email||'';
+  apiPost({action:'swipe',email,cookie_id:st.uid,tarjeta_id:tarjeta.id,like,categoria:tarjeta.categoria||''})
+    .then(r=>{if(r.ok){st.puntos=r.puntos;updatePts();showToast('+1 punto 🫘');checkDesbloqueos();}})
+    .catch(()=>{st.puntos++;updatePts();showToast('+1 punto 🫘');});
+  if(st.swipeIdx%5===0&&st.interesesAcum.length)
+    apiPost({action:'intereses',email,cookie_id:st.uid,intereses:st.interesesAcum});
+  setTimeout(renderSwiper,350);
 }
 
-function checkDesbloqueos() {
-  const nueva = st.recompensas.find(r=>Number(r.puntos_requeridos)===st.puntos);
-  if(nueva) setTimeout(()=>showToast('🎉 ¡Nueva recompensa disponible!'),800);
+function checkDesbloqueos(){
+  const n=st.recompensas.find(r=>getPts(r)===st.puntos);
+  if(n)setTimeout(()=>showToast('🎉 ¡Nueva recompensa disponible!'),800);
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER PROMOS — todas visibles, distintas acciones
+//  RENDER PROMOS — con confetti automático si hay activas
 // ═══════════════════════════════════════════════
-function renderPromos() {
-  const body=$('promos-body'); if(!body)return;
+function renderPromos(){
+  const body=$('promos-body');if(!body)return;
   $('promo-pts').textContent=st.puntos+' PTS';
+  if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.<br/>¡Pronto habrá novedades!</div>';return;}
 
-  if (!st.recompensas.length) {
-    body.innerHTML='<div class="empty-state">No hay recompensas disponibles.<br>¡Pronto habrá novedades!</div>';
-    return;
+  const activas=st.recompensas.filter(r=>st.puntos>=getPts(r));
+  const bloqueadas=st.recompensas.filter(r=>st.puntos<getPts(r));
+
+  let html='';
+  if(activas.length){
+    html+=`<div class="slbl">Disponibles para ti 🔥</div>`;
+    activas.forEach(r=>{
+      html+=`<div class="pc" onclick="tryUnlock('${escH(r.emoji||'🎁')}','${escH(r.nombre)}','${escH(r.instrucciones_canje||r['instrucciones_canje']||'')}',${r.id||r.ID||0},'recompensa')">
+        <div class="pci" style="background:#FFF5FA">${r.emoji||'🎁'}</div>
+        <div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${escH(r.descripcion||'')}${getPts(r)?' · '+getPts(r)+' pts':''}</div></div>
+        <span class="ptag ptag-ok">Activo</span></div>`;
+    });
   }
-
-  let html='<div class="slbl">Recompensas 🎁</div>';
-  st.recompensas.forEach(r => {
-    const req     = Number(r.puntos_requeridos||0);
-    const tieneP  = st.puntos >= req;
-    const faltan  = req - st.puntos;
-    const pcClass = tieneP ? 'pc' : 'pc sin-pts';
-    const onclick = tieneP
-      ? `onclick="tryUnlock('${escH(r.emoji||'🎁')}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}',${r.id},'recompensa')"`
-      : `onclick="showPtsModal('${escH(r.emoji||'🎁')}','${escH(r.nombre)}',${faltan})"`;
-
-    html+=`<div class="${pcClass}" ${onclick}>
-      <div class="pci" style="background:#FFF5FA">${r.emoji||'🎁'}</div>
-      <div class="pci-info">
-        <div class="pci-name">${escH(r.nombre)}</div>
-        <div class="pci-meta">${escH(r.descripcion||'')}${req?' · '+req+' pts':''}</div>
-      </div>
-      <span class="ptag ${tieneP?'ptag-ok':'ptag-lk'}">${tieneP?'Canjear':'🔒 '+req}</span>
-    </div>`;
-  });
+  if(bloqueadas.length){
+    html+=`<div class="slbl">Próximamente — sigue acumulando 🔒</div>`;
+    bloqueadas.forEach(r=>{
+      const faltan=getPts(r)-st.puntos;
+      html+=`<div class="pc locked" onclick="showPtsModal('${escH(r.emoji||'🎁')}','${escH(r.nombre)}',${faltan})">
+        <div class="pci" style="background:#f9f9f9">${r.emoji||'🎁'}</div>
+        <div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">Faltan ${faltan} pts · ${escH(r.descripcion||'')}</div></div>
+        <span class="ptag ptag-lk">🔒 ${getPts(r)}</span></div>`;
+    });
+  }
   body.innerHTML=html;
+
+  // Confetti automático si hay recompensas activas disponibles
+  if(activas.length>0){
+    setTimeout(()=>startConfPromos(),300);
+  }
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER CONCURSOS — todos visibles
+//  RENDER CONCURSOS
 // ═══════════════════════════════════════════════
-function renderConcursos() {
-  const body=$('contests-body'); if(!body)return;
+function renderConcursos(){
+  const body=$('contests-body');if(!body)return;
   $('contest-pts').textContent=st.puntos+' PTS';
+  if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos activos.<br/>¡Pronto habrá novedades!</div>';return;}
 
-  if (!st.concursos.length) {
-    body.innerHTML='<div class="empty-state">No hay concursos activos.<br>¡Pronto habrá novedades!</div>';
-    return;
+  const activos=st.concursos.filter(c=>st.puntos>=getPts(c));
+  const bloqueados=st.concursos.filter(c=>st.puntos<getPts(c));
+  let html='';
+
+  if(activos.length){
+    html+=`<div class="slbl">¡Participas en estos! 🏆</div>`;
+    activos.forEach(c=>{
+      html+=`<div class="cc" onclick="tryUnlock('${escH(c.emoji||'🏅')}','${escH(c.nombre)}','Sorteo: ${escH(c.fecha_sorteo||'')}',${c.id||0},'concurso')">
+        <div class="cc-hd"><div class="cc-em">${c.emoji||'🏅'}</div><div><div class="cc-title">${escH(c.nombre)}</div><div class="cc-sub">${escH(c.descripcion||'')}${c.fecha_sorteo?' · Sorteo '+escH(c.fecha_sorteo):''}</div></div></div>
+        <div style="font-size:11px;color:#C0157A;font-weight:700;margin-bottom:4px">✓ ¡Estás participando!</div>
+        <div class="prow"><div class="pbar"><div class="pfill" style="width:100%"></div></div><div class="plbl win">✓</div></div></div>`;
+    });
   }
-
-  let html='<div class="slbl">Concursos 🏅</div>';
-  st.concursos.forEach(c => {
-    const req    = Number(c.puntos_requeridos||0);
-    const tieneP = st.puntos >= req;
-    const faltan = req - st.puntos;
-    const pct    = req>0 ? Math.min(Math.round(st.puntos/req*100),100) : 100;
-    const onclick= tieneP
-      ? `onclick="tryUnlock('${escH(c.emoji||'🏅')}','${escH(c.nombre)}','Sorteo: ${escH(c.fecha_sorteo||'')}',${c.id},'concurso')"`
-      : `onclick="showPtsModal('${escH(c.emoji||'🏅')}','${escH(c.nombre)}',${faltan})"`;
-
-    html+=`<div class="cc ${tieneP?'':'sin-pts'}" ${onclick}>
-      <div class="cc-hd">
-        <div class="cc-em">${c.emoji||'🏅'}</div>
-        <div>
-          <div class="cc-title">${escH(c.nombre)}</div>
-          <div class="cc-sub">${escH(c.descripcion||'')}${c.fecha_sorteo?' · Sorteo '+escH(c.fecha_sorteo):''}</div>
-        </div>
-      </div>
-      ${tieneP
-        ? '<div style="font-size:11px;color:#C0157A;font-weight:700;margin-bottom:4px">✓ ¡Estás participando!</div>'
-        : `<div style="font-size:11px;color:#aaa;margin-bottom:4px">Faltan ${faltan} pts para participar</div>`}
-      <div class="prow">
-        <div class="pbar"><div class="pfill ${tieneP?'':'lk'}" style="width:${pct}%"></div></div>
-        <div class="plbl ${tieneP?'win':''}">${tieneP?'✓':pct+'%'}</div>
-      </div>
-    </div>`;
-  });
+  if(bloqueados.length){
+    html+= activos.length?`<div class="slbl">Próximos concursos 🔒</div>`:`<div class="slbl">Todos los concursos 🏅</div>`;
+    bloqueados.forEach(c=>{
+      const req=getPts(c),pct=req>0?Math.min(Math.round(st.puntos/req*100),100):0,faltan=req-st.puntos;
+      html+=`<div class="cc locked" onclick="showPtsModal('${escH(c.emoji||'🏅')}','${escH(c.nombre)}',${faltan})">
+        <div class="cc-hd"><div class="cc-em">${c.emoji||'🏅'}</div><div><div class="cc-title">${escH(c.nombre)}</div><div class="cc-sub">${escH(c.descripcion||'')} · ${req} pts</div></div></div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:4px">Faltan ${faltan} pts</div>
+        <div class="prow"><div class="pbar"><div class="pfill lk" style="width:${pct}%"></div></div><div class="plbl">🔒 ${pct}%</div></div></div>`;
+    });
+  }
   body.innerHTML=html;
 }
 
 // ═══════════════════════════════════════════════
 //  MODAL FALTAN PUNTOS
 // ═══════════════════════════════════════════════
-function showPtsModal(ico, nombre, faltan) {
-  $('pts-modal-ico').textContent=ico;
-  $('pts-modal-title').textContent='Todavía no puedes canjear esto';
-  $('pts-modal-pts').textContent='Faltan '+faltan+' pts';
-  $('pts-modal-msg').textContent=`Necesitas ${faltan} puntos más para "${nombre}". ¡Sigue deslizando!`;
+function showPtsModal(ico,nombre,faltan){
+  $('pts-ico').textContent=ico;
+  $('pts-num').textContent='Faltan '+faltan+' pts';
+  $('pts-msg').textContent=`Necesitas ${faltan} puntos más para "${nombre}". ¡Sigue deslizando tarjetas!`;
   $('pts-modal').classList.add('show');
 }
-function closePtsModal() {
-  $('pts-modal').classList.remove('show');
-  goMain();
-}
+function closePtsModal(){$('pts-modal').classList.remove('show');goMain();}
 
 // ═══════════════════════════════════════════════
-//  CANJE
+//  CANJE — modal idéntico al de referencia
 // ═══════════════════════════════════════════════
-async function tryUnlock(ico, title, instrucciones, id, tipo) {
-  const email  = st.usuario?.id_email || st.usuario?.email || '';
-  let codigo   = Math.floor(1000+Math.random()*9000);
-  try {
-    const r = await apiPost({ action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo });
-    if(r.ok && r.codigo) codigo=r.codigo.replace('DEP-','');
-  } catch(e){}
-
+async function tryUnlock(ico,title,instrucciones,id,tipo){
+  const email=st.usuario?.id_email||st.usuario?.email||'';
+  let codigo=Math.floor(1000+Math.random()*9000);
+  try{
+    const r=await apiPost({action:'canje',email,cookie_id:st.uid,recompensa_id:id,tipo});
+    if(r.ok&&r.codigo)codigo=r.codigo.replace('DEP-','');
+  }catch(e){}
   $('u-ico').textContent=ico;
   $('u-title').textContent=title;
   $('u-sub').textContent=instrucciones||'Muestra este código al momento del canje';
@@ -744,186 +753,121 @@ async function tryUnlock(ico, title, instrucciones, id, tipo) {
   $('umodal').classList.add('show');
   setTimeout(startConf,60);
 }
-
-function closeUnlock() { $('umodal').classList.remove('show'); stopConf(); }
+function closeUnlock(){$('umodal').classList.remove('show');stopConf();}
 
 // ═══════════════════════════════════════════════
-//  RENDER PROFILE
+//  PROFILE
 // ═══════════════════════════════════════════════
-function renderProfile() {
-  const body=$('prof-body'); if(!body)return;
+function renderProfile(){
+  const body=$('prof-body');if(!body)return;
   $('prof-pts').textContent=st.puntos+' PTS';
-  const u = st.usuario||{};
-  const email    = u.id_email||u.email||'';
-  const nombre   = u.nombre||email.split('@')[0]||'Usuario';
-  const initials = nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
-  const intereses= String(u.intereses||st.interesesAcum.join(',')||'').split(',').filter(Boolean);
-  let nivel='Bronce', nextPts=500, nextNivel='Plata';
+  const u=st.usuario||{};
+  const email=u.id_email||u.email||'';
+  const nombre=u.nombre||email.split('@')[0]||'Usuario';
+  const initials=nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
+  const intereses=String(u.intereses||st.interesesAcum.join(',')||'').split(',').filter(Boolean);
+  let nivel='Bronce',nextPts=500,nextNivel='Plata';
   if(st.puntos>=1000){nivel='Oro';nextPts=9999;nextNivel='Máximo';}
   else if(st.puntos>=500){nivel='Plata';nextPts=1000;nextNivel='Oro';}
   const pct=Math.min(Math.round(st.puntos/nextPts*100),100);
-  const pills=intereses.length
-    ? intereses.map(i=>`<span class="ipill">${escH(i)}</span>`).join('')
-    : '<span style="font-size:12px;color:#aaa">Desliza tarjetas para descubrir tus intereses</span>';
-
+  const pills=intereses.length?intereses.map(i=>`<span class="ipill">${escH(i)}</span>`).join(''):'<span style="font-size:12px;color:#aaa">Desliza tarjetas para ver tus intereses</span>';
   body.innerHTML=`
     <div class="ph">
-      <div class="av" id="av-circle" onclick="triggerAvatarUpload()">${st.avatarUrl?`<img src="${st.avatarUrl}" alt=""/>`:escH(initials)}</div>
-      <div>
-        <div class="pname">${escH(nombre)}</div>
-        <div class="prole">Nivel ${nivel} 🫘 · ${escH(email)}</div>
-      </div>
+      <div class="av" id="av-circle" onclick="$('avatar-inp')?.click()">${st.avatarUrl?`<img src="${st.avatarUrl}"/>`+escH(initials):escH(initials)}</div>
+      <div><div class="pname">${escH(nombre)}</div><div class="prole">Nivel ${nivel} 🫘 · ${escH(email)}</div></div>
     </div>
     <div class="ptsc">
       <div><div class="ptbig">${st.puntos}</div><div class="ptsub">puntos</div></div>
       <div class="pflex">
         <div class="pnivel-label">Próximo: ${nextNivel} (${nextPts} pts)</div>
-        <div class="pbar" style="height:8px"><div class="pfill2 pfill" style="width:${pct}%"></div></div>
+        <div class="pbar" style="height:8px"><div class="pfill" style="width:${pct}%"></div></div>
         <div style="font-size:11px;color:#C0157A;font-weight:700;margin-top:4px">${st.puntos<9999?'Faltan '+(nextPts-st.puntos)+' pts':'¡Nivel máximo!'}</div>
       </div>
     </div>
     <div><div class="slbl2">Mis intereses</div><div class="ipills">${pills}</div></div>
     <div class="georow">📍 <span>Ubicación: <b>${escH(st.ciudad)}</b></span></div>
-
-    <!-- Datos de perfil -->
     <div>
       <div class="slbl2">Mi perfil</div>
-      <div class="prof-form" id="prof-form">
-        <div class="prof-field">
-          <label>Nombre completo</label>
-          <input type="text" id="pf-nombre" value="${escH(nombre)}" placeholder="Tu nombre"/>
-        </div>
-        <div class="prof-field">
-          <label>Género</label>
-          <select id="pf-genero">
-            <option value="">Prefiero no decir</option>
-            <option value="hombre" ${u.genero==='hombre'?'selected':''}>Hombre</option>
-            <option value="mujer"  ${u.genero==='mujer'?'selected':''}>Mujer</option>
-            <option value="otro"   ${u.genero==='otro'?'selected':''}>Otro</option>
-          </select>
-        </div>
-        <div class="prof-field">
-          <label>Fecha de nacimiento</label>
-          <input type="date" id="pf-nacimiento" value="${u.fecha_nacimiento||''}"/>
-        </div>
-        <div class="prof-field">
-          <label>Situación sentimental</label>
-          <select id="pf-sentimental">
-            <option value="">Prefiero no decir</option>
-            <option value="soltero/a"    ${u.situacion_sentimental==='soltero/a'?'selected':''}>Soltero/a</option>
-            <option value="en pareja"    ${u.situacion_sentimental==='en pareja'?'selected':''}>En pareja</option>
-            <option value="casado/a"     ${u.situacion_sentimental==='casado/a'?'selected':''}>Casado/a</option>
-            <option value="divorciado/a" ${u.situacion_sentimental==='divorciado/a'?'selected':''}>Divorciado/a</option>
-          </select>
-        </div>
-        <div class="prof-field">
-          <label>¿Tienes hijos?</label>
-          <select id="pf-hijos">
-            <option value="">Prefiero no decir</option>
-            <option value="no"  ${u.hijos==='no'?'selected':''}>No</option>
-            <option value="1"   ${u.hijos==='1'?'selected':''}>1</option>
-            <option value="2"   ${u.hijos==='2'?'selected':''}>2</option>
-            <option value="3+"  ${u.hijos==='3+'?'selected':''}>3 o más</option>
-          </select>
-        </div>
-        <div class="prof-field">
-          <label>¿Tienes mascotas?</label>
-          <select id="pf-mascotas">
-            <option value="">Prefiero no decir</option>
-            <option value="no"   ${u.mascotas==='no'?'selected':''}>No</option>
-            <option value="perro"${u.mascotas==='perro'?'selected':''}>Perro</option>
-            <option value="gato" ${u.mascotas==='gato'?'selected':''}>Gato</option>
-            <option value="otro" ${u.mascotas==='otro'?'selected':''}>Otra mascota</option>
-          </select>
-        </div>
-        <div class="prof-field">
-          <label>Idiomas que hablas</label>
-          <input type="text" id="pf-idiomas" value="${escH(u.idiomas||'')}" placeholder="Ej: Español, Inglés, Francés"/>
-        </div>
+      <div class="prof-form">
+        <div class="pf-field"><label>Nombre completo</label><input type="text" id="pf-nombre" value="${escH(nombre)}"/></div>
+        <div class="pf-field"><label>Género</label><select id="pf-genero"><option value="">Prefiero no decir</option><option value="hombre" ${u.genero==='hombre'?'selected':''}>Hombre</option><option value="mujer" ${u.genero==='mujer'?'selected':''}>Mujer</option><option value="otro" ${u.genero==='otro'?'selected':''}>Otro</option></select></div>
+        <div class="pf-field"><label>Fecha de nacimiento</label><input type="date" id="pf-nacimiento" value="${u.fecha_nacimiento||''}"/></div>
+        <div class="pf-field"><label>Situación sentimental</label><select id="pf-sentimental"><option value="">Prefiero no decir</option><option value="soltero/a" ${u.situacion_sentimental==='soltero/a'?'selected':''}>Soltero/a</option><option value="en pareja" ${u.situacion_sentimental==='en pareja'?'selected':''}>En pareja</option><option value="casado/a" ${u.situacion_sentimental==='casado/a'?'selected':''}>Casado/a</option></select></div>
+        <div class="pf-field"><label>¿Tienes hijos?</label><select id="pf-hijos"><option value="">Prefiero no decir</option><option value="no" ${u.hijos==='no'?'selected':''}>No</option><option value="1" ${u.hijos==='1'?'selected':''}>1</option><option value="2" ${u.hijos==='2'?'selected':''}>2</option><option value="3+" ${u.hijos==='3+'?'selected':''}>3+</option></select></div>
+        <div class="pf-field"><label>¿Tienes mascotas?</label><select id="pf-mascotas"><option value="">Prefiero no decir</option><option value="no" ${u.mascotas==='no'?'selected':''}>No</option><option value="perro" ${u.mascotas==='perro'?'selected':''}>Perro</option><option value="gato" ${u.mascotas==='gato'?'selected':''}>Gato</option><option value="otro" ${u.mascotas==='otro'?'selected':''}>Otra</option></select></div>
+        <div class="pf-field"><label>Idiomas</label><input type="text" id="pf-idiomas" value="${escH(u.idiomas||'')}" placeholder="Español, Inglés..."/></div>
         <button class="btn-mg" style="margin-top:4px" onclick="guardarPerfil()">Guardar perfil</button>
       </div>
     </div>
-
-    <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="onAvatarChange(this)"/>
+    <input type="file" id="avatar-inp" accept="image/*" style="display:none" onchange="onAvatarChange(this)"/>
     <div><div class="slbl2">Opciones</div><button class="updbtn" onclick="goMain()">Volver a las tarjetas 🃏</button></div>
     <button class="logoutbtn" onclick="logout()">Cerrar sesión</button>`;
 }
 
-// Avatar
-function triggerAvatarUpload() { $('avatar-input')?.click(); }
-function onAvatarChange(input) {
-  const file=input.files?.[0]; if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    st.avatarUrl=e.target.result;
-    const av=$('av-circle'); if(av) av.innerHTML=`<img src="${st.avatarUrl}" alt=""/>`;
-  };
-  reader.readAsDataURL(file);
-}
+function onAvatarChange(inp){const f=inp.files?.[0];if(!f)return;const r=new FileReader();r.onload=e=>{st.avatarUrl=e.target.result;const av=$('av-circle');if(av)av.innerHTML=`<img src="${st.avatarUrl}"/>`};r.readAsDataURL(f);}
 
-async function guardarPerfil() {
+async function guardarPerfil(){
   const email=st.usuario?.id_email||st.usuario?.email||'';
-  const perfil={
-    nombre:           $('pf-nombre')?.value||'',
-    genero:           $('pf-genero')?.value||'',
-    fecha_nacimiento: $('pf-nacimiento')?.value||'',
-    situacion_sentimental: $('pf-sentimental')?.value||'',
-    hijos:            $('pf-hijos')?.value||'',
-    mascotas:         $('pf-mascotas')?.value||'',
-    idiomas:          $('pf-idiomas')?.value||'',
-  };
-  // Actualizar nombre en estado
-  if (perfil.nombre && st.usuario) st.usuario.nombre=perfil.nombre;
-
-  try {
-    await apiPost({ action:'perfil', email, cookie_id:st.uid, perfil });
-    showToast('✓ Perfil guardado');
-  } catch(e){ showToast('Error al guardar'); }
+  const perfil={nombre:$('pf-nombre')?.value||'',genero:$('pf-genero')?.value||'',fecha_nacimiento:$('pf-nacimiento')?.value||'',situacion_sentimental:$('pf-sentimental')?.value||'',hijos:$('pf-hijos')?.value||'',mascotas:$('pf-mascotas')?.value||'',idiomas:$('pf-idiomas')?.value||''};
+  if(perfil.nombre&&st.usuario)st.usuario.nombre=perfil.nombre;
+  try{await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});showToast('✓ Perfil guardado');}
+  catch(e){showToast('Error al guardar');}
 }
 
 // ═══════════════════════════════════════════════
-//  CONFETTI
+//  CONFETTI — modal de canje
 // ═══════════════════════════════════════════════
-let cP=[],cR=null,cC=null,cX=null;
+let cP=[],cR=null,cCvs=null,cCtx=null;
 const COLS=['#C0157A','#1A1A1A','#F5D0E8','#FFD700','#00C2A8','#FF6B35','#fff','#8A0F57'];
+function mkPart(canvas){return{x:Math.random()*canvas.width,y:-Math.random()*canvas.height*.5,w:Math.random()*12+5,h:Math.random()*5+3,color:COLS[Math.random()*COLS.length|0],r:Math.random()*Math.PI*2,vx:(Math.random()-.5)*3.5,vy:Math.random()*4+1.5,vr:(Math.random()-.5)*.22};}
 function startConf(){
-  cC=$('conf-cvs'); if(!cC)return;
-  const m=$('umodal'); cC.width=m.offsetWidth||390; cC.height=m.offsetHeight||700;
-  cX=cC.getContext('2d'); cP=[];
-  for(let i=0;i<160;i++) cP.push({
-    x:Math.random()*cC.width, y:-Math.random()*cC.height*.5,
-    w:Math.random()*12+5, h:Math.random()*5+3,
-    color:COLS[Math.random()*COLS.length|0],
-    r:Math.random()*Math.PI*2, vx:(Math.random()-.5)*3.5,
-    vy:Math.random()*4+1.5, vr:(Math.random()-.5)*.22
-  });
-  if(cR)cancelAnimationFrame(cR); animConf();
+  cCvs=$('conf-cvs');if(!cCvs)return;
+  const m=$('umodal');cCvs.width=m.offsetWidth||390;cCvs.height=m.offsetHeight||700;
+  cCtx=cCvs.getContext('2d');cP=Array.from({length:160},()=>mkPart(cCvs));
+  if(cR)cancelAnimationFrame(cR);animConf();
 }
 function animConf(){
-  if(!cX||!cC)return; cX.clearRect(0,0,cC.width,cC.height);
+  if(!cCtx||!cCvs)return;cCtx.clearRect(0,0,cCvs.width,cCvs.height);
   let alive=false;
-  cP.forEach(p=>{
-    p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.vy+=.06;
-    if(p.y<cC.height+20)alive=true;
-    cX.save(); cX.translate(p.x,p.y); cX.rotate(p.r);
-    cX.fillStyle=p.color; cX.globalAlpha=Math.max(0,1-p.y/cC.height*.85);
-    cX.fillRect(-p.w/2,-p.h/2,p.w,p.h); cX.restore();
-  });
+  cP.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.vy+=.06;if(p.y<cCvs.height+20)alive=true;cCtx.save();cCtx.translate(p.x,p.y);cCtx.rotate(p.r);cCtx.fillStyle=p.color;cCtx.globalAlpha=Math.max(0,1-p.y/cCvs.height*.85);cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cCtx.restore();});
   if(alive)cR=requestAnimationFrame(animConf);
 }
-function stopConf(){
-  if(cR)cancelAnimationFrame(cR);
-  if(cX&&cC)cX.clearRect(0,0,cC.width,cC.height);
+function stopConf(){if(cR)cancelAnimationFrame(cR);if(cCtx&&cCvs)cCtx.clearRect(0,0,cCvs.width,cCvs.height);}
+
+// ═══════════════════════════════════════════════
+//  CONFETTI AUTOMÁTICO en pantalla de promos
+// ═══════════════════════════════════════════════
+let pRaf=null;
+function startConfPromos(){
+  const cv=$('conf-promos');if(!cv)return;
+  const screen=$('s-promos');
+  cv.width=screen.offsetWidth||390;cv.height=screen.offsetHeight||600;
+  const ctx=cv.getContext('2d');
+  const parts=Array.from({length:80},()=>mkPart(cv));
+  if(pRaf)cancelAnimationFrame(pRaf);
+  function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height);let alive=false;
+    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.vy+=.05;if(p.y<cv.height+20)alive=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.color;ctx.globalAlpha=Math.max(0,1-p.y/cv.height*.9);ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
+    if(alive)pRaf=requestAnimationFrame(loop);else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  loop();
 }
 
+// ═══════════════════════════════════════════════
+//  LOGOUT
+// ═══════════════════════════════════════════════
 function logout(){
-  Object.assign(st,{usuario:null,puntos:0,ciudad:'todas',tarjetas:[],recompensas:[],concursos:[],swipeIdx:0,interesesAcum:[],avatarUrl:null});
+  Object.assign(st,{usuario:null,puntos:0,tarjetas:[],recompensas:[],concursos:[],swipeIdx:0,interesesAcum:[],avatarUrl:null,otpEmail:''});
   if($('inp-email'))$('inp-email').value='';
   if($('inp-nombre'))$('inp-nombre').value='';
+  $('step-otp').classList.remove('active');
+  $('step-email').style.display='flex';
+  $('ret-banner').style.display='none';
+  $('btn-cookie').style.display='none';
   showScreen('s-login');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
