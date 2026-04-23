@@ -207,8 +207,15 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
       <div class="sw-prog-wrap"><div class="sw-prog" id="sw-prog" style="width:0%"></div></div>
       <div class="card-stack" id="card-stack"></div>
       <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700;margin-top:10px">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:10px" onclick="goTab('promos')">Ver recompensas</button></div>
-      <div class="sw-btns" id="sw-btns"><button class="sw-btn no" onclick="swipeCard(false)">✕</button><button class="sw-btn yes" onclick="swipeCard(true)">♥</button></div>
-    </div>
+// <div class="sw-btns" id="sw-btns"><button class="sw-btn no" onclick="swipeCard(false)">✕</button><button class="sw-btn yes" onclick="swipeCard(true)">♥</button></div>
+<div class="sw-btns" id="sw-btns">
+  <button class="sw-btn no" onclick="swipeCard(false)">✕</button>
+  <button class="sw-btn yes" onclick="swipeCard(true)">♥</button>
+  <button class="sw-btn super" onclick="swipeCard(true, true)" style="border-color:#FFD700;color:#FFD700;position:relative">
+    <span style="font-size:18px">⭐</span>
+    <span style="position:absolute;top:-4px;right:-4px;background:#FFD700;color:#1A1A1A;font-size:9px;padding:2px 4px;border-radius:10px;font-weight:bold">x2</span>
+  </button>
+</div>
     <div class="bnav">
       <button class="nb on" onclick="goMain()"><span class="ni">🃏</span>Tarjetas</button>
       <button class="nb" onclick="goTab('promos')"><span class="ni">🎁</span>Recompensas</button>
@@ -480,21 +487,33 @@ function getUnlockCode(id, tipo) {
   return found ? found.split(':')[2] : null;
 }
 
+// En la función renderPromos(), reemplaza toda la función:
 function renderPromos(){
   const body=$('promos-body');if(!body)return;
   $('promo-pts').textContent=st.puntos+' PTS';
   if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.</div>';return;}
+  
+  // Ordenar: desbloqueadas primero
+  const recompensas = [...st.recompensas].sort((a,b)=>{
+    const aUnlocked = getUnlockCode(a.id, 'recompensa');
+    const bUnlocked = getUnlockCode(b.id, 'recompensa');
+    if(aUnlocked && !bUnlocked) return -1;
+    if(!aUnlocked && bUnlocked) return 1;
+    return 0;
+  });
+  
   let html='';
-  st.recompensas.forEach(r=>{
+  recompensas.forEach(r=>{
     const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
-    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
+    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '', instruccionesDisplay = '';
     const unlockedCode = getUnlockCode(r.id, 'recompensa');
 
     if (unlockedCode) {
        statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Desbloqueado</span>`;
        codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">DEP-${unlockedCode}</div>`;
+       instruccionesDisplay = r.instrucciones_canje ? `<div style="font-size:11px;color:#666;margin-top:4px;line-height:1.3">${escH(r.instrucciones_canje)}</div>` : '';
        clickAction = `onclick="alert('Ya canjeaste esta recompensa. Código: DEP-${unlockedCode}')"`;
        barColor = `style="width:100%;background:#4CAF50"`;
     } else if (st.puntos >= pts) {
@@ -506,26 +525,38 @@ function renderPromos(){
        clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barColor = `style="width:${pct}%;background:#C0157A"`;
     }
-    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}${instruccionesDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
 
+// En la función renderConcursos(), reemplaza toda la función:
 function renderConcursos(){
   const body=$('contests-body');if(!body)return;
   $('contest-pts').textContent=st.puntos+' PTS';
   if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos disponibles.</div>';return;}
+  
+  // Ordenar: desbloqueados primero
+  const concursos = [...st.concursos].sort((a,b)=>{
+    const aUnlocked = getUnlockCode(a.id, 'concurso');
+    const bUnlocked = getUnlockCode(b.id, 'concurso');
+    if(aUnlocked && !bUnlocked) return -1;
+    if(!aUnlocked && bUnlocked) return 1;
+    return 0;
+  });
+  
   let html='';
-  st.concursos.forEach(c=>{
+  concursos.forEach(c=>{
     const pts = Number(c.puntos_requeridos||c['puntos requeridos']||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
-    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
+    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '', instruccionesDisplay = '';
     const unlockedCode = getUnlockCode(c.id, 'concurso');
 
     if (unlockedCode) {
        statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Participando</span>`;
        codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Ticket: DEP-${unlockedCode}</div>`;
+       instruccionesDisplay = c.descripcion ? `<div style="font-size:11px;color:#666;margin-top:4px;line-height:1.3">${escH(c.descripcion)}</div>` : '';
        clickAction = `onclick="alert('Ya estás participando. Ticket: DEP-${unlockedCode}')"`;
        barColor = `style="width:100%;background:#4CAF50"`;
     } else if (st.puntos >= pts) {
@@ -537,12 +568,58 @@ function renderConcursos(){
        clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barColor = `style="width:${pct}%;background:#C0157A"`;
     }
-    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}${instruccionesDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
 
-let pendingCanje = null;
+// Modificar swipeCard para validar límite diario y añadir super like:
+async function swipeCard(like, superLike = false){
+  if(st.swipeIdx>=st.tarjetas.length)return;
+  
+  // No puntuar si es swipe izquierda (like = false)
+  if(!like) {
+    const t=st.tarjetas[st.swipeIdx]; 
+    const card=$('sc-'+t.id); 
+    if(card)card.classList.add('gone');
+    st.swipeIdx++;
+    const email=st.usuario?.id_email||st.usuario?.email||'';
+    apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:false, perfil_campo:'', perfil_valor:'', super_like:false})
+      .catch(()=>{});
+    setTimeout(renderSwiper,300);
+    return;
+  }
+  
+  const t=st.tarjetas[st.swipeIdx]; 
+  const card=$('sc-'+t.id); 
+  if(card)card.classList.add('liked');
+  
+  const pcampo = card ? card.dataset.pcampo : '';
+  const pvalor = card ? card.dataset.pvalor : '';
+  
+  st.swipeIdx++;
+  const email=st.usuario?.id_email||st.usuario?.email||'';
+  
+  const puntosGanados = superLike ? 2 : 1;
+  st.puntos += puntosGanados; 
+  updatePts(); 
+  showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
+  
+  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:true, perfil_campo:pcampo, perfil_valor:pvalor, super_like:superLike})
+    .then(r=>{
+      if(r.ok){
+        st.puntos=r.puntos_restantes; 
+        updatePts();
+        if(r.error === 'Límite diario alcanzado'){
+          alert('⚠️ Alcanzaste el límite de 10 likes por día. Vuelve mañana para seguir ganando puntos 🫘');
+          goTab('promos');
+        }
+      }
+    }).catch(()=>{});
+    
+  setTimeout(renderSwiper,300);
+}
+  let pendingCanje = null;
 function tryUnlock(ico, title, instrucciones, id, tipo, coste){
   pendingCanje = {ico, title, instrucciones, id, tipo};
   $('conf-msg').innerHTML = `Se descontarán <b style="color:#C0157A;font-size:16px">${coste} frijoles</b> de tu saldo.`;
