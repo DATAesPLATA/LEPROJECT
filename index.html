@@ -54,8 +54,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .card-stack{
   position:relative;
   width:300px;
-  height:600px; /* Tamaño exacto solicitado */
-  max-height:68vh; /* Para que no se rompa en teléfonos muy pequeños */
+  height:600px;
+  max-height:68vh;
   flex-shrink:0;
 }
 .swipe-card{
@@ -64,7 +64,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   background:#f4f4f4;
   border-radius:16px;
   box-shadow:0 4px 15px rgba(0,0,0,0.1);
-  overflow:hidden; /* Corta la imagen de fondo en los bordes redondeados */
+  overflow:hidden;
   transition:transform .32s,opacity .32s;
   cursor:grab;
   user-select:none;
@@ -72,7 +72,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .swipe-card.gone{transform:translateX(-140%) rotate(-22deg)!important;opacity:0}
 .swipe-card.liked{transform:translateX(140%) rotate(22deg)!important;opacity:0}
 
-/* Capa A: Fondo */
 .card-bg{
   position:absolute;
   inset:0;
@@ -81,7 +80,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   background-color:#eee;
   z-index:1;
 }
-/* Capa D: Recuadro del Logo */
 .card-logo{
   position:absolute;
   top:16px;
@@ -102,13 +100,11 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   max-height:100%;
   object-fit:contain;
 }
-/* Capas B y C: Nombre y Descripción */
 .card-info{
   position:absolute;
   bottom:0;
   left:0;
   width:100%;
-  /* Gradiente para que el texto sea siempre legible sobre fotos claras/oscuras */
   background:linear-gradient(to top, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0));
   padding:40px 20px 20px;
   z-index:2;
@@ -145,6 +141,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .pci-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pci-meta{font-size:11px;color:#888;margin-top:2px}
 .ptag{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;text-transform:uppercase}
+.ptag-ok{background:#C0157A;color:#fff;border:2px solid #C0157A;box-shadow:0 2px 6px rgba(192,21,122,0.3);font-weight:700;padding:6px 14px}
+.ptag-lk{background:#f5f5f5;color:#888}
 
 .ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:14px;margin-bottom:14px}
 .av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;flex-shrink:0}
@@ -287,15 +285,10 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 //  INIT & MEMORIA DE AUTOCOMPLETADO
 // ═══════════════════════════════════════════════
 async function init(){
-  // Autocompletar Correo Y Contraseña
   const savedEmail = localStorage.getItem('dep_saved_email');
-  const savedPass = localStorage.getItem('dep_saved_pass');
   if(savedEmail) {
     $('inp-email').value = savedEmail;
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
-  }
-  if(savedPass) {
-    $('inp-password').value = savedPass;
   }
 
   try{
@@ -321,9 +314,7 @@ async function hacerLogin() {
     const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
     
-    // GUARDAR EN MEMORIA (Auto-login)
     localStorage.setItem('dep_saved_email', email);
-    localStorage.setItem('dep_saved_pass', pass); 
     st.avatarUrl = localStorage.getItem('dep_avatar_'+email);
     
     await procesarLoginExitoso(r.usuario);
@@ -364,9 +355,7 @@ async function verificarYCrear() {
     const r = await apiPost({action:'registro_otp', email, nombre, password:pass, codigo, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
     
-    // GUARDAR EN MEMORIA
     localStorage.setItem('dep_saved_email', email);
-    localStorage.setItem('dep_saved_pass', pass);
     
     await procesarLoginExitoso(r.usuario);
   } catch(e) { showErr('otp-err', e.message); }
@@ -376,7 +365,12 @@ async function verificarYCrear() {
 function setupOTPInputs(){
   for(let i=0;i<6;i++){
     const inp=$('otp'+i); if(!inp)continue;
-    inp.addEventListener('input',e=>{const v=e.target.value.replace(/\D/g,'');e.target.value=v.slice(-1);if(v&&i<5)$('otp'+(i+1)).focus();});
+    inp.addEventListener('input',e=>{
+      const v=e.target.value.replace(/\D/g,'');
+      e.target.value=v.slice(-1);
+      if(v&&i<5) $('otp'+(i+1)).focus();
+      else if(v&&i===5) setTimeout(verificarYCrear, 200);
+    });
     inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!e.target.value&&i>0)$('otp'+(i-1)).focus();});
   }
 }
@@ -417,7 +411,6 @@ function renderSwiper(){
     div.dataset.pcampo = t.perfil_campo || '';
     div.dataset.pvalor = t.perfil_valor || '';
     
-    // ESTRUCTURA DE CAPAS (A, B, C, D)
     const imgBg = t.img ? t.img : 'https://via.placeholder.com/300x600?text=Falta+Imagen';
     const logoHtml = t.logo ? `<div class="card-logo"><img src="${t.logo}" alt="Logo"/></div>` : '';
     
@@ -442,10 +435,22 @@ function attachDrag(c){
   let sx=0,drag=false;
   const start=e=>{sx=(e.touches?e.touches[0].clientX:e.clientX);drag=true;c.style.transition='none';};
   const move=e=>{if(!drag)return;const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;const iy=c.querySelector('.ind-y'),in_=c.querySelector('.ind-n');if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;if(in_)in_.style.opacity=dx<-28?Math.min((-dx-28)/40,1):0;if(e.cancelable)e.preventDefault();};
-  const end=e=>{if(!drag)return;drag=false;c.style.transition='';const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;c.querySelectorAll('.ind').forEach(i=>i.style.opacity=0);if(dx>60)swipeCard(true);else if(dx<-60)swipeCard(false);else c.style.transform='';};
-  c.addEventListener('mousedown',start);c.addEventListener('touchstart',start,{passive:true});
-  document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});
-  document.addEventListener('mouseup',end);document.addEventListener('touchend',end);
+  const end=e=>{
+    if(!drag)return;drag=false;c.style.transition='';
+    const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;
+    c.querySelectorAll('.ind').forEach(i=>i.style.opacity=0);
+    if(dx>60)swipeCard(true);else if(dx<-60)swipeCard(false);else c.style.transform='';
+    document.removeEventListener('mousemove',move);
+    document.removeEventListener('touchmove',move);
+    document.removeEventListener('mouseup',end);
+    document.removeEventListener('touchend',end);
+  };
+  c.addEventListener('mousedown',start);
+  c.addEventListener('touchstart',start,{passive:true});
+  document.addEventListener('mousemove',move);
+  document.addEventListener('touchmove',move,{passive:false});
+  document.addEventListener('mouseup',end);
+  document.addEventListener('touchend',end);
 }
 
 async function swipeCard(like){
@@ -621,19 +626,22 @@ async function guardarPerfil(){
 
   const perfil={nombre:$('pf-nombre').value, genero:$('pf-genero').value, fecha_nacimiento:$('pf-nacimiento').value, situacion_sentimental:$('pf-sentimental').value, hijos:$('pf-hijos').value, mascotas: mascotas};
   if(st.usuario) Object.assign(st.usuario, perfil);
-  try{await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});showToast('✓ Guardado');}catch(e){showToast('Error al guardar');}
+  try{
+    const r = await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});
+    if(r.puntos_extra && r.puntos_extra > 0) {
+      st.puntos += r.puntos_extra;
+      updatePts();
+      showToast(`✓ Guardado +${r.puntos_extra} pts 🫘`);
+    } else {
+      showToast('✓ Guardado');
+    }
+  }catch(e){showToast('Error al guardar');}
 }
 
 function logout(){
   st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0;
-  
-  // Limpiamos inputs pero MANTENEMOS la memoria en LocalStorage para el auto-login la próxima vez
   $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
   showScreen('s-login');
-  
-  // Si quisiéramos borrar la memoria al salir, descomentaríamos estas dos líneas:
-  // localStorage.removeItem('dep_saved_email');
-  // localStorage.removeItem('dep_saved_pass');
 }
 
 // CONFETTI
