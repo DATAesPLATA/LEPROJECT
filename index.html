@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-<meta name="theme-color" content="#1A1A1A"/>
 <title>Data Es Plata</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--mg:#C0157A;--blk:#1A1A1A;--sb:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Roboto',sans-serif}
+html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 #app{max-width:390px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden}
 .screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .screen.active{display:flex}
 
-/* TOPBAR & NAV */
-.topbar{background:#1A1A1A;padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.tlogo{font-size:14px;font-weight:800;color:#fff;letter-spacing:.05em;text-transform:uppercase}
+.topbar{background:#1A1A1A;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tlogo{font-size:14px;font-weight:800;color:#fff;letter-spacing:.05em}
 .tlogo span{color:#C0157A}
 .bpts{background:#C0157A;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px}
 .bnav{display:flex;border-top:1.5px solid #1A1A1A;background:#fff;padding-bottom:var(--sb);flex-shrink:0}
@@ -24,7 +25,6 @@ html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSyste
 .nb.on{color:#C0157A}
 .ni{font-size:20px;line-height:1}
 
-/* FORMS LOGIN/REGISTRO */
 .login-wrap{display:flex;flex-direction:column;align-items:center;padding:0 24px 32px;gap:14px;overflow-y:auto;height:100%}
 .beans-stage{width:100%;height:160px;position:relative;flex-shrink:0;overflow:hidden}
 .bbean{position:absolute;bottom:0;object-fit:contain}
@@ -37,67 +37,115 @@ html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSyste
 .d2{font-size:24px;font-weight:800}.d2 .mg{color:#C0157A}
 .inp{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none}
 .inp:focus{border-color:#C0157A}
-.btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase}
-.btn-mg:disabled{background:#ddd;cursor:default}
-.btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase}
+.btn-mg{width:100%;padding:14px;background:#C0157A;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-ghost{width:100%;padding:12px;border:1.5px solid #e0e0e0;border-radius:10px;background:none;color:#888;font-size:13px;font-weight:700;cursor:pointer}
 .login-err{font-size:13px;color:#C0157A;text-align:center;display:none;padding:8px;background:#FCEBEB;border-radius:8px;width:100%}
 .otp-inputs{display:flex;gap:8px;justify-content:center}
 .otp-input{width:44px;height:54px;border:1.5px solid #e0e0e0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;outline:none}
 
-/* SWIPER (300x600 Programático) */
+/* SWIPER - REESTRUCTURADO 300x600 */
 #s-swiper{overflow:hidden}
 .sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.sw-title{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase}
+.sw-title{font-size:13px;font-weight:700;color:#fff}
 .sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
 .sw-prog-wrap{width:100%;height:5px;background:#eee;border-radius:5px;overflow:hidden;flex-shrink:0}
 .sw-prog{height:100%;background:#C0157A;border-radius:5px;transition:width .3s}
-.card-stack{position:relative;width:100%;max-width:300px;flex:1;min-height:400px;max-height:600px;flex-shrink:0}
-.swipe-card{position:absolute;inset:0;background:#f4f4f4;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.1);overflow:hidden;transition:transform .32s,opacity .32s;cursor:grab;user-select:none}
+
+.card-stack{
+  position:relative;
+  width:300px;
+  height:600px; /* Tamaño exacto solicitado */
+  max-height:68vh; /* Para que no se rompa en teléfonos muy pequeños */
+  flex-shrink:0;
+}
+.swipe-card{
+  position:absolute;
+  inset:0;
+  background:#f4f4f4;
+  border-radius:16px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+  overflow:hidden; /* Corta la imagen de fondo en los bordes redondeados */
+  transition:transform .32s,opacity .32s;
+  cursor:grab;
+  user-select:none;
+}
 .swipe-card.gone{transform:translateX(-140%) rotate(-22deg)!important;opacity:0}
 .swipe-card.liked{transform:translateX(140%) rotate(22deg)!important;opacity:0}
-.c-bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:1;pointer-events:none}
-.c-logo{position:absolute;top:16px;left:16px;width:48px;height:48px;background:#fff;border-radius:10px;padding:4px;z-index:3;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.15);pointer-events:none}
-.c-logo img{max-width:100%;max-height:100%;object-fit:contain}
-.c-info{position:absolute;bottom:0;left:0;width:100%;background:linear-gradient(to top, rgba(255,255,255,1) 40%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0));padding:40px 20px 20px;z-index:2;pointer-events:none}
-.c-name{font-family:'Roboto',sans-serif;font-weight:800;color:#000;font-size:22px;margin-bottom:4px;line-height:1.1}
-.c-desc{font-family:'Roboto',sans-serif;font-weight:400;color:#666;font-size:14px;line-height:1.4}
-.ind{position:absolute;top:16px;font-size:13px;font-weight:800;padding:6px 14px;border-radius:20px;opacity:0;transition:opacity .1s;z-index:4;text-transform:uppercase;pointer-events:none}
+
+/* Capa A: Fondo */
+.card-bg{
+  position:absolute;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  background-color:#eee;
+  z-index:1;
+}
+/* Capa D: Recuadro del Logo */
+.card-logo{
+  position:absolute;
+  top:16px;
+  left:16px;
+  width:48px;
+  height:48px;
+  background:#fff;
+  border-radius:10px;
+  padding:4px;
+  z-index:3;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card-logo img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+/* Capas B y C: Nombre y Descripción */
+.card-info{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  /* Gradiente para que el texto sea siempre legible sobre fotos claras/oscuras */
+  background:linear-gradient(to top, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0));
+  padding:40px 20px 20px;
+  z-index:2;
+}
+.card-name{
+  font-family:'Roboto', sans-serif;
+  font-weight:700;
+  color:#000000;
+  font-size:22px;
+  margin-bottom:4px;
+  line-height:1.1;
+}
+.card-brand{
+  font-family:'Roboto', sans-serif;
+  font-weight:400;
+  color:#666666;
+  font-size:15px;
+  line-height:1.4;
+}
+
+.ind{position:absolute;top:16px;font-size:14px;font-weight:700;padding:6px 14px;border-radius:20px;opacity:0;transition:opacity .1s;z-index:4}
 .ind-y{right:16px;background:#C0157A;color:#fff}
 .ind-n{left:16px;background:#1A1A1A;color:#fff}
-.sw-btns{display:flex;gap:20px;flex-shrink:0;margin-top:5px}
-.sw-btn{width:60px;height:60px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sw-btns{display:flex;gap:20px;flex-shrink:0;margin-top:10px}
+.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
 
-/* NUEVO DISEÑO DE PROMOS (Basado en Screenshot) */
-.scrollbody{flex:1;overflow-y:auto;padding:16px;background:#fff}
-.empty-state{text-align:center;padding:40px 24px;color:#aaa;font-size:14px}
+.scrollbody{flex:1;overflow-y:auto;padding:14px}
+.slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin:16px 0 8px}
+.pc{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #1A1A1A;border-radius:14px;margin-bottom:10px;background:#fff;cursor:pointer}
+.pci{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;border:1px solid #eee;flex-shrink:0}
+.pci-info{flex:1;min-width:0}
+.pci-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pci-meta{font-size:11px;color:#888;margin-top:2px}
+.ptag{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;text-transform:uppercase}
 
-.pc-new{display:flex;align-items:center;padding:14px;border:1.5px solid #1A1A1A;border-radius:16px;margin-bottom:14px;background:#fff;cursor:pointer;transition:transform 0.1s;box-shadow:0 2px 8px rgba(0,0,0,0.03)}
-.pc-new:active{transform:scale(0.98)}
-.pc-new.locked{border-color:#e0e0e0;cursor:default;box-shadow:none}
-.pc-new.locked:active{transform:none}
-
-.pc-img-box{width:54px;height:54px;background:#FFF5FA;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;margin-right:14px}
-.pc-new.locked .pc-img-box{background:#f9f9f9;filter:grayscale(1);opacity:0.8}
-
-.pc-content{flex:1;min-width:0;display:flex;flex-direction:column}
-.pc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-.pc-texts{flex:1;padding-right:10px}
-.pc-new.locked .pc-texts{opacity:0.85} /* Opacidad al 85% en bloqueadas */
-.pc-title{font-size:15px;font-weight:800;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
-.pc-pts{font-size:12px;color:#888;margin-top:2px}
-
-.pc-action{flex-shrink:0;font-size:13px;font-weight:800;color:#1A1A1A;text-transform:uppercase}
-.pc-new.locked .pc-action{color:#555;font-size:11px}
-
-.pc-prog-row{display:flex;align-items:center;gap:8px}
-.pc-prog-bar{flex:1;height:6px;background:#eee;border-radius:4px;overflow:hidden}
-.pc-prog-fill{height:100%;background:#C0157A;border-radius:4px;transition:width 0.4s}
-.pc-prog-pct{font-size:11px;font-weight:800;color:#aaa;width:32px;text-align:right}
-.pc-new:not(.locked) .pc-prog-pct{color:#C0157A}
-
-/* PROFILE */
 .ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:14px;margin-bottom:14px}
 .av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;flex-shrink:0}
 .av img{width:100%;height:100%;object-fit:cover}
@@ -105,15 +153,12 @@ html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSyste
 .pf-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .pf-field label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase}
 .pf-field input,.pf-field select{padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%}
-.updbtn{padding:12px;border:1.5px solid #1A1A1A;border-radius:10px;background:none;color:#1A1A1A;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;margin-top:10px}
 
-/* MODALES */
 .loader{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .loader.hide{opacity:0;pointer-events:none}
 .toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity .2s;z-index:150}
-.toast.show{opacity:1}
-.pts-modal,.umodal{position:absolute;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
-.pts-box,.ubox{background:#fff;border-radius:20px;padding:24px 20px;width:100%;max-width:310px;text-align:center}
+.pts-modal,.umodal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
+.pts-box,.ubox{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:300px;text-align:center}
 </style>
 </head>
 <body>
@@ -163,7 +208,7 @@ html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSyste
     <div class="sw-body">
       <div class="sw-prog-wrap"><div class="sw-prog" id="sw-prog" style="width:0%"></div></div>
       <div class="card-stack" id="card-stack"></div>
-      <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:800;margin-top:10px">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:10px" onclick="goTab('promos')">Ver recompensas</button></div>
+      <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700;margin-top:10px">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:10px" onclick="goTab('promos')">Ver recompensas</button></div>
       <div class="sw-btns" id="sw-btns"><button class="sw-btn no" onclick="swipeCard(false)">✕</button><button class="sw-btn yes" onclick="swipeCard(true)">♥</button></div>
     </div>
     <div class="bnav">
@@ -194,23 +239,22 @@ html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSyste
 
   <div class="pts-modal" id="conf-modal" style="display:none">
     <div class="pts-box">
-      <div style="font-size:48px;margin-bottom:10px">⚠️</div><div style="font-size:16px;font-weight:800;margin-bottom:6px">¿Confirmar canje?</div>
-      <div id="conf-msg" style="font-size:13px;color:#888;margin-bottom:16px;line-height:1.4"></div>
-      <div style="display:flex;gap:10px"><button style="flex:1;padding:12px;border:none;border-radius:10px;background:#eee;font-weight:700" onclick="$('conf-modal').style.display='none'">CANCELAR</button><button id="conf-btn-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#C0157A;color:#fff;font-weight:800" onclick="executeCanje()">OBTENER</button></div>
+      <div style="font-size:48px;margin-bottom:10px">⚠️</div><div style="font-size:16px;font-weight:bold;margin-bottom:6px">¿Confirmar canje?</div>
+      <div id="conf-msg" style="font-size:13px;color:#888;margin-bottom:16px"></div>
+      <div style="display:flex;gap:10px"><button style="flex:1;padding:12px;border:none;border-radius:10px;background:#eee" onclick="$('conf-modal').style.display='none'">Cancelar</button><button id="conf-btn-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#C0157A;color:#fff;font-weight:bold" onclick="executeCanje()">Sí, canjear</button></div>
     </div>
   </div>
   
   <div class="umodal" id="umodal">
     <canvas id="conf-cvs" style="position:absolute;inset:0;pointer-events:none;z-index:201"></canvas>
     <div class="ubox">
-      <div style="font-size:40px" id="u-ico">🎁</div><div style="font-size:16px;font-weight:800;margin-bottom:4px;text-transform:uppercase" id="u-title"></div>
+      <div style="font-size:40px" id="u-ico">🎁</div><div style="font-size:16px;font-weight:bold;margin-bottom:4px" id="u-title"></div>
       <div style="font-size:12px;color:#888;margin-bottom:12px" id="u-sub"></div>
-      <div style="font-size:24px;font-weight:800;color:#C0157A;padding:12px;background:#F5D0E8;border-radius:12px;margin-bottom:14px;letter-spacing:2px">DEP-<span id="u-code"></span></div>
-      <button class="btn-mg" onclick="$('umodal').style.display='none';stopConf()">¡ENTENDIDO!</button>
+      <div style="font-size:24px;font-weight:bold;color:#C0157A;padding:12px;background:#F5D0E8;border-radius:12px;margin-bottom:12px">DEP-<span id="u-code"></span></div>
+      <button class="btn-mg" onclick="$('umodal').style.display='none';stopConf()">¡Entendido!</button>
     </div>
   </div>
-  
-  <div class="pts-modal" id="pts-modal" style="display:none"><div class="pts-box"><div style="font-size:48px;margin-bottom:10px">🔒</div><div style="font-size:16px;font-weight:800">No tienes suficientes puntos</div><div style="font-size:24px;color:#C0157A;font-weight:800;margin:10px 0" id="pts-num"></div><button class="btn-mg" onclick="$('pts-modal').style.display='none';goMain()">Seguir deslizando</button></div></div>
+  <div class="pts-modal" id="pts-modal" style="display:none"><div class="pts-box"><div style="font-size:48px">🔒</div><div style="font-size:16px;font-weight:bold">Faltan puntos</div><div style="font-size:24px;color:#C0157A;font-weight:bold;margin:10px 0" id="pts-num"></div><button class="btn-mg" onclick="$('pts-modal').style.display='none';goMain()">Seguir deslizando</button></div></div>
 
 </div>
 
@@ -240,16 +284,19 @@ function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display=msg?'bl
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 // ═══════════════════════════════════════════════
-//  INIT
+//  INIT & MEMORIA DE AUTOCOMPLETADO
 // ═══════════════════════════════════════════════
 async function init(){
+  // Autocompletar Correo Y Contraseña
   const savedEmail = localStorage.getItem('dep_saved_email');
   const savedPass = localStorage.getItem('dep_saved_pass');
   if(savedEmail) {
     $('inp-email').value = savedEmail;
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
   }
-  if(savedPass) $('inp-password').value = savedPass;
+  if(savedPass) {
+    $('inp-password').value = savedPass;
+  }
 
   try{
     const r=await api({action:'por_cookie',cookie:st.uid});
@@ -260,7 +307,7 @@ async function init(){
 }
 
 // ═══════════════════════════════════════════════
-//  LOGIN / REGISTRO
+//  FLUJO DE LOGIN Y REGISTRO (CON OTP)
 // ═══════════════════════════════════════════════
 function mostrarRegistro() {$('step-auth').style.display='none';$('step-otp').style.display='none';$('step-register').style.display='flex';showErr('login-err','');}
 function mostrarLogin() {$('step-register').style.display='none';$('step-otp').style.display='none';$('step-auth').style.display='flex';showErr('reg-err','');}
@@ -273,9 +320,12 @@ async function hacerLogin() {
   try {
     const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
+    
+    // GUARDAR EN MEMORIA (Auto-login)
     localStorage.setItem('dep_saved_email', email);
     localStorage.setItem('dep_saved_pass', pass); 
     st.avatarUrl = localStorage.getItem('dep_avatar_'+email);
+    
     await procesarLoginExitoso(r.usuario);
   } catch(e) { showErr('login-err', e.message); }
   $('btn-login').disabled = false; loaderHide();
@@ -306,14 +356,18 @@ async function verificarYCrear() {
   const email = $('reg-email').value.trim();
   const pass = $('reg-password').value;
   const codigo = [0,1,2,3,4,5].map(i=>$('otp'+i).value).join('');
+  
   if(codigo.length<6) return showErr('otp-err','Introduce los 6 dígitos');
   
   $('btn-verificar').disabled = true; loaderShow();
   try {
     const r = await apiPost({action:'registro_otp', email, nombre, password:pass, codigo, cookie_id:st.uid});
     if(!r.ok) throw new Error(r.error);
+    
+    // GUARDAR EN MEMORIA
     localStorage.setItem('dep_saved_email', email);
     localStorage.setItem('dep_saved_pass', pass);
+    
     await procesarLoginExitoso(r.usuario);
   } catch(e) { showErr('otp-err', e.message); }
   $('btn-verificar').disabled = false; loaderHide();
@@ -350,7 +404,7 @@ async function cargarDatos(){
 }
 
 // ═══════════════════════════════════════════════
-//  SWIPER
+//  SWIPER (CAPAS 300x600 px)
 // ═══════════════════════════════════════════════
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
@@ -363,18 +417,20 @@ function renderSwiper(){
     div.dataset.pcampo = t.perfil_campo || '';
     div.dataset.pvalor = t.perfil_valor || '';
     
-    const bgUrl = t.img ? t.img : 'https://via.placeholder.com/300x600?text=Cargando';
-    const logoHtml = t.logo ? `<div class="c-logo"><img src="${t.logo}" alt="Logo"/></div>` : '';
+    // ESTRUCTURA DE CAPAS (A, B, C, D)
+    const imgBg = t.img ? t.img : 'https://via.placeholder.com/300x600?text=Falta+Imagen';
+    const logoHtml = t.logo ? `<div class="card-logo"><img src="${t.logo}" alt="Logo"/></div>` : '';
     
     div.innerHTML=`
-      <div class="c-bg" style="background-image:url('${bgUrl}')"></div>
+      <div class="card-bg" style="background-image:url('${imgBg}')"></div>
       ${logoHtml}
-      <div class="c-info">
-        <div class="c-name">${escH(t.nombre)}</div>
-        <div class="c-desc">${escH(t.descripcion||'')}</div>
+      <div class="card-info">
+        <div class="card-name">${escH(t.nombre)}</div>
+        <div class="card-brand">${escH(t.descripcion||'')}</div>
       </div>
       <div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div>
     `;
+    
     const depth=Math.min(4,pend.length-1)-vi; div.style.zIndex=vi+1;
     if(depth>0)div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
     attachDrag(div);stack.appendChild(div);
@@ -385,26 +441,32 @@ function renderSwiper(){
 function attachDrag(c){
   let sx=0,drag=false;
   const start=e=>{sx=(e.touches?e.touches[0].clientX:e.clientX);drag=true;c.style.transition='none';};
-  const move=e=>{if(!drag)return;e.preventDefault();const diff=(e.touches?e.touches[0].clientX:e.clientX)-sx;c.style.transform=`translateX(${diff}px) rotate(${diff*.05}deg)`;const iy=c.querySelector('.ind-y'),in_=c.querySelector('.ind-n');if(diff>20){iy.style.opacity=Math.min((diff-20)/30,1);in_.style.opacity=0;}else if(diff<-20){in_.style.opacity=Math.min((-diff-20)/30,1);iy.style.opacity=0;}else{iy.style.opacity=0;in_.style.opacity=0;}};
-  const end=e=>{if(!drag)return;drag=false;c.style.transition='transform 0.3s, opacity 0.3s';const diff=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;c.querySelectorAll('.ind').forEach(ind=>ind.style.opacity=0);if(diff>50)performSwipe(c,true);else if(diff<-50)performSwipe(c,false);else c.style.transform='';};
-  c.addEventListener('mousedown',start);c.addEventListener('touchstart',start,{passive:false});
+  const move=e=>{if(!drag)return;const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;const iy=c.querySelector('.ind-y'),in_=c.querySelector('.ind-n');if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;if(in_)in_.style.opacity=dx<-28?Math.min((-dx-28)/40,1):0;if(e.cancelable)e.preventDefault();};
+  const end=e=>{if(!drag)return;drag=false;c.style.transition='';const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;c.querySelectorAll('.ind').forEach(i=>i.style.opacity=0);if(dx>60)swipeCard(true);else if(dx<-60)swipeCard(false);else c.style.transform='';};
+  c.addEventListener('mousedown',start);c.addEventListener('touchstart',start,{passive:true});
   document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});
   document.addEventListener('mouseup',end);document.addEventListener('touchend',end);
 }
 
-async function performSwipe(card, isLike){
-  card.classList.add(isLike?'liked':'gone');
-  const cardId=card.dataset.id; const pcampo=card.dataset.pcampo; const pvalor=card.dataset.pvalor;
+async function swipeCard(like){
+  if(st.swipeIdx>=st.tarjetas.length)return;
+  const t=st.tarjetas[st.swipeIdx]; const card=$('sc-'+t.id); if(card)card.classList.add(like?'liked':'gone');
+  
+  const pcampo = card ? card.dataset.pcampo : '';
+  const pvalor = card ? card.dataset.pvalor : '';
+  
   st.swipeIdx++;
   const email=st.usuario?.id_email||st.usuario?.email||'';
   st.puntos++; updatePts(); showToast('+1 punto 🫘');
-  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:cardId, like:isLike, perfil_campo:pcampo, perfil_valor:pvalor})
+  
+  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like, perfil_campo:pcampo, perfil_valor:pvalor})
     .then(r=>{if(r.ok){st.puntos=r.puntos_restantes; updatePts();}}).catch(()=>{});
+    
   setTimeout(renderSwiper,300);
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER PROMOS & CONCURSOS (DISEÑO EXACTO SCREENSHOT)
+//  RECOMPENSAS Y CANJE
 // ═══════════════════════════════════════════════
 function getUnlockCode(id, tipo) {
   if(!st.usuario || !st.usuario.canjes) return null;
@@ -417,46 +479,29 @@ function renderPromos(){
   const body=$('promos-body');if(!body)return;
   $('promo-pts').textContent=st.puntos+' PTS';
   if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.</div>';return;}
-  
   let html='';
   st.recompensas.forEach(r=>{
-    const ptsReq = Number(r.puntos_requeridos||r['puntos requeridos']||0);
-    const pct = ptsReq > 0 ? Math.min(Math.round((st.puntos/ptsReq)*100), 100) : 0;
-    const faltan = Math.max(ptsReq - st.puntos, 0);
-    const isLocked = st.puntos < ptsReq;
+    const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0);
+    const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
+    const faltan = Math.max(pts - st.puntos, 0);
+    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
     const unlockedCode = getUnlockCode(r.id, 'recompensa');
 
-    let actionText = '';
-    let clickAttr = '';
-
     if (unlockedCode) {
-        actionText = `<span style="color:#4CAF50">CÓDIGO: DEP-${unlockedCode}</span>`;
-        clickAttr = `onclick="alert('Ya canjeaste esto. Tu código es DEP-${unlockedCode}')"`;
-    } else if (!isLocked) {
-        actionText = `OBTENER`;
-        clickAttr = `onclick="tryUnlock('${r.emoji||'🎁'}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}','${r.id}','recompensa',${ptsReq})"`;
+       statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Desbloqueado</span>`;
+       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">DEP-${unlockedCode}</div>`;
+       clickAction = `onclick="alert('Ya canjeaste esta recompensa. Código: DEP-${unlockedCode}')"`;
+       barColor = `style="width:100%;background:#4CAF50"`;
+    } else if (st.puntos >= pts) {
+       statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
+       clickAction = `onclick="tryUnlock('${r.emoji||'🎁'}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}','${r.id}','recompensa',${pts})"`;
+       barColor = `style="width:100%;background:#C0157A"`;
     } else {
-        actionText = `🔒 FALTAN ${faltan} PTS`;
-        clickAttr = `onclick="$('pts-num').textContent='Faltan ${faltan} pts';$('pts-modal').style.display='flex'"`;
+       statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
+       clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
+       barColor = `style="width:${pct}%;background:#C0157A"`;
     }
-
-    html += `
-    <div class="pc-new ${isLocked ? 'locked' : ''}" ${clickAttr}>
-        <div class="pc-img-box">${r.emoji || '🎁'}</div>
-        <div class="pc-content">
-            <div class="pc-header">
-                <div class="pc-texts">
-                    <div class="pc-title">${escH(r.nombre)}</div>
-                    <div class="pc-pts">${ptsReq} pts</div>
-                </div>
-                <div class="pc-action">${actionText}</div>
-            </div>
-            <div class="pc-prog-row">
-                <div class="pc-prog-bar"><div class="pc-prog-fill" style="width:${unlockedCode?100:pct}%"></div></div>
-                <div class="pc-prog-pct">${unlockedCode?'100':pct}%</div>
-            </div>
-        </div>
-    </div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
@@ -465,46 +510,29 @@ function renderConcursos(){
   const body=$('contests-body');if(!body)return;
   $('contest-pts').textContent=st.puntos+' PTS';
   if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos disponibles.</div>';return;}
-  
   let html='';
   st.concursos.forEach(c=>{
-    const ptsReq = Number(c.puntos_requeridos||c['puntos requeridos']||0);
-    const pct = ptsReq > 0 ? Math.min(Math.round((st.puntos/ptsReq)*100), 100) : 0;
-    const faltan = Math.max(ptsReq - st.puntos, 0);
-    const isLocked = st.puntos < ptsReq;
+    const pts = Number(c.puntos_requeridos||c['puntos requeridos']||0);
+    const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
+    const faltan = Math.max(pts - st.puntos, 0);
+    let clickAction = '', statusTag = '', barColor = '', codeDisplay = '';
     const unlockedCode = getUnlockCode(c.id, 'concurso');
 
-    let actionText = '';
-    let clickAttr = '';
-
     if (unlockedCode) {
-        actionText = `<span style="color:#4CAF50">TICKET: DEP-${unlockedCode}</span>`;
-        clickAttr = `onclick="alert('Ya participas. Ticket: DEP-${unlockedCode}')"`;
-    } else if (!isLocked) {
-        actionText = `PARTICIPAR`;
-        clickAttr = `onclick="tryUnlock('${c.emoji||'🏅'}','${escH(c.nombre)}','${escH(c.descripcion||'')}','${c.id}','concurso',${ptsReq})"`;
+       statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Participando</span>`;
+       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Ticket: DEP-${unlockedCode}</div>`;
+       clickAction = `onclick="alert('Ya estás participando. Ticket: DEP-${unlockedCode}')"`;
+       barColor = `style="width:100%;background:#4CAF50"`;
+    } else if (st.puntos >= pts) {
+       statusTag = `<span class="ptag ptag-ok">Participar</span>`;
+       clickAction = `onclick="tryUnlock('${c.emoji||'🏅'}','${escH(c.nombre)}','${escH(c.descripcion||'')}','${c.id}','concurso',${pts})"`;
+       barColor = `style="width:100%;background:#C0157A"`;
     } else {
-        actionText = `🔒 FALTAN ${faltan} PTS`;
-        clickAttr = `onclick="$('pts-num').textContent='Faltan ${faltan} pts';$('pts-modal').style.display='flex'"`;
+       statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
+       clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
+       barColor = `style="width:${pct}%;background:#C0157A"`;
     }
-
-    html += `
-    <div class="pc-new ${isLocked ? 'locked' : ''}" ${clickAttr}>
-        <div class="pc-img-box">${c.emoji || '🏅'}</div>
-        <div class="pc-content">
-            <div class="pc-header">
-                <div class="pc-texts">
-                    <div class="pc-title">${escH(c.nombre)}</div>
-                    <div class="pc-pts">${ptsReq} pts</div>
-                </div>
-                <div class="pc-action">${actionText}</div>
-            </div>
-            <div class="pc-prog-row">
-                <div class="pc-prog-bar"><div class="pc-prog-fill" style="width:${unlockedCode?100:pct}%"></div></div>
-                <div class="pc-prog-pct">${unlockedCode?'100':pct}%</div>
-            </div>
-        </div>
-    </div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div ${barColor} style="height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
@@ -512,14 +540,14 @@ function renderConcursos(){
 let pendingCanje = null;
 function tryUnlock(ico, title, instrucciones, id, tipo, coste){
   pendingCanje = {ico, title, instrucciones, id, tipo};
-  $('conf-msg').innerHTML = `Se descontarán <b style="color:#C0157A;font-size:16px">${coste} puntos</b> de tu saldo.`;
+  $('conf-msg').innerHTML = `Se descontarán <b style="color:#C0157A;font-size:16px">${coste} frijoles</b> de tu saldo.`;
   $('conf-modal').style.display='flex';
 }
 
 async function executeCanje() {
   if(!pendingCanje) return;
   const {ico, title, instrucciones, id, tipo} = pendingCanje;
-  $('conf-btn-yes').disabled = true; $('conf-btn-yes').textContent = 'PROCESANDO...';
+  $('conf-btn-yes').disabled = true; $('conf-btn-yes').textContent = 'Procesando...';
   const email = st.usuario?.id_email || st.usuario?.email || '';
   try {
     const r = await apiPost({action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo});
@@ -532,11 +560,11 @@ async function executeCanje() {
       if(tipo === 'recompensa') renderPromos(); else renderConcursos();
     } else { alert("Error: " + r.error); $('conf-modal').style.display='none'; }
   } catch(e) { alert("Error de conexión"); $('conf-modal').style.display='none'; }
-  $('conf-btn-yes').disabled = false; $('conf-btn-yes').textContent = 'OBTENER';
+  $('conf-btn-yes').disabled = false; $('conf-btn-yes').textContent = 'Sí, canjear';
 }
 
 // ═══════════════════════════════════════════════
-//  PERFIL
+//  PERFIL COMPLETO
 // ═══════════════════════════════════════════════
 function renderProfile(){
   const body=$('prof-body');if(!body)return;
@@ -590,6 +618,7 @@ async function guardarPerfil(){
   const email=st.usuario?.id_email||st.usuario?.email||'';
   const mCb = document.querySelectorAll('.mascota-cb:checked');
   const mascotas = Array.from(mCb).map(cb=>cb.value).join(', ');
+
   const perfil={nombre:$('pf-nombre').value, genero:$('pf-genero').value, fecha_nacimiento:$('pf-nacimiento').value, situacion_sentimental:$('pf-sentimental').value, hijos:$('pf-hijos').value, mascotas: mascotas};
   if(st.usuario) Object.assign(st.usuario, perfil);
   try{await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});showToast('✓ Guardado');}catch(e){showToast('Error al guardar');}
@@ -597,8 +626,14 @@ async function guardarPerfil(){
 
 function logout(){
   st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0;
+  
+  // Limpiamos inputs pero MANTENEMOS la memoria en LocalStorage para el auto-login la próxima vez
   $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
   showScreen('s-login');
+  
+  // Si quisiéramos borrar la memoria al salir, descomentaríamos estas dos líneas:
+  // localStorage.removeItem('dep_saved_email');
+  // localStorage.removeItem('dep_saved_pass');
 }
 
 // CONFETTI
