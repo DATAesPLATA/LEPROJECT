@@ -48,10 +48,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .sw-title{font-size:13px;font-weight:700;color:#fff}
 .sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
-.sw-prog-wrap{width:100%;flex-shrink:0;margin-bottom:4px}
-.sw-prog-label{font-size:11px;font-weight:700;color:#666;margin-bottom:4px}
-.sw-prog-bar-wrap{width:100%;height:5px;background:#eee;border-radius:5px;overflow:hidden}
-.sw-prog-bar{height:100%;background:#C0157A;border-radius:5px;transition:width .3s}
 
 .card-stack{
   position:relative;
@@ -160,6 +156,28 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .loader{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .loader.hide{opacity:0;pointer-events:none}
 .toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity .2s;z-index:150}
+
+.limit-popup{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  padding:16px 24px;
+  border-radius:16px;
+  opacity:0;
+  transition:opacity .3s;
+  z-index:160;
+  text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  min-width:260px;
+}
+.limit-popup.show{opacity:1}
+.limit-popup.like-bg{background:#C0157A}
+.limit-popup.super-bg{background:#FFD700;color:#1A1A1A}
+
 .pts-modal,.umodal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
 .pts-box,.ubox{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:300px;text-align:center}
 </style>
@@ -169,6 +187,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 
   <div class="loader" id="loader"><img src="assets/brillo-frijo.gif" width="88" alt=""/><div style="width:28px;height:28px;border:3px solid #eee;border-top-color:#C0157A;border-radius:50%;animation:spin .8s linear infinite"></div></div>
   <div class="toast" id="toast">+1 punto 🫘</div>
+  <div class="limit-popup" id="limit-popup"></div>
 
   <div class="screen active" id="s-login">
     <div class="login-wrap">
@@ -209,14 +228,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   <div class="screen" id="s-swiper">
     <div class="sw-hdr"><span class="sw-title">¡Desliza y gana! 🫘</span><span class="bpts" id="sw-pts">0 PTS</span></div>
     <div class="sw-body">
-      <div class="sw-prog-wrap">
-        <div class="sw-prog-label" id="likes-label">Tienes 10 likes para hoy</div>
-        <div class="sw-prog-bar-wrap"><div class="sw-prog-bar" id="likes-bar" style="width:100%"></div></div>
-      </div>
-      <div class="sw-prog-wrap">
-        <div class="sw-prog-label" id="super-label">Tienes 3 Super Amo para hoy</div>
-        <div class="sw-prog-bar-wrap"><div class="sw-prog-bar" id="super-bar" style="width:100%;background:#FFD700"></div></div>
-      </div>
       <div class="card-stack" id="card-stack"></div>
       <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700;margin-top:10px">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:10px" onclick="goTab('promos')">Ver recompensas</button></div>
       <div class="sw-btns" id="sw-btns">
@@ -292,7 +303,7 @@ const $=id=>document.getElementById(id);
 
 function showScreen(id){['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
 function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='contests') renderConcursos(); if(t==='profile') renderProfile();}
-function goMain(){showScreen('s-swiper');updateLimitsUI();}
+function goMain(){showScreen('s-swiper');}
 function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
 function showToast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
 function loaderShow(){$('loader').style.display='flex';$('loader').classList.remove('hide');}
@@ -300,16 +311,43 @@ function loaderHide(){$('loader').classList.add('hide');setTimeout(()=>$('loader
 function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display=msg?'block':'none';}
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
-function updateLimitsUI(){
-  const likesBar = $('likes-bar');
-  const superBar = $('super-bar');
-  const likesLabel = $('likes-label');
-  const superLabel = $('super-label');
+function showLimitPopup(isSuperLike, remaining){
+  const popup = $('limit-popup');
+  if(!popup) return;
   
-  if(likesBar) likesBar.style.width = ((st.likesRestantes/10)*100)+'%';
-  if(superBar) superBar.style.width = ((st.superRestantes/3)*100)+'%';
-  if(likesLabel) likesLabel.textContent = `Tienes ${st.likesRestantes} likes para hoy`;
-  if(superLabel) superLabel.textContent = `Tienes ${st.superRestantes} Super Amo para hoy`;
+  popup.className = 'limit-popup';
+  
+  if(remaining > 0) {
+    if(isSuperLike) {
+      popup.classList.add('super-bg');
+      popup.textContent = `Aprovecha tus Super Amo, te quedan ${remaining} hoy ⭐`;
+    } else {
+      popup.classList.add('like-bg');
+      popup.textContent = `Aprovecha tus likes, te quedan ${remaining} hoy ♥`;
+    }
+  } else {
+    const horasHastaReset = calcularHorasHastaReset();
+    if(isSuperLike) {
+      popup.classList.add('super-bg');
+      popup.textContent = `En ${horasHastaReset} horas, podrás seguir opinando ⭐`;
+    } else {
+      popup.classList.add('like-bg');
+      popup.textContent = `En ${horasHastaReset} horas, podrás seguir opinando ♥`;
+    }
+  }
+  
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 2000);
+}
+
+function calcularHorasHastaReset(){
+  const ahora = new Date();
+  const manana = new Date(ahora);
+  manana.setDate(manana.getDate() + 1);
+  manana.setHours(0, 0, 0, 0);
+  const diff = manana - ahora;
+  const horas = Math.ceil(diff / (1000 * 60 * 60));
+  return horas;
 }
 
 // ═══════════════════════════════════════════════
@@ -414,7 +452,6 @@ async function procesarLoginExitoso(usuario) {
   st.swipeIdx=0; 
   await cargarDatos();
   updatePts();
-  updateLimitsUI();
   showScreen('s-swiper');
   renderSwiper();
 }
@@ -504,12 +541,11 @@ async function swipeCard(like, superLike = false){
   
   // Validar límites en cliente
   if(superLike && st.superRestantes <= 0) {
-    alert('⚠️ Ya usaste tus 3 Super Amo del día. Vuelve mañana 🫘');
+    showLimitPopup(true, 0);
     return;
   }
   if(!superLike && st.likesRestantes <= 0) {
-    alert('⚠️ Alcanzaste el límite de 10 likes por día. Vuelve mañana 🫘');
-    goTab('promos');
+    showLimitPopup(false, 0);
     return;
   }
   
@@ -530,8 +566,8 @@ async function swipeCard(like, superLike = false){
   else st.likesRestantes--;
   
   updatePts(); 
-  updateLimitsUI();
   showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
+  showLimitPopup(superLike, superLike ? st.superRestantes : st.likesRestantes);
   
   apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:true, perfil_campo:pcampo, perfil_valor:pvalor, super_like:superLike})
     .then(r=>{
@@ -540,10 +576,6 @@ async function swipeCard(like, superLike = false){
         st.likesRestantes=r.likes_restantes||0;
         st.superRestantes=r.super_restantes||0;
         updatePts();
-        updateLimitsUI();
-      } else if(r.error === 'Límite diario alcanzado'){
-        alert('⚠️ Alcanzaste tu límite diario. Vuelve mañana 🫘');
-        goTab('promos');
       }
     }).catch(()=>{});
     
