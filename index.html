@@ -49,7 +49,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-top-row{display:flex;align-items:center;justify-content:space-between;width:100%}
 .sw-geo{font-size:11px;color:#ccc;font-weight:400}
 .sw-title{font-size:13px;font-weight:700;color:#fff}
-.sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
+.sw-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
 
 .card-stack{
   position:relative;
@@ -135,8 +135,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn.disabled{opacity:0.4;cursor:not-allowed}
 .circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
 .progress-ring{fill:none;stroke-width:3}
-.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
-.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end;margin-bottom:20px}
+.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px 24px;text-align:center}
+.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end}
 .beans-celebration img{width:100px;object-fit:contain}
 
 .scrollbody{flex:1;overflow-y:auto;padding:14px;min-height:0}
@@ -598,15 +598,18 @@ function renderSwiper(){
 
 function attachDrag(c){
   let sx=0,drag=false;
-  const start=e=>{sx=(e.touches?e.touches[0].clientX:e.clientX);drag=true;c.style.transition='none';};
+  const start=e=>{
+    sx=(e.touches?e.touches[0].clientX:e.clientX);
+    drag=true;
+    c.style.transition='none';
+  };
   const move=e=>{
     if(!drag)return;
     const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
     
-    // Bloquear swipe derecha si no hay likes
+    // BLOQUEAR COMPLETAMENTE swipe derecha si no hay likes
     if(dx > 0 && st.likesRestantes <= 0) {
-      c.style.transform='';
-      return;
+      return; // No permitir ningún movimiento a la derecha
     }
     
     c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;
