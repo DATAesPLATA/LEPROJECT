@@ -313,7 +313,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   <div class="umodal" id="umodal">
     <canvas id="conf-cvs" style="position:absolute;inset:0;pointer-events:none;z-index:201"></canvas>
     <div class="ubox">
-      <div style="font-size:40px" id="u-ico">🎁</div><div style="font-size:16px;font-weight:bold;margin-bottom:4px" id="u-title"></div>
+      <div style="font-size:40px" id="u-ico">🎁</div>
+      <div style="font-size:16px;font-weight:bold;margin-bottom:4px" id="u-title"></div>
       <div style="font-size:12px;color:#888;margin-bottom:12px" id="u-sub"></div>
       <div style="font-size:24px;font-weight:bold;color:#C0157A;padding:12px;background:#F5D0E8;border-radius:12px;margin-bottom:12px">DEP-<span id="u-code"></span></div>
       <button class="btn-mg" onclick="$('umodal').style.display='none';stopConf()">¡Entendido!</button>
@@ -337,6 +338,9 @@ function getOrCreateUID(){let id=localStorage.getItem(UID_KEY);if(!id){id=genUUI
 
 const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null, likesRestantes:10, superRestantes:3, geo:'', pais:'', preferencias:null, countdownInterval:null};
 const $=id=>document.getElementById(id);
+
+// Variable para controlar popups (solo primera vez por sesión)
+let popupShown = {like: false, super: false};
 
 function showScreen(id){['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
 function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='contests') renderConcursos(); if(t==='profile') renderProfile();}
@@ -392,6 +396,11 @@ function updateProgressCircles(){
 function showLimitPopup(isSuperLike, remaining){
   const popup = $('limit-popup');
   if(!popup) return;
+  
+  // Solo mostrar en la primera vez de la sesión
+  const key = isSuperLike ? 'super' : 'like';
+  if(popupShown[key]) return;
+  popupShown[key] = true;
   
   popup.className = 'limit-popup';
   
@@ -508,7 +517,7 @@ async function hacerLogin() {
   if(!email || !pass) return showErr('login-err', 'Ingresa correo y contraseña');
   $('btn-login').disabled = true; loaderShow();
   try {
-    const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid});
+    const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid, geo:st.geo, pais:st.pais});
     if(!r.ok) throw new Error(r.error);
     
     localStorage.setItem('dep_saved_email', email);
@@ -549,7 +558,7 @@ async function verificarYCrear() {
   
   $('btn-verificar').disabled = true; loaderShow();
   try {
-    const r = await apiPost({action:'registro_otp', email, nombre, password:pass, codigo, cookie_id:st.uid});
+    const r = await apiPost({action:'registro_otp', email, nombre, password:pass, codigo, cookie_id:st.uid, geo:st.geo, pais:st.pais});
     if(!r.ok) throw new Error(r.error);
     
     localStorage.setItem('dep_saved_email', email);
@@ -833,14 +842,14 @@ function renderPromos(){
     const faltan = Math.max(pts - st.puntos, 0);
     
     const emoji = r.emoji || '🎁';
-    const nombre = r.nombre || 'Sin nombre';
-    const detalle = r.detalle_categoria ? ' - ' + r.detalle_categoria : '';
+    const titulo = r.nombre_marca || 'Sin marca';
+    const subtitulo = r.detalle_categoria || '';
     
     let clickAction = '', statusTag = '', barWidth = '';
     
     if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
-       clickAction = `onclick="tryUnlock('${emoji}','${escH(nombre)}','${escH(r.instrucciones_canje||'')}','${r.id_recompensa||r.id}','recompensa',${pts})"`;
+       clickAction = `onclick="tryUnlock('${emoji}','${escH(titulo)}','${escH(subtitulo)}','${escH(r.instrucciones_canje||'')}','${escH(r.caduca||'')}','${r.id_recompensa||r.id}','recompensa',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
@@ -854,8 +863,8 @@ function renderPromos(){
           ${emoji}
         </div>
         <div class="pci-info">
-          <div class="pci-name">${escH(nombre)}${escH(detalle)}</div>
-          <div class="pci-meta">${pts} pts</div>
+          <div class="pci-name">${escH(titulo)}</div>
+          <div class="pci-meta">${escH(subtitulo)}</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
             <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
               <div style="${barWidth};height:100%;border-radius:5px"></div>
@@ -891,14 +900,14 @@ function renderConcursos(){
     const faltan = Math.max(pts - st.puntos, 0);
     
     const emoji = c.emoji || '🏅';
-    const nombre = c.nombre || 'Sin nombre';
-    const detalle = c.detalle_categoria ? ' - ' + c.detalle_categoria : '';
+    const titulo = c.nombre_marca || 'Sin marca';
+    const subtitulo = c.detalle_categoria || '';
     
     let clickAction = '', statusTag = '', barWidth = '';
 
     if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Participar</span>`;
-       clickAction = `onclick="tryUnlock('${emoji}','${escH(nombre)}','${escH(c.descripcion||'')}','${c.id_concurso||c.id}','concurso',${pts})"`;
+       clickAction = `onclick="tryUnlock('${emoji}','${escH(titulo)}','${escH(subtitulo)}','${escH(c.instrucciones_canje||'')}','','${c.id_concurso||c.id}','concurso',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
@@ -912,8 +921,8 @@ function renderConcursos(){
           ${emoji}
         </div>
         <div class="pci-info">
-          <div class="pci-name">${escH(nombre)}${escH(detalle)}</div>
-          <div class="pci-meta">${pts} pts</div>
+          <div class="pci-name">${escH(titulo)}</div>
+          <div class="pci-meta">${escH(subtitulo)}</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
             <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
               <div style="${barWidth};height:100%;border-radius:5px"></div>
@@ -929,130 +938,283 @@ function renderConcursos(){
   body.innerHTML=html;
 }
 
-let pendingCanje = null;
-function tryUnlock(ico, title, instrucciones, id, tipo, coste){
-  pendingCanje = {ico, title, instrucciones, id, tipo};
-  $('conf-msg').innerHTML = `Se descontarán <b style="color:#C0157A;font-size:16px">${coste} frijoles</b> de tu saldo.`;
-  $('conf-modal').style.display='flex';
+let pendingCanje={};
+function tryUnlock(emoji, titulo, subtitulo, instrucciones, caduca, id, tipo, pts){
+  pendingCanje = {emoji, titulo, subtitulo, instrucciones, caduca, id, tipo, pts};
+  const modal = $('conf-modal');
+  const msg = $('conf-msg');
+  if(!modal || !msg) return;
+  
+  msg.innerHTML = `
+    <div style="font-size:16px;font-weight:700;margin-bottom:4px">${escH(titulo)}</div>
+    <div style="font-size:13px;color:#888">${escH(subtitulo)}</div>
+    <div style="margin-top:10px;font-size:14px;font-weight:bold;color:#C0157A">${pts} puntos</div>
+  `;
+  modal.style.display='flex';
 }
 
-async function executeCanje() {
-  if(!pendingCanje) return;
-  const {ico, title, instrucciones, id, tipo} = pendingCanje;
-  $('conf-btn-yes').disabled = true; $('conf-btn-yes').textContent = 'Procesando...';
-  const email = st.usuario?.id_email || st.usuario?.email || '';
+async function executeCanje(){
+  $('conf-modal').style.display='none';
+  loaderShow();
+  
+  const email=st.usuario?.id_email||st.usuario?.email||'';
+  
   try {
-    const r = await apiPost({action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo});
-    if(r.ok) {
-      st.puntos = r.puntos_restantes;
-      updatePts();
-      $('conf-modal').style.display='none';
-      $('u-ico').textContent = ico; $('u-title').textContent = title; $('u-sub').textContent = instrucciones; $('u-code').textContent = r.codigo;
-      $('umodal').style.display='flex'; setTimeout(startConf, 60);
-      if(tipo === 'recompensa') renderPromos(); else renderConcursos();
-    } else { alert("Error: " + r.error); $('conf-modal').style.display='none'; }
-  } catch(e) { alert("Error de conexión"); $('conf-modal').style.display='none'; }
-  $('conf-btn-yes').disabled = false; $('conf-btn-yes').textContent = 'Sí, canjear';
+    const r = await apiPost({
+      action:'canje',
+      email,
+      cookie_id:st.uid,
+      recompensa_id:pendingCanje.id,
+      tipo:pendingCanje.tipo
+    });
+    
+    if(!r.ok) throw new Error(r.error);
+    
+    st.puntos = r.puntos_restantes;
+    updatePts();
+    
+    // MOSTRAR MODAL CON CONFETTI
+    const modal = $('umodal');
+    const ico = $('u-ico');
+    const title = $('u-title');
+    const sub = $('u-sub');
+    const code = $('u-code');
+    
+    ico.textContent = pendingCanje.emoji;
+    title.textContent = pendingCanje.titulo;
+    
+    // SUBTÍTULO: detalle_categoria + instrucciones + caduca
+    let subtituloCompleto = pendingCanje.subtitulo || '';
+    if(pendingCanje.instrucciones) {
+      subtituloCompleto += (subtituloCompleto ? ' • ' : '') + pendingCanje.instrucciones;
+    }
+    if(pendingCanje.caduca) {
+      subtituloCompleto += (subtituloCompleto ? ' • ' : '') + 'Caduca: ' + pendingCanje.caduca;
+    }
+    
+    sub.textContent = subtituloCompleto;
+    code.textContent = r.codigo;
+    
+    modal.style.display='flex';
+    startConf();
+    
+    // Recargar recompensas/concursos
+    if(pendingCanje.tipo === 'recompensa') renderPromos();
+    else renderConcursos();
+    
+  } catch(err) {
+    showToast('Error: ' + err.message);
+  }
+  
+  loaderHide();
+}
+
+let confInterval;
+function startConf(){
+  const cvs=$('conf-cvs');
+  if(!cvs)return;
+  const ctx=cvs.getContext('2d');
+  cvs.width=window.innerWidth;
+  cvs.height=window.innerHeight;
+  const pieces=[];
+  for(let i=0;i<60;i++){
+    pieces.push({
+      x:Math.random()*cvs.width,
+      y:-20,
+      r:Math.random()*4+2,
+      dx:Math.random()*2-1,
+      dy:Math.random()*3+2,
+      c:['#C0157A','#FFD700','#4CAF50','#FF5722'][Math.floor(Math.random()*4)]
+    });
+  }
+  confInterval=setInterval(()=>{
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    pieces.forEach(p=>{
+      p.x+=p.dx;p.y+=p.dy;
+      ctx.fillStyle=p.c;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+      if(p.y>cvs.height){p.y=-20;p.x=Math.random()*cvs.width;}
+    });
+  },30);
+}
+
+function stopConf(){
+  if(confInterval){clearInterval(confInterval);confInterval=null;}
+  const cvs=$('conf-cvs');
+  if(cvs){const ctx=cvs.getContext('2d');ctx.clearRect(0,0,cvs.width,cvs.height);}
 }
 
 // ═══════════════════════════════════════════════
-//  PERFIL COMPLETO
+//  PERFIL
 // ═══════════════════════════════════════════════
 function renderProfile(){
-  const body=$('prof-body');if(!body)return;
+  const body=$('prof-body');
+  if(!body) return;
+  
   $('prof-pts').textContent=st.puntos+' PTS';
-  const u=st.usuario||{}; const email=u.id_email||u.email||''; const nombre=u.nombre||email.split('@')[0]||'Usuario';
-  const initials=nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
   
-  let fNac = u.fecha_nacimiento || '';
-  if(fNac.length > 10) { try { fNac = new Date(fNac).toISOString().split('T')[0]; } catch(e){} }
+  const u=st.usuario||{};
+  const email=u.id_email||u.email||'';
+  const nombre=u.nombre||'Usuario';
   
-  const mList = ['Perros', 'Gatos', 'Roedores', 'Exóticos', 'Caballos', 'Ganadería', 'No tengo'];
-  const userMascotas = String(u.mascotas||'').split(',').map(s=>s.trim());
-  let mHtml = '';
-  mList.forEach(m => {
-     const checked = userMascotas.includes(m) ? 'checked' : '';
-     mHtml += `<label style="background:#f9f9f9;padding:8px 12px;border-radius:20px;border:1px solid #eee;display:flex;align-items:center;gap:6px;font-size:13px"><input type="checkbox" value="${m}" ${checked} class="mascota-cb"/> ${m}</label>`;
-  });
+  const avatarHtml = st.avatarUrl 
+    ? `<img src="${st.avatarUrl}" alt="Avatar"/>` 
+    : nombre.charAt(0).toUpperCase();
   
   body.innerHTML=`
     <div class="ph">
-      <div class="av" onclick="$('avatar-inp').click()">${st.avatarUrl?`<img src="${st.avatarUrl}"/>`:initials}</div>
-      <div><div class="pname">${nombre}</div><div class="prole">${email}</div></div>
+      <label class="av" onclick="cambiarAvatar()" style="cursor:pointer">
+        ${avatarHtml}
+      </label>
+      <div style="flex:1">
+        <div class="pname">${escH(nombre)}</div>
+        <div class="prole">${escH(email)}</div>
+      </div>
     </div>
-    <div class="slbl">Mis Datos</div>
-    <div class="pf-field"><label>Nombre</label><input type="text" id="pf-nombre" value="${u.nombre||''}"/></div>
-    <div class="pf-field"><label>Género</label><select id="pf-genero"><option value="">Selecciona</option><option value="Hombre" ${u.genero==='Hombre'?'selected':''}>Hombre</option><option value="Mujer" ${u.genero==='Mujer'?'selected':''}>Mujer</option><option value="Otro" ${u.genero==='Otro'?'selected':''}>Otro</option></select></div>
-    <div class="pf-field"><label>Fecha de nacimiento</label><input type="date" id="pf-nacimiento" value="${fNac}"/></div>
-    <div class="pf-field"><label>Situación sentimental</label><select id="pf-sentimental"><option value="">Selecciona</option><option value="Soltero/a" ${u.situacion_sentimental==='Soltero/a'?'selected':''}>Soltero/a</option><option value="En pareja" ${u.situacion_sentimental==='En pareja'?'selected':''}>En pareja</option></select></div>
-    <div class="pf-field"><label>¿Hijos?</label><select id="pf-hijos"><option value="">Selecciona</option><option value="No" ${u.hijos==='No'?'selected':''}>No</option><option value="Sí" ${u.hijos==='Sí'?'selected':''}>Sí</option></select></div>
+    <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
+    
+    <div class="slbl">Completa tu perfil y gana 3 puntos por campo</div>
+    
     <div class="pf-field">
-      <label>¿Mascotas?</label>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">${mHtml}</div>
+      <label>Nombre completo</label>
+      <input id="pf-nombre" value="${escH(u.nombre||'')}" placeholder="Tu nombre completo"/>
     </div>
-    <button class="btn-mg" style="margin-top:10px" onclick="guardarPerfil()">Guardar Perfil</button>
-    <input type="file" id="avatar-inp" accept="image/*" style="display:none" onchange="onAvatarChange(this)"/>
-    <button class="updbtn" style="margin-top:20px" onclick="logout()">Cerrar sesión</button>
+    
+    <div class="pf-field">
+      <label>Género</label>
+      <select id="pf-genero">
+        <option value="">Selecciona...</option>
+        <option ${u.genero==='Masculino'?'selected':''}>Masculino</option>
+        <option ${u.genero==='Femenino'?'selected':''}>Femenino</option>
+        <option ${u.genero==='No binario'?'selected':''}>No binario</option>
+        <option ${u.genero==='Prefiero no decir'?'selected':''}>Prefiero no decir</option>
+      </select>
+    </div>
+    
+    <div class="pf-field">
+      <label>Fecha de nacimiento</label>
+      <input id="pf-fecha" type="date" value="${u.fecha_nacimiento||''}"/>
+    </div>
+    
+    <div class="pf-field">
+      <label>Situación sentimental</label>
+      <select id="pf-situacion">
+        <option value="">Selecciona...</option>
+        <option ${u.situacion_sentimental==='Soltero/a'?'selected':''}>Soltero/a</option>
+        <option ${u.situacion_sentimental==='En una relación'?'selected':''}>En una relación</option>
+        <option ${u.situacion_sentimental==='Casado/a'?'selected':''}>Casado/a</option>
+        <option ${u.situacion_sentimental==='Divorciado/a'?'selected':''}>Divorciado/a</option>
+        <option ${u.situacion_sentimental==='Viudo/a'?'selected':''}>Viudo/a</option>
+        <option ${u.situacion_sentimental==='Es complicado'?'selected':''}>Es complicado</option>
+      </select>
+    </div>
+    
+    <div class="pf-field">
+      <label>¿Tienes hijos?</label>
+      <select id="pf-hijos">
+        <option value="">Selecciona...</option>
+        <option ${u.hijos==='No'?'selected':''}>No</option>
+        <option ${u.hijos==='Sí, 1'?'selected':''}>Sí, 1</option>
+        <option ${u.hijos==='Sí, 2'?'selected':''}>Sí, 2</option>
+        <option ${u.hijos==='Sí, 3 o más'?'selected':''}>Sí, 3 o más</option>
+      </select>
+    </div>
+    
+    <div class="pf-field">
+      <label>Mascotas</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+        ${['🐶 Perro','🐱 Gato','🐦 Ave','🐠 Pez','🐹 Roedor','🦎 Reptil','🐴 Caballo','Ninguna'].map(m=>{
+          const checked = (u.mascotas||'').includes(m) ? 'checked' : '';
+          return `<label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer">
+            <input type="checkbox" class="pf-mascota" value="${m}" ${checked} 
+              style="width:16px;height:16px;cursor:pointer"/>
+            ${m}
+          </label>`;
+        }).join('')}
+      </div>
+    </div>
+    
+    <button class="updbtn" onclick="guardarPerfil()" style="margin-top:20px;background:#C0157A;color:#fff">
+      Guardar cambios
+    </button>
   `;
 }
 
-function onAvatarChange(inp){
-  const f=inp.files?.[0];if(!f)return;
-  const r=new FileReader();r.onload=e=>{
-    st.avatarUrl=e.target.result;
-    const email = st.usuario?.id_email||st.usuario?.email||'';
-    if(email) localStorage.setItem('dep_avatar_'+email, st.avatarUrl);
+function cambiarAvatar(){
+  $('avatar-input').click();
+}
+
+function handleAvatarUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const email = st.usuario?.id_email || st.usuario?.email || '';
+    st.avatarUrl = ev.target.result;
+    localStorage.setItem('dep_avatar_'+email, st.avatarUrl);
     renderProfile();
-  };r.readAsDataURL(f);
+  };
+  reader.readAsDataURL(file);
 }
 
 async function guardarPerfil(){
-  const email=st.usuario?.id_email||st.usuario?.email||'';
-  const mCb = document.querySelectorAll('.mascota-cb:checked');
-  const mascotas = Array.from(mCb).map(cb=>cb.value).join(', ');
-
-  const perfil={
-    nombre:$('pf-nombre').value, 
-    genero:$('pf-genero').value, 
-    fecha_nacimiento:$('pf-nacimiento').value, 
-    situacion_sentimental:$('pf-sentimental').value, 
-    hijos:$('pf-hijos').value, 
+  const email = st.usuario?.id_email || st.usuario?.email || '';
+  
+  const mascotas = Array.from(document.querySelectorAll('.pf-mascota:checked'))
+    .map(cb => cb.value)
+    .join(', ');
+  
+  const perfil = {
+    nombre: $('pf-nombre').value.trim(),
+    genero: $('pf-genero').value,
+    fecha_nacimiento: $('pf-fecha').value,
+    situacion_sentimental: $('pf-situacion').value,
+    hijos: $('pf-hijos').value,
     mascotas: mascotas
   };
   
-  if(st.usuario) Object.assign(st.usuario, perfil);
+  loaderShow();
   
-  try{
-    const r = await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});
-    if(r.puntos_extra && r.puntos_extra > 0) {
+  try {
+    const r = await apiPost({
+      action: 'perfil',
+      email,
+      cookie_id: st.uid,
+      perfil
+    });
+    
+    if(!r.ok) throw new Error(r.error);
+    
+    if(r.puntos_extra > 0) {
       st.puntos += r.puntos_extra;
       updatePts();
-      showToast(`✓ Guardado +${r.puntos_extra} pts 🫘`);
+      showToast(`¡+${r.puntos_extra} puntos por completar tu perfil! 🎉`);
     } else {
-      showToast('✓ Guardado');
+      showToast('Perfil actualizado correctamente');
     }
-  }catch(e){showToast('Error al guardar');}
+    
+    // Actualizar usuario en memoria
+    Object.assign(st.usuario, perfil);
+    
+  } catch(err) {
+    showToast('Error: ' + err.message);
+  }
+  
+  loaderHide();
 }
 
-function logout(){
-  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0; st.likesRestantes=10; st.superRestantes=3; st.preferencias=null;
-  $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
-  if(st.countdownInterval) clearInterval(st.countdownInterval);
-  showScreen('s-login');
-}
+// ═══════════════════════════════════════════════
+//  ANIMACIÓN DE CARGA
+// ═══════════════════════════════════════════════
+const style=document.createElement('style');
+style.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(style);
 
-// CONFETTI
-let cP=[],cR=null,cCvs=null,cCtx=null;
-const COLS=['#C0157A','#1A1A1A','#F5D0E8','#FFD700','#00C2A8'];
-function mkPart(c){return{x:Math.random()*c.width,y:-20,w:Math.random()*12+5,h:Math.random()*5+3,color:COLS[Math.random()*COLS.length|0],r:Math.random()*6,vx:(Math.random()-.5)*3.5,vy:Math.random()*4+1.5,vr:(Math.random()-.5)*.22};}
-function startConf(){cCvs=$('conf-cvs');cCtx=cCvs.getContext('2d');cCvs.width=390;cCvs.height=700;cP=Array.from({length:100},()=>mkPart(cCvs));animConf();}
-function animConf(){cCtx.clearRect(0,0,cCvs.width,cCvs.height);let alive=false;cP.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.vy+=.1;if(p.y<800)alive=true;cCtx.save();cCtx.translate(p.x,p.y);cCtx.rotate(p.r);cCtx.fillStyle=p.color;cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cCtx.restore();});if(alive)cR=requestAnimationFrame(animConf);}
-function stopConf(){if(cR)cancelAnimationFrame(cR);if(cCtx)cCtx.clearRect(0,0,cCvs.width,cCvs.height);}
-
-document.addEventListener('DOMContentLoaded',init);
+// ═══════════════════════════════════════════════
+//  INICIAR APP
+// ═══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', init);
 </script>
-<style>
-@keyframes spin{to{transform:rotate(360deg)}}
-</style>
 </body>
 </html>
