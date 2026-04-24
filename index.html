@@ -132,7 +132,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);position:relative;transition:all .3s}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-btn.super{border-color:#FFD700;color:#FFD700}
-.sw-btn.disabled{opacity:0.4;cursor:not-allowed}
+.sw-btn.disabled{opacity:0.4;cursor:not-allowed;pointer-events:none}
 .sw-btn.filled{background:#C0157A;color:#fff}
 .sw-btn.super.filled{background:#FFD700;color:#1A1A1A}
 .circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
@@ -268,7 +268,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
           <span style="font-size:18px">⭐</span>
           <span style="position:absolute;top:-4px;right:-4px;background:#FFD700;color:#1A1A1A;font-size:9px;padding:2px 4px;border-radius:10px;font-weight:bold">x2</span>
         </button>
-        <button class="sw-btn yes" id="btn-like" onclick="swipeCard(true)">
+        <button class="sw-btn yes" id="btn-like" onclick="swipeCard(true, false)">
           <svg class="circular-progress" id="like-progress">
             <circle class="progress-ring" cx="34" cy="34" r="32" stroke="#C0157A" stroke-dasharray="201" stroke-dashoffset="0"/>
           </svg>
@@ -343,9 +343,9 @@ function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='c
 function goMain(){showScreen('s-swiper');updateProgressCircles();}
 function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
 function showToast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
-function loaderShow(){$('loader').style.display='flex';$('loader').classList.remove('hide');}
-function loaderHide(){$('loader').classList.add('hide');setTimeout(()=>$('loader').style.display='none',350);}
-function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display=msg?'block':'none';}
+function loaderShow(){const l=$('loader');if(l){l.style.display='flex';l.classList.remove('hide');}}
+function loaderHide(){const l=$('loader');if(l){l.classList.add('hide');setTimeout(()=>l.style.display='none',350);}}
+function showErr(id,msg){const e=$(id);if(!e)return;e.textContent=msg;e.style.display=msg?'block':'none';}
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 function updateProgressCircles(){
@@ -619,35 +619,57 @@ async function cargarDatos(){
 // ═══════════════════════════════════════════════
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
-  stack.innerHTML=''; const pend=st.tarjetas.slice(st.swipeIdx);
+  stack.innerHTML=''; 
+  const pend=st.tarjetas.slice(st.swipeIdx);
+  
   if(!pend.length){
     empty.style.display='flex';
     btns.style.display='none';
     iniciarCountdown();
     return;
   }
-  empty.style.display='none';btns.style.display='flex';
+  
+  empty.style.display='none';
+  btns.style.display='flex';
   if(st.countdownInterval) clearInterval(st.countdownInterval);
   
   pend.slice(0,5).reverse().forEach((t,vi)=>{
-    const div=document.createElement('div'); div.className='swipe-card'; div.id='sc-'+(t.id_tarjeta||t.id);
+    const div=document.createElement('div'); 
+    div.className='swipe-card'; 
     
-    const imgBg = t.img_tarjeta || t.img || 'https://via.placeholder.com/300x600?text=Falta+Imagen';
-    const logoHtml = (t.logo_tarjeta||t.logo) ? `<div class="card-logo"><img src="${t.logo_tarjeta||t.logo}" alt="Logo"/></div>` : '';
+    // USAR id O id_tarjeta
+    const tarjetaId = t.id_tarjeta || t.id;
+    div.id='sc-'+tarjetaId;
+    div.dataset.tarjetaId = tarjetaId;
+    
+    // Imagen de fondo
+    const imgBg = t.img_tarjeta || t.img || t.imagen || 'https://via.placeholder.com/300x600?text=Falta+Imagen';
+    
+    // Logo
+    const logoSrc = t.logo_tarjeta || t.logo;
+    const logoHtml = logoSrc ? `<div class="card-logo"><img src="${logoSrc}" alt="Logo"/></div>` : '';
+    
+    // Textos - USAR CAMPOS CORRECTOS
+    const cardName = t.nombre_marca || t.descripcion || 'Sin marca';
+    const cardBrand = t.detalle_categoria || t.nombre || 'Sin detalle';
     
     div.innerHTML=`
       <div class="card-bg" style="background-image:url('${imgBg}')"></div>
       ${logoHtml}
       <div class="card-info">
-        <div class="card-name">${escH(t.nombre_marca||t.descripcion||'')}</div>
-        <div class="card-brand">${escH(t.detalle_categoria||t.nombre||'')}</div>
+        <div class="card-name">${escH(cardName)}</div>
+        <div class="card-brand">${escH(cardBrand)}</div>
       </div>
-      <div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div>
+      <div class="ind ind-y">Me late ♥</div>
+      <div class="ind ind-n">Paso ✕</div>
     `;
     
-    const depth=Math.min(4,pend.length-1)-vi; div.style.zIndex=vi+1;
-    if(depth>0)div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
-    attachDrag(div);stack.appendChild(div);
+    const depth=Math.min(4,pend.length-1)-vi; 
+    div.style.zIndex=vi+1;
+    if(depth>0) div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
+    
+    attachDrag(div);
+    stack.appendChild(div);
   });
 }
 
@@ -663,7 +685,7 @@ function attachDrag(c){
     const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
     
     // BLOQUEAR COMPLETAMENTE swipe derecha si no hay likes
-    if(dx > 0 && st.likesRestantes <= 0) {
+    if(dx > 0 && st.likesRestantes <= 0 && st.superRestantes <= 0) {
       return;
     }
     
@@ -677,7 +699,7 @@ function attachDrag(c){
     if(!drag)return;drag=false;c.style.transition='';
     const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;
     c.querySelectorAll('.ind').forEach(i=>i.style.opacity=0);
-    if(dx>60)swipeCard(true);else if(dx<-60)swipeCard(false);else c.style.transform='';
+    if(dx>60)swipeCard(true, false);else if(dx<-60)swipeCard(false, false);else c.style.transform='';
     document.removeEventListener('mousemove',move);
     document.removeEventListener('touchmove',move);
     document.removeEventListener('mouseup',end);
@@ -691,18 +713,34 @@ function attachDrag(c){
   document.addEventListener('touchend',end);
 }
 
-async function swipeCard(like, superLike = false){
-  if(st.swipeIdx>=st.tarjetas.length)return;
+async function swipeCard(like, superLike){
+  if(st.swipeIdx>=st.tarjetas.length) return;
+  
+  const t = st.tarjetas[st.swipeIdx];
+  const tarjetaId = t.id_tarjeta || t.id;
+  
+  if(!tarjetaId) {
+    showToast('Error: Falta tarjeta_id');
+    return;
+  }
+  
+  const card = $('sc-'+tarjetaId);
   
   // No puntuar si es swipe izquierda (like = false)
   if(!like) {
-    const t=st.tarjetas[st.swipeIdx]; 
-    const card=$('sc-'+(t.id_tarjeta||t.id)); 
-    if(card)card.classList.add('gone');
+    if(card) card.classList.add('gone');
     st.swipeIdx++;
     const email=st.usuario?.id_email||st.usuario?.email||'';
-    apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:(t.id_tarjeta||t.id), like:false, super_like:false, geo:st.geo, pais:st.pais})
-      .catch(()=>{});
+    apiPost({
+      action:'swipe', 
+      email, 
+      cookie_id:st.uid, 
+      tarjeta_id:tarjetaId, 
+      like:false, 
+      super_like:false, 
+      geo:st.geo, 
+      pais:st.pais
+    }).catch(()=>{});
     setTimeout(renderSwiper,300);
     return;
   }
@@ -717,9 +755,7 @@ async function swipeCard(like, superLike = false){
     return;
   }
   
-  const t=st.tarjetas[st.swipeIdx]; 
-  const card=$('sc-'+(t.id_tarjeta||t.id)); 
-  if(card)card.classList.add('liked');
+  if(card) card.classList.add('liked');
   
   st.swipeIdx++;
   const email=st.usuario?.id_email||st.usuario?.email||'';
@@ -731,7 +767,7 @@ async function swipeCard(like, superLike = false){
       action:'swipe', 
       email, 
       cookie_id:st.uid, 
-      tarjeta_id:(t.id_tarjeta||t.id), 
+      tarjeta_id:tarjetaId, 
       like:true, 
       super_like:superLike, 
       geo:st.geo,
@@ -777,16 +813,16 @@ async function swipeCard(like, superLike = false){
 // ═══════════════════════════════════════════════
 //  RECOMPENSAS Y CANJE
 // ═══════════════════════════════════════════════
-function getUnlockCode(id, tipo) {
-  // NOTA: Este sistema necesita actualizarse cuando implementes
-  // el sistema de canjes desde la pestaña Canjes
-  return null;
-}
-
 function renderPromos(){
-  const body=$('promos-body');if(!body)return;
+  const body=$('promos-body');
+  if(!body) return;
+  
   $('promo-pts').textContent=st.puntos+' PTS';
-  if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.</div>';return;}
+  
+  if(!st.recompensas.length){
+    body.innerHTML='<div style="padding:40px;text-align:center;color:#888">No hay recompensas disponibles.</div>';
+    return;
+  }
   
   const recompensas = [...st.recompensas];
   
@@ -795,26 +831,56 @@ function renderPromos(){
     const pts = Number(r.puntos_requeridos||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
+    
+    const emoji = r.emoji || '🎁';
+    const nombre = r.nombre || 'Sin nombre';
+    const detalle = r.detalle_categoria ? ' - ' + r.detalle_categoria : '';
+    
     let clickAction = '', statusTag = '', barWidth = '';
     
     if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
-       clickAction = `onclick="tryUnlock('${r.emoji||'🎁'}','${escH(r.nombre_recompensa||r.nombre||'')}','${escH(r.instrucciones_canje||'')}','${r.id_recompensa||r.id}','recompensa',${pts})"`;
+       clickAction = `onclick="tryUnlock('${emoji}','${escH(nombre)}','${escH(r.instrucciones_canje||'')}','${r.id_recompensa||r.id}','recompensa',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
        clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barWidth = `width:${pct}%;background:#C0157A`;
     }
-    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre_recompensa||r.nombre||'')}</div><div class="pci-meta">${pts} pts</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div style="${barWidth};height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div></div></div>${statusTag}</div>`;
+    
+    html += `
+      <div class="pc" ${clickAction}>
+        <div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">
+          ${emoji}
+        </div>
+        <div class="pci-info">
+          <div class="pci-name">${escH(nombre)}${escH(detalle)}</div>
+          <div class="pci-meta">${pts} pts</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+            <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
+              <div style="${barWidth};height:100%;border-radius:5px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
+          </div>
+        </div>
+        ${statusTag}
+      </div>
+    `;
   });
+  
   body.innerHTML=html;
 }
 
 function renderConcursos(){
-  const body=$('contests-body');if(!body)return;
+  const body=$('contests-body');
+  if(!body) return;
+  
   $('contest-pts').textContent=st.puntos+' PTS';
-  if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos disponibles.</div>';return;}
+  
+  if(!st.concursos.length){
+    body.innerHTML='<div style="padding:40px;text-align:center;color:#888">No hay concursos disponibles.</div>';
+    return;
+  }
   
   const concursos = [...st.concursos];
   
@@ -823,19 +889,43 @@ function renderConcursos(){
     const pts = Number(c.puntos_requeridos||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
+    
+    const emoji = c.emoji || '🏅';
+    const nombre = c.nombre || 'Sin nombre';
+    const detalle = c.detalle_categoria ? ' - ' + c.detalle_categoria : '';
+    
     let clickAction = '', statusTag = '', barWidth = '';
 
     if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Participar</span>`;
-       clickAction = `onclick="tryUnlock('${c.emoji_concurso||c.emoji||'🏅'}','${escH(c.nombre_concurso||c.nombre||'')}','${escH(c.descripcion_concurso||c.descripcion||'')}','${c.id_concurso||c.id}','concurso',${pts})"`;
+       clickAction = `onclick="tryUnlock('${emoji}','${escH(nombre)}','${escH(c.descripcion||'')}','${c.id_concurso||c.id}','concurso',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
        clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barWidth = `width:${pct}%;background:#C0157A`;
     }
-    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji_concurso||c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre_concurso||c.nombre||'')}</div><div class="pci-meta">${pts} pts</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div style="${barWidth};height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div></div></div>${statusTag}</div>`;
+    
+    html += `
+      <div class="pc" ${clickAction}>
+        <div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">
+          ${emoji}
+        </div>
+        <div class="pci-info">
+          <div class="pci-name">${escH(nombre)}${escH(detalle)}</div>
+          <div class="pci-meta">${pts} pts</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+            <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
+              <div style="${barWidth};height:100%;border-radius:5px"></div>
+            </div>
+            <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
+          </div>
+        </div>
+        ${statusTag}
+      </div>
+    `;
   });
+  
   body.innerHTML=html;
 }
 
