@@ -129,15 +129,22 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .ind-y{right:16px;background:#C0157A;color:#fff}
 .ind-n{left:16px;background:#1A1A1A;color:#fff}
 .sw-btns{display:flex;gap:12px;flex-shrink:0;margin-top:10px;justify-content:center;align-items:center;width:100%}
-.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);position:relative}
+.sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);position:relative;transition:all .3s}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-btn.super{border-color:#FFD700;color:#FFD700}
 .sw-btn.disabled{opacity:0.4;cursor:not-allowed}
+.sw-btn.filled{background:#C0157A;color:#fff}
+.sw-btn.super.filled{background:#FFD700;color:#1A1A1A}
 .circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
 .progress-ring{fill:none;stroke-width:3}
+
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px 24px;text-align:center}
-.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end}
-.beans-celebration img{width:100px;object-fit:contain}
+.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end;margin-bottom:20px}
+.beans-celebration img{width:80px;object-fit:contain;animation:breathe 3s ease-in-out infinite}
+.beans-celebration img:first-child{animation-delay:.5s}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.countdown-text{font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.4;margin-bottom:8px}
+.countdown-timer{font-size:28px;font-weight:800;color:#C0157A;letter-spacing:.05em}
 
 .scrollbody{flex:1;overflow-y:auto;padding:14px;min-height:0}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin:16px 0 8px}
@@ -163,6 +170,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .loader{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:300;transition:opacity .3s}
 .loader.hide{opacity:0;pointer-events:none}
 .toast{position:absolute;top:68px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:13px;font-weight:700;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity .2s;z-index:150}
+.toast.show{opacity:1}
 
 .limit-popup{
   position:absolute;
@@ -243,6 +251,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
     <div class="sw-body">
       <div class="card-stack" id="card-stack"></div>
       <div class="sw-empty" id="sw-empty">
+        <div class="countdown-text" id="countdown-text">Vuelve en:</div>
+        <div class="countdown-timer" id="countdown-timer">00:00:00</div>
         <div class="beans-celebration">
           <img src="assets/brillo-frijo.gif" alt="Frijo"/>
           <img src="assets/brillo-lito.gif" alt="Lito"/>
@@ -325,7 +335,7 @@ const UID_KEY = 'dep_uid';
 function genUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)});}
 function getOrCreateUID(){let id=localStorage.getItem(UID_KEY);if(!id){id=genUUID();localStorage.setItem(UID_KEY,id);}return id;}
 
-const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null, likesRestantes:10, superRestantes:3, geo:'', perfilEditado:{}};
+const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null, likesRestantes:10, superRestantes:3, geo:'', pais:'', preferencias:null, countdownInterval:null};
 const $=id=>document.getElementById(id);
 
 function showScreen(id){['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
@@ -355,12 +365,10 @@ function updateProgressCircles(){
   if(btnLike) {
     if(st.likesRestantes <= 0) {
       btnLike.classList.add('disabled');
-      btnLike.style.background = '#C0157A';
-      btnLike.style.color = '#fff';
+      btnLike.classList.add('filled');
     } else {
       btnLike.classList.remove('disabled');
-      btnLike.style.background = likePercent === 1 ? '#C0157A' : '#fff';
-      btnLike.style.color = likePercent === 1 ? '#fff' : '#C0157A';
+      btnLike.classList.remove('filled');
     }
   }
   
@@ -373,12 +381,10 @@ function updateProgressCircles(){
   if(btnSuper) {
     if(st.superRestantes <= 0) {
       btnSuper.classList.add('disabled');
-      btnSuper.style.background = '#FFD700';
-      btnSuper.style.color = '#1A1A1A';
+      btnSuper.classList.add('filled');
     } else {
       btnSuper.classList.remove('disabled');
-      btnSuper.style.background = superPercent === 1 ? '#FFD700' : '#fff';
-      btnSuper.style.color = superPercent === 1 ? '#1A1A1A' : '#FFD700';
+      btnSuper.classList.remove('filled');
     }
   }
 }
@@ -422,6 +428,34 @@ function calcularHorasHastaReset(){
   return horas;
 }
 
+function iniciarCountdown(){
+  if(st.countdownInterval) clearInterval(st.countdownInterval);
+  
+  const timer = $('countdown-timer');
+  if(!timer) return;
+  
+  st.countdownInterval = setInterval(() => {
+    const ahora = new Date();
+    const manana = new Date(ahora);
+    manana.setDate(manana.getDate() + 1);
+    manana.setHours(0, 1, 0, 0);
+    
+    const diff = manana - ahora;
+    
+    if(diff <= 0) {
+      clearInterval(st.countdownInterval);
+      timer.textContent = '00:00:00';
+      return;
+    }
+    
+    const horas = Math.floor(diff / (1000 * 60 * 60));
+    const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    timer.textContent = `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}:${String(segundos).padStart(2,'0')}`;
+  }, 1000);
+}
+
 async function obtenerGeo(){
   try {
     const pos = await new Promise((resolve, reject) => {
@@ -431,12 +465,13 @@ async function obtenerGeo(){
     const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
     const data = await r.json();
     const ciudad = data.address.city || data.address.town || data.address.village || data.address.state || 'Ubicación';
-    const pais = data.address.country_code ? data.address.country_code.toUpperCase() : '';
-    st.geo = `${ciudad}, ${pais}`;
+    st.pais = data.address.country_code ? data.address.country_code.toUpperCase() : '';
+    st.geo = `${ciudad}, ${st.pais}`;
     const geoEl = $('sw-geo');
     if(geoEl) geoEl.textContent = `📍 ${st.geo}`;
   } catch(e) {
     st.geo = 'Ubicación desconocida';
+    st.pais = '';
     const geoEl = $('sw-geo');
     if(geoEl) geoEl.textContent = `📍 ${st.geo}`;
   }
@@ -539,10 +574,9 @@ function setupOTPInputs(){
 
 async function procesarLoginExitoso(usuario) {
   st.usuario = usuario;
-  st.puntos = Number(usuario.puntos_restantes||usuario['puntos_restantes']||usuario.puntos||0);
+  st.puntos = Number(usuario.puntos_disponibles||usuario['puntos_disponibles']||usuario.puntos||0);
   st.likesRestantes = Number(usuario.likes_restantes||10);
   st.superRestantes = Number(usuario.super_restantes||3);
-  st.perfilEditado = JSON.parse(usuario.perfil_editado || '{}');
   st.swipeIdx=0; 
   await cargarDatos();
   updatePts();
@@ -553,14 +587,31 @@ async function procesarLoginExitoso(usuario) {
 
 async function cargarDatos(){
   const email=st.usuario?.id_email||st.usuario?.email||'';
-  const[rT,rR,rC]=await Promise.all([
-    api({action:'tarjetas',email,cookie:st.uid}),
+  const cookie=st.uid;
+  const[rT,rR,rC,rP]=await Promise.all([
+    api({action:'tarjetas',email,cookie}),
     api({action:'recompensas'}),
-    api({action:'concursos'})
+    api({action:'concursos'}),
+    api({action:'preferencias',cookie})
   ]);
+  
   st.tarjetas = rT.tarjetas || [];
   st.recompensas = rR.recompensas || [];
   st.concursos = rC.concursos || [];
+  st.preferencias = rP.preferencias || null;
+  
+  // ORDENAR TARJETAS POR PREFERENCIAS
+  if(st.preferencias) {
+    const catPts = st.preferencias.categorias || {};
+    const marPts = st.preferencias.marcas || {};
+    const detPts = st.preferencias.detalles || {};
+    
+    st.tarjetas.sort((a, b) => {
+      const scoreA = (catPts[a.id_categoria] || 0) + (marPts[a.id_marca] || 0) + (detPts[a.id_detalle] || 0);
+      const scoreB = (catPts[b.id_categoria] || 0) + (marPts[b.id_marca] || 0) + (detPts[b.id_detalle] || 0);
+      return scoreB - scoreA;
+    });
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -569,23 +620,27 @@ async function cargarDatos(){
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
   stack.innerHTML=''; const pend=st.tarjetas.slice(st.swipeIdx);
-  if(!pend.length){empty.style.display='flex';btns.style.display='none';return;}
+  if(!pend.length){
+    empty.style.display='flex';
+    btns.style.display='none';
+    iniciarCountdown();
+    return;
+  }
   empty.style.display='none';btns.style.display='flex';
+  if(st.countdownInterval) clearInterval(st.countdownInterval);
   
   pend.slice(0,5).reverse().forEach((t,vi)=>{
-    const div=document.createElement('div'); div.className='swipe-card'; div.id='sc-'+t.id;
-    div.dataset.pcampo = t.perfil_campo || '';
-    div.dataset.pvalor = t.perfil_valor || '';
+    const div=document.createElement('div'); div.className='swipe-card'; div.id='sc-'+(t.id_tarjeta||t.id);
     
-    const imgBg = t.img ? t.img : 'https://via.placeholder.com/300x600?text=Falta+Imagen';
-    const logoHtml = t.logo ? `<div class="card-logo"><img src="${t.logo}" alt="Logo"/></div>` : '';
+    const imgBg = t.img_tarjeta || t.img || 'https://via.placeholder.com/300x600?text=Falta+Imagen';
+    const logoHtml = (t.logo_tarjeta||t.logo) ? `<div class="card-logo"><img src="${t.logo_tarjeta||t.logo}" alt="Logo"/></div>` : '';
     
     div.innerHTML=`
       <div class="card-bg" style="background-image:url('${imgBg}')"></div>
       ${logoHtml}
       <div class="card-info">
-        <div class="card-name">${escH(t.nombre)}</div>
-        <div class="card-brand">${escH(t.descripcion||'')}</div>
+        <div class="card-name">${escH(t.nombre_marca||t.descripcion||'')}</div>
+        <div class="card-brand">${escH(t.detalle_categoria||t.nombre||'')}</div>
       </div>
       <div class="ind ind-y">Me late ♥</div><div class="ind ind-n">Paso ✕</div>
     `;
@@ -609,7 +664,7 @@ function attachDrag(c){
     
     // BLOQUEAR COMPLETAMENTE swipe derecha si no hay likes
     if(dx > 0 && st.likesRestantes <= 0) {
-      return; // No permitir ningún movimiento a la derecha
+      return;
     }
     
     c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;
@@ -642,11 +697,11 @@ async function swipeCard(like, superLike = false){
   // No puntuar si es swipe izquierda (like = false)
   if(!like) {
     const t=st.tarjetas[st.swipeIdx]; 
-    const card=$('sc-'+t.id); 
+    const card=$('sc-'+(t.id_tarjeta||t.id)); 
     if(card)card.classList.add('gone');
     st.swipeIdx++;
     const email=st.usuario?.id_email||st.usuario?.email||'';
-    apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:false, perfil_campo:'', perfil_valor:'', super_like:false, geo:st.geo})
+    apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:(t.id_tarjeta||t.id), like:false, super_like:false, geo:st.geo, pais:st.pais})
       .catch(()=>{});
     setTimeout(renderSwiper,300);
     return;
@@ -663,16 +718,12 @@ async function swipeCard(like, superLike = false){
   }
   
   const t=st.tarjetas[st.swipeIdx]; 
-  const card=$('sc-'+t.id); 
+  const card=$('sc-'+(t.id_tarjeta||t.id)); 
   if(card)card.classList.add('liked');
-  
-  const pcampo = card ? card.dataset.pcampo : '';
-  const pvalor = card ? card.dataset.pvalor : '';
   
   st.swipeIdx++;
   const email=st.usuario?.id_email||st.usuario?.email||'';
   
-  // NO actualizar el estado local hasta que el servidor confirme
   showToast(`Procesando...`);
   
   try {
@@ -680,30 +731,26 @@ async function swipeCard(like, superLike = false){
       action:'swipe', 
       email, 
       cookie_id:st.uid, 
-      tarjeta_id:t.id, 
+      tarjeta_id:(t.id_tarjeta||t.id), 
       like:true, 
-      perfil_campo:pcampo, 
-      perfil_valor:pvalor, 
       super_like:superLike, 
-      geo:st.geo
+      geo:st.geo,
+      pais:st.pais
     });
     
     if(!r.ok) {
-      // Si hay error (límite alcanzado), mostrar popup y NO actualizar nada
       if(r.error && r.error.includes('Límite diario alcanzado')) {
         showLimitPopup(superLike, superLike ? r.super_restantes : r.likes_restantes);
-        // Revertir la tarjeta
         if(card) {
           card.classList.remove('liked');
           card.style.transform = '';
         }
-        st.swipeIdx--; // Revertir el índice
+        st.swipeIdx--;
         return;
       }
       throw new Error(r.error || 'Error desconocido');
     }
     
-    // Solo actualizar si el servidor confirma OK
     st.puntos = r.puntos_restantes;
     st.likesRestantes = r.likes_restantes || 0;
     st.superRestantes = r.super_restantes || 0;
@@ -716,7 +763,6 @@ async function swipeCard(like, superLike = false){
     
   } catch(err) {
     showToast('Error: ' + err.message);
-    // Revertir la tarjeta
     if(card) {
       card.classList.remove('liked');
       card.style.transform = '';
@@ -732,10 +778,9 @@ async function swipeCard(like, superLike = false){
 //  RECOMPENSAS Y CANJE
 // ═══════════════════════════════════════════════
 function getUnlockCode(id, tipo) {
-  if(!st.usuario || !st.usuario.canjes) return null;
-  const canjes = String(st.usuario.canjes).split(',');
-  const found = canjes.find(c => c.startsWith(tipo + ':' + id + ':'));
-  return found ? found.split(':')[2] : null;
+  // NOTA: Este sistema necesita actualizarse cuando implementes
+  // el sistema de canjes desde la pestaña Canjes
+  return null;
 }
 
 function renderPromos(){
@@ -743,38 +788,25 @@ function renderPromos(){
   $('promo-pts').textContent=st.puntos+' PTS';
   if(!st.recompensas.length){body.innerHTML='<div class="empty-state">No hay recompensas disponibles.</div>';return;}
   
-  const recompensas = [...st.recompensas].sort((a,b)=>{
-    const aUnlocked = getUnlockCode(a.id, 'recompensa');
-    const bUnlocked = getUnlockCode(b.id, 'recompensa');
-    if(aUnlocked && !bUnlocked) return -1;
-    if(!aUnlocked && bUnlocked) return 1;
-    return 0;
-  });
+  const recompensas = [...st.recompensas];
   
   let html='';
   recompensas.forEach(r=>{
-    const pts = Number(r.puntos_requeridos||r['puntos requeridos']||0);
+    const pts = Number(r.puntos_requeridos||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
-    let clickAction = '', statusTag = '', barWidth = '', codeDisplay = '', instruccionesDisplay = '';
-    const unlockedCode = getUnlockCode(r.id, 'recompensa');
-
-    if (unlockedCode) {
-       statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Desbloqueado</span>`;
-       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">DEP-${unlockedCode}</div>`;
-       instruccionesDisplay = r.instrucciones_canje ? `<div style="font-size:11px;color:#666;margin-top:4px;line-height:1.3">${escH(r.instrucciones_canje)}</div>` : '';
-       clickAction = `onclick="alert('Ya canjeaste esta recompensa. Código: DEP-${unlockedCode}')"`;
-       barWidth = `width:100%;background:#4CAF50`;
-    } else if (st.puntos >= pts) {
+    let clickAction = '', statusTag = '', barWidth = '';
+    
+    if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
-       clickAction = `onclick="tryUnlock('${r.emoji||'🎁'}','${escH(r.nombre)}','${escH(r.instrucciones_canje||'')}','${r.id}','recompensa',${pts})"`;
+       clickAction = `onclick="tryUnlock('${r.emoji||'🎁'}','${escH(r.nombre_recompensa||r.nombre||'')}','${escH(r.instrucciones_canje||'')}','${r.id_recompensa||r.id}','recompensa',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
        clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barWidth = `width:${pct}%;background:#C0157A`;
     }
-    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}${instruccionesDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div style="${barWidth};height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${r.emoji||'🎁'}</div><div class="pci-info"><div class="pci-name">${escH(r.nombre_recompensa||r.nombre||'')}</div><div class="pci-meta">${pts} pts</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div style="${barWidth};height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
@@ -784,38 +816,25 @@ function renderConcursos(){
   $('contest-pts').textContent=st.puntos+' PTS';
   if(!st.concursos.length){body.innerHTML='<div class="empty-state">No hay concursos disponibles.</div>';return;}
   
-  const concursos = [...st.concursos].sort((a,b)=>{
-    const aUnlocked = getUnlockCode(a.id, 'concurso');
-    const bUnlocked = getUnlockCode(b.id, 'concurso');
-    if(aUnlocked && !bUnlocked) return -1;
-    if(!aUnlocked && bUnlocked) return 1;
-    return 0;
-  });
+  const concursos = [...st.concursos];
   
   let html='';
   concursos.forEach(c=>{
-    const pts = Number(c.puntos_requeridos||c['puntos requeridos']||0);
+    const pts = Number(c.puntos_requeridos||0);
     const pct = pts > 0 ? Math.min(Math.round((st.puntos/pts)*100), 100) : 0;
     const faltan = Math.max(pts - st.puntos, 0);
-    let clickAction = '', statusTag = '', barWidth = '', codeDisplay = '', instruccionesDisplay = '';
-    const unlockedCode = getUnlockCode(c.id, 'concurso');
+    let clickAction = '', statusTag = '', barWidth = '';
 
-    if (unlockedCode) {
-       statusTag = `<span class="ptag" style="background:#4CAF50;color:#fff">Participando</span>`;
-       codeDisplay = `<div style="font-size:14px;color:#C0157A;font-weight:bold;margin-top:4px">Ticket: DEP-${unlockedCode}</div>`;
-       instruccionesDisplay = c.descripcion ? `<div style="font-size:11px;color:#666;margin-top:4px;line-height:1.3">${escH(c.descripcion)}</div>` : '';
-       clickAction = `onclick="alert('Ya estás participando. Ticket: DEP-${unlockedCode}')"`;
-       barWidth = `width:100%;background:#4CAF50`;
-    } else if (st.puntos >= pts) {
+    if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Participar</span>`;
-       clickAction = `onclick="tryUnlock('${c.emoji||'🏅'}','${escH(c.nombre)}','${escH(c.descripcion||'')}','${c.id}','concurso',${pts})"`;
+       clickAction = `onclick="tryUnlock('${c.emoji_concurso||c.emoji||'🏅'}','${escH(c.nombre_concurso||c.nombre||'')}','${escH(c.descripcion_concurso||c.descripcion||'')}','${c.id_concurso||c.id}','concurso',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
        clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
        barWidth = `width:${pct}%;background:#C0157A`;
     }
-    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${unlockedCode?'#E8F5E9':st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre)}</div><div class="pci-meta">${pts} pts</div>${codeDisplay}${instruccionesDisplay}<div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div style="${barWidth};height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${unlockedCode?'100%':pct+'%'}</div></div></div>${statusTag}</div>`;
+    html += `<div class="pc" ${clickAction}><div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">${c.emoji_concurso||c.emoji||'🏅'}</div><div class="pci-info"><div class="pci-name">${escH(c.nombre_concurso||c.nombre||'')}</div><div class="pci-meta">${pts} pts</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden"><div style="${barWidth};height:100%;border-radius:5px"></div></div><div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div></div></div>${statusTag}</div>`;
   });
   body.innerHTML=html;
 }
@@ -835,7 +854,7 @@ async function executeCanje() {
   try {
     const r = await apiPost({action:'canje', email, cookie_id:st.uid, recompensa_id:id, tipo});
     if(r.ok) {
-      st.puntos = r.puntos_restantes; if(r.canjes) st.usuario.canjes = r.canjes;
+      st.puntos = r.puntos_restantes;
       updatePts();
       $('conf-modal').style.display='none';
       $('u-ico').textContent = ico; $('u-title').textContent = title; $('u-sub').textContent = instrucciones; $('u-code').textContent = r.codigo;
@@ -855,7 +874,7 @@ function renderProfile(){
   const u=st.usuario||{}; const email=u.id_email||u.email||''; const nombre=u.nombre||email.split('@')[0]||'Usuario';
   const initials=nombre.split(' ').map(p=>p[0]||'').join('').toUpperCase().slice(0,2)||'U';
   
-  let fNac = u.fecha_nacimiento || u['fecha de nacimiento'] || '';
+  let fNac = u.fecha_nacimiento || '';
   if(fNac.length > 10) { try { fNac = new Date(fNac).toISOString().split('T')[0]; } catch(e){} }
   
   const mList = ['Perros', 'Gatos', 'Roedores', 'Exóticos', 'Caballos', 'Ganadería', 'No tengo'];
@@ -911,23 +930,14 @@ async function guardarPerfil(){
     mascotas: mascotas
   };
   
-  // Contar cuántos campos nuevos se rellenaron (que no habían sido editados antes)
-  let puntosGanados = 0;
-  for(const [campo, valor] of Object.entries(perfil)){
-    if(valor && !st.perfilEditado[campo]) {
-      puntosGanados += 3;
-      st.perfilEditado[campo] = true;
-    }
-  }
-  
   if(st.usuario) Object.assign(st.usuario, perfil);
   
   try{
-    const r = await apiPost({action:'perfil',email,cookie_id:st.uid,perfil, perfil_editado: JSON.stringify(st.perfilEditado)});
-    if(puntosGanados > 0) {
-      st.puntos += puntosGanados;
+    const r = await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});
+    if(r.puntos_extra && r.puntos_extra > 0) {
+      st.puntos += r.puntos_extra;
       updatePts();
-      showToast(`✓ Guardado +${puntosGanados} pts 🫘 por información de perfil`);
+      showToast(`✓ Guardado +${r.puntos_extra} pts 🫘`);
     } else {
       showToast('✓ Guardado');
     }
@@ -935,8 +945,9 @@ async function guardarPerfil(){
 }
 
 function logout(){
-  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0; st.likesRestantes=10; st.superRestantes=3; st.perfilEditado={};
+  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0; st.likesRestantes=10; st.superRestantes=3; st.preferencias=null;
   $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
+  if(st.countdownInterval) clearInterval(st.countdownInterval);
   showScreen('s-login');
 }
 
@@ -950,5 +961,8 @@ function stopConf(){if(cR)cancelAnimationFrame(cR);if(cCtx)cCtx.clearRect(0,0,cC
 
 document.addEventListener('DOMContentLoaded',init);
 </script>
+<style>
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </body>
 </html>
