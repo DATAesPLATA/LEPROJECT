@@ -45,7 +45,9 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 
 /* SWIPER - REESTRUCTURADO 300x600 */
 #s-swiper{overflow:hidden}
-.sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.sw-top-row{display:flex;align-items:center;justify-content:space-between;width:100%}
+.sw-geo{font-size:11px;color:#ccc;font-weight:400}
 .sw-title{font-size:13px;font-weight:700;color:#fff}
 .sw-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
 
@@ -130,7 +132,12 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);position:relative}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-btn.super{border-color:#FFD700;color:#FFD700}
+.sw-btn.disabled{opacity:0.4;cursor:not-allowed}
+.circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
+.progress-ring{fill:none;stroke-width:3}
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;flex:1}
+.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end;margin-bottom:20px}
+.beans-celebration img{width:100px;object-fit:contain}
 
 .scrollbody{flex:1;overflow-y:auto;padding:14px;min-height:0}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin:16px 0 8px}
@@ -226,17 +233,37 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   </div>
 
   <div class="screen" id="s-swiper">
-    <div class="sw-hdr"><span class="sw-title">¡Desliza y gana! 🫘</span><span class="bpts" id="sw-pts">0 PTS</span></div>
+    <div class="sw-hdr">
+      <div class="sw-geo" id="sw-geo">📍 Obteniendo ubicación...</div>
+      <div class="sw-top-row">
+        <span class="tlogo">Data <span>Es</span> Plata</span>
+        <span class="bpts" id="sw-pts">0 PTS</span>
+      </div>
+    </div>
     <div class="sw-body">
       <div class="card-stack" id="card-stack"></div>
-      <div class="sw-empty" id="sw-empty"><img src="assets/brillo-frijo.gif" style="width:88px"/><div style="font-size:16px;font-weight:700;margin-top:5px">¡Ya las viste todas!</div><button class="btn-mg" style="width:auto;padding:12px 24px;margin-top:10px" onclick="goTab('promos')">Ver recompensas</button></div>
+      <div class="sw-empty" id="sw-empty">
+        <div class="beans-celebration">
+          <img src="assets/brillo-frijo.gif" alt="Frijo"/>
+          <img src="assets/brillo-lito.gif" alt="Lito"/>
+        </div>
+        <div style="font-size:16px;font-weight:700;text-align:center;line-height:1.4">Hoy nos quedamos sin preguntas para ti pero mañana seguimos<br>¡Data es plata!</div>
+      </div>
       <div class="sw-btns" id="sw-btns">
         <button class="sw-btn no" onclick="swipeCard(false)">✕</button>
-        <button class="sw-btn super" onclick="swipeCard(true, true)">
+        <button class="sw-btn super" id="btn-super" onclick="swipeCard(true, true)">
+          <svg class="circular-progress" id="super-progress">
+            <circle class="progress-ring" cx="34" cy="34" r="32" stroke="#FFD700" stroke-dasharray="201" stroke-dashoffset="0"/>
+          </svg>
           <span style="font-size:18px">⭐</span>
           <span style="position:absolute;top:-4px;right:-4px;background:#FFD700;color:#1A1A1A;font-size:9px;padding:2px 4px;border-radius:10px;font-weight:bold">x2</span>
         </button>
-        <button class="sw-btn yes" onclick="swipeCard(true)">♥</button>
+        <button class="sw-btn yes" id="btn-like" onclick="swipeCard(true)">
+          <svg class="circular-progress" id="like-progress">
+            <circle class="progress-ring" cx="34" cy="34" r="32" stroke="#C0157A" stroke-dasharray="201" stroke-dashoffset="0"/>
+          </svg>
+          ♥
+        </button>
       </div>
     </div>
     <div class="bnav">
@@ -298,18 +325,63 @@ const UID_KEY = 'dep_uid';
 function genUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)});}
 function getOrCreateUID(){let id=localStorage.getItem(UID_KEY);if(!id){id=genUUID();localStorage.setItem(UID_KEY,id);}return id;}
 
-const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null, likesRestantes:10, superRestantes:3};
+const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null, likesRestantes:10, superRestantes:3, geo:'', perfilEditado:{}};
 const $=id=>document.getElementById(id);
 
 function showScreen(id){['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
 function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='contests') renderConcursos(); if(t==='profile') renderProfile();}
-function goMain(){showScreen('s-swiper');}
+function goMain(){showScreen('s-swiper');updateProgressCircles();}
 function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
 function showToast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
 function loaderShow(){$('loader').style.display='flex';$('loader').classList.remove('hide');}
 function loaderHide(){$('loader').classList.add('hide');setTimeout(()=>$('loader').style.display='none',350);}
 function showErr(id,msg){const e=$(id);e.textContent=msg;e.style.display=msg?'block':'none';}
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function updateProgressCircles(){
+  const likeProgress = $('like-progress');
+  const superProgress = $('super-progress');
+  const btnLike = $('btn-like');
+  const btnSuper = $('btn-super');
+  
+  const circleCircumference = 2 * Math.PI * 32;
+  
+  // Like progress
+  const likePercent = (10 - st.likesRestantes) / 10;
+  const likeOffset = circleCircumference * (1 - likePercent);
+  if(likeProgress) {
+    likeProgress.querySelector('circle').style.strokeDashoffset = likeOffset;
+  }
+  if(btnLike) {
+    if(st.likesRestantes <= 0) {
+      btnLike.classList.add('disabled');
+      btnLike.style.background = '#C0157A';
+      btnLike.style.color = '#fff';
+    } else {
+      btnLike.classList.remove('disabled');
+      btnLike.style.background = likePercent === 1 ? '#C0157A' : '#fff';
+      btnLike.style.color = likePercent === 1 ? '#fff' : '#C0157A';
+    }
+  }
+  
+  // Super progress
+  const superPercent = (3 - st.superRestantes) / 3;
+  const superOffset = circleCircumference * (1 - superPercent);
+  if(superProgress) {
+    superProgress.querySelector('circle').style.strokeDashoffset = superOffset;
+  }
+  if(btnSuper) {
+    if(st.superRestantes <= 0) {
+      btnSuper.classList.add('disabled');
+      btnSuper.style.background = '#FFD700';
+      btnSuper.style.color = '#1A1A1A';
+    } else {
+      btnSuper.classList.remove('disabled');
+      btnSuper.style.background = superPercent === 1 ? '#FFD700' : '#fff';
+      btnSuper.style.color = superPercent === 1 ? '#1A1A1A' : '#FFD700';
+    }
+  }
+}
 
 function showLimitPopup(isSuperLike, remaining){
   const popup = $('limit-popup');
@@ -344,10 +416,30 @@ function calcularHorasHastaReset(){
   const ahora = new Date();
   const manana = new Date(ahora);
   manana.setDate(manana.getDate() + 1);
-  manana.setHours(0, 0, 0, 0);
+  manana.setHours(0, 1, 0, 0);
   const diff = manana - ahora;
   const horas = Math.ceil(diff / (1000 * 60 * 60));
   return horas;
+}
+
+async function obtenerGeo(){
+  try {
+    const pos = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+    const {latitude, longitude} = pos.coords;
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+    const data = await r.json();
+    const ciudad = data.address.city || data.address.town || data.address.village || data.address.state || 'Ubicación';
+    const pais = data.address.country_code ? data.address.country_code.toUpperCase() : '';
+    st.geo = `${ciudad}, ${pais}`;
+    const geoEl = $('sw-geo');
+    if(geoEl) geoEl.textContent = `📍 ${st.geo}`;
+  } catch(e) {
+    st.geo = 'Ubicación desconocida';
+    const geoEl = $('sw-geo');
+    if(geoEl) geoEl.textContent = `📍 ${st.geo}`;
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -366,6 +458,7 @@ async function init(){
   }catch(e){}
   loaderHide();
   setupOTPInputs();
+  obtenerGeo();
 }
 
 // ═══════════════════════════════════════════════
@@ -449,9 +542,11 @@ async function procesarLoginExitoso(usuario) {
   st.puntos = Number(usuario.puntos_restantes||usuario['puntos_restantes']||usuario.puntos||0);
   st.likesRestantes = Number(usuario.likes_restantes||10);
   st.superRestantes = Number(usuario.super_restantes||3);
+  st.perfilEditado = JSON.parse(usuario.perfil_editado || '{}');
   st.swipeIdx=0; 
   await cargarDatos();
   updatePts();
+  updateProgressCircles();
   showScreen('s-swiper');
   renderSwiper();
 }
@@ -504,7 +599,22 @@ function renderSwiper(){
 function attachDrag(c){
   let sx=0,drag=false;
   const start=e=>{sx=(e.touches?e.touches[0].clientX:e.clientX);drag=true;c.style.transition='none';};
-  const move=e=>{if(!drag)return;const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;const iy=c.querySelector('.ind-y'),in_=c.querySelector('.ind-n');if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;if(in_)in_.style.opacity=dx<-28?Math.min((-dx-28)/40,1):0;if(e.cancelable)e.preventDefault();};
+  const move=e=>{
+    if(!drag)return;
+    const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
+    
+    // Bloquear swipe derecha si no hay likes
+    if(dx > 0 && st.likesRestantes <= 0) {
+      c.style.transform='';
+      return;
+    }
+    
+    c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;
+    const iy=c.querySelector('.ind-y'),in_=c.querySelector('.ind-n');
+    if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;
+    if(in_)in_.style.opacity=dx<-28?Math.min((-dx-28)/40,1):0;
+    if(e.cancelable)e.preventDefault();
+  };
   const end=e=>{
     if(!drag)return;drag=false;c.style.transition='';
     const dx=(e.changedTouches?e.changedTouches[0].clientX:e.clientX)-sx;
@@ -533,7 +643,7 @@ async function swipeCard(like, superLike = false){
     if(card)card.classList.add('gone');
     st.swipeIdx++;
     const email=st.usuario?.id_email||st.usuario?.email||'';
-    apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:false, perfil_campo:'', perfil_valor:'', super_like:false})
+    apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:false, perfil_campo:'', perfil_valor:'', super_like:false, geo:st.geo})
       .catch(()=>{});
     setTimeout(renderSwiper,300);
     return;
@@ -566,16 +676,18 @@ async function swipeCard(like, superLike = false){
   else st.likesRestantes--;
   
   updatePts(); 
+  updateProgressCircles();
   showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
   showLimitPopup(superLike, superLike ? st.superRestantes : st.likesRestantes);
   
-  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:true, perfil_campo:pcampo, perfil_valor:pvalor, super_like:superLike})
+  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:true, perfil_campo:pcampo, perfil_valor:pvalor, super_like:superLike, geo:st.geo})
     .then(r=>{
       if(r.ok){
         st.puntos=r.puntos_restantes;
         st.likesRestantes=r.likes_restantes||0;
         st.superRestantes=r.super_restantes||0;
         updatePts();
+        updateProgressCircles();
       }
     }).catch(()=>{});
     
@@ -756,14 +868,32 @@ async function guardarPerfil(){
   const mCb = document.querySelectorAll('.mascota-cb:checked');
   const mascotas = Array.from(mCb).map(cb=>cb.value).join(', ');
 
-  const perfil={nombre:$('pf-nombre').value, genero:$('pf-genero').value, fecha_nacimiento:$('pf-nacimiento').value, situacion_sentimental:$('pf-sentimental').value, hijos:$('pf-hijos').value, mascotas: mascotas};
+  const perfil={
+    nombre:$('pf-nombre').value, 
+    genero:$('pf-genero').value, 
+    fecha_nacimiento:$('pf-nacimiento').value, 
+    situacion_sentimental:$('pf-sentimental').value, 
+    hijos:$('pf-hijos').value, 
+    mascotas: mascotas
+  };
+  
+  // Contar cuántos campos nuevos se rellenaron (que no habían sido editados antes)
+  let puntosGanados = 0;
+  for(const [campo, valor] of Object.entries(perfil)){
+    if(valor && !st.perfilEditado[campo]) {
+      puntosGanados += 3;
+      st.perfilEditado[campo] = true;
+    }
+  }
+  
   if(st.usuario) Object.assign(st.usuario, perfil);
+  
   try{
-    const r = await apiPost({action:'perfil',email,cookie_id:st.uid,perfil});
-    if(r.puntos_extra && r.puntos_extra > 0) {
-      st.puntos += r.puntos_extra;
+    const r = await apiPost({action:'perfil',email,cookie_id:st.uid,perfil, perfil_editado: JSON.stringify(st.perfilEditado)});
+    if(puntosGanados > 0) {
+      st.puntos += puntosGanados;
       updatePts();
-      showToast(`✓ Guardado +${r.puntos_extra} pts 🫘`);
+      showToast(`✓ Guardado +${puntosGanados} pts 🫘 por información de perfil`);
     } else {
       showToast('✓ Guardado');
     }
@@ -771,7 +901,7 @@ async function guardarPerfil(){
 }
 
 function logout(){
-  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0; st.likesRestantes=10; st.superRestantes=3;
+  st.usuario=null; st.puntos=0; st.tarjetas=[]; st.recompensas=[]; st.concursos=[]; st.swipeIdx=0; st.likesRestantes=10; st.superRestantes=3; st.perfilEditado={};
   $('inp-password').value=''; $('reg-password').value=''; $('inp-email').value='';
   showScreen('s-login');
 }
