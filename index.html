@@ -669,31 +669,62 @@ async function swipeCard(like, superLike = false){
   st.swipeIdx++;
   const email=st.usuario?.id_email||st.usuario?.email||'';
   
-  const puntosGanados = superLike ? 2 : 1;
-  st.puntos += puntosGanados; 
+  // NO actualizar el estado local hasta que el servidor confirme
+  showToast(`Procesando...`);
   
-  if(superLike) st.superRestantes--;
-  else st.likesRestantes--;
-  
-  updatePts(); 
-  updateProgressCircles();
-  showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
-  showLimitPopup(superLike, superLike ? st.superRestantes : st.likesRestantes);
-  
-  apiPost({action:'swipe', email, cookie_id:st.uid, tarjeta_id:t.id, like:true, perfil_campo:pcampo, perfil_valor:pvalor, super_like:superLike, geo:st.geo})
-    .then(r=>{
-      if(r.ok){
-        st.puntos=r.puntos_restantes;
-        st.likesRestantes=r.likes_restantes||0;
-        st.superRestantes=r.super_restantes||0;
-        updatePts();
-        updateProgressCircles();
-      }
-    }).catch(()=>{});
+  try {
+    const r = await apiPost({
+      action:'swipe', 
+      email, 
+      cookie_id:st.uid, 
+      tarjeta_id:t.id, 
+      like:true, 
+      perfil_campo:pcampo, 
+      perfil_valor:pvalor, 
+      super_like:superLike, 
+      geo:st.geo
+    });
     
-  setTimeout(renderSwiper,300);
+    if(!r.ok) {
+      // Si hay error (límite alcanzado), mostrar popup y NO actualizar nada
+      if(r.error && r.error.includes('Límite diario alcanzado')) {
+        showLimitPopup(superLike, superLike ? r.super_restantes : r.likes_restantes);
+        // Revertir la tarjeta
+        if(card) {
+          card.classList.remove('liked');
+          card.style.transform = '';
+        }
+        st.swipeIdx--; // Revertir el índice
+        return;
+      }
+      throw new Error(r.error || 'Error desconocido');
+    }
+    
+    // Solo actualizar si el servidor confirma OK
+    st.puntos = r.puntos_restantes;
+    st.likesRestantes = r.likes_restantes || 0;
+    st.superRestantes = r.super_restantes || 0;
+    
+    const puntosGanados = superLike ? 2 : 1;
+    updatePts(); 
+    updateProgressCircles();
+    showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
+    showLimitPopup(superLike, superLike ? st.superRestantes : st.likesRestantes);
+    
+  } catch(err) {
+    showToast('Error: ' + err.message);
+    // Revertir la tarjeta
+    if(card) {
+      card.classList.remove('liked');
+      card.style.transform = '';
+    }
+    st.swipeIdx--;
+    return;
+  }
+  
+  setTimeout(renderSwiper, 300);
 }
-
+  
 // ═══════════════════════════════════════════════
 //  RECOMPENSAS Y CANJE
 // ═══════════════════════════════════════════════
