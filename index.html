@@ -604,11 +604,17 @@ async function procesarLoginExitoso(usuario) {
   st.likesRestantes = Number(usuario.likes_restantes||10);
   st.superRestantes = Number(usuario.super_restantes||3);
   st.swipeIdx=0; 
-  await cargarDatos();
+  
   updatePts();
-  updateProgressCircles();
   showScreen('s-swiper');
-  renderSwiper();
+  
+  await cargarDatos();
+  
+  // CRÍTICO: Actualizar después de cargar datos Y después de que el DOM se renderice
+  setTimeout(() => {
+    updateProgressCircles();
+    renderSwiper();
+  }, 100);
 }
 
 async function cargarDatos(){
