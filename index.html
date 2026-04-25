@@ -43,7 +43,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .otp-inputs{display:flex;gap:8px;justify-content:center}
 .otp-input{width:44px;height:54px;border:1.5px solid #e0e0e0;border-radius:10px;text-align:center;font-size:22px;font-weight:700;outline:none}
 
-/* SWIPER - REESTRUCTURADO 300x600 */
+/* SWIPER */
 #s-swiper{overflow:hidden}
 .sw-hdr{background:#1A1A1A;padding:12px 16px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 .sw-top-row{display:flex;align-items:center;justify-content:space-between;width:100%}
@@ -330,29 +330,127 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 //  API Y CONFIGURACIÓN
 // ═══════════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrMsbQm7f7fGE4jjrZ99MTtjnNo06RQT6N4pwWK66m5aVI3E0XG9dHuwvciMQd_ui0/exec';
-async function api(params){const r=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params));return r.json();}
-async function apiPost(body){const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});return r.json();}
 
-const UID_KEY = 'dep_uid';
-function genUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&0x3|0x8)).toString(16)});}
-function getOrCreateUID(){let id=localStorage.getItem(UID_KEY);if(!id){id=genUUID();localStorage.setItem(UID_KEY,id);}return id;}
+async function api(params){
+  const r=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params));
+  return r.json();
+}
 
-const st={uid:getOrCreateUID(), usuario:null, puntos:0, tarjetas:[], recompensas:[], concursos:[], swipeIdx:0, avatarUrl:null, likesRestantes:10, superRestantes:3, geo:'', pais:'', preferencias:null, countdownInterval:null};
+async function apiPost(body){
+  const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});
+  return r.json();
+}
+
+// Generar session_id (antes era cookie_id)
+const SESSION_KEY = 'dep_session_id';
+function genUUID(){
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+    const r=Math.random()*16|0;
+    return(c==='x'?r:(r&0x3|0x8)).toString(16);
+  });
+}
+function getOrCreateSessionId(){
+  let id=localStorage.getItem(SESSION_KEY);
+  if(!id){
+    id=genUUID();
+    localStorage.setItem(SESSION_KEY,id);
+  }
+  return id;
+}
+
+// Estado global
+const st={
+  sessionId: getOrCreateSessionId(),
+  email: null,
+  usuario: null,
+  puntos: 0,
+  tarjetas: [],
+  recompensas: [],
+  concursos: [],
+  swipeIdx: 0,
+  avatarUrl: null,
+  likesRestantes: 10,
+  superRestantes: 3,
+  geo: '',
+  pais: '',
+  countdownInterval: null
+};
+
 const $=id=>document.getElementById(id);
 
-// Variable para controlar popups (solo primera vez por sesión)
+// Variable para controlar popups
 let popupShown = {like: false, super: false};
 
-function showScreen(id){['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{const e=$(s);if(e)e.classList.remove('active')});const t=$(id);if(t)t.classList.add('active');}
-function goTab(t){showScreen('s-'+t); if(t==='promos') renderPromos(); if(t==='contests') renderConcursos(); if(t==='profile') renderProfile();}
-function goMain(){showScreen('s-swiper');updateProgressCircles();}
-function updatePts(){const p=st.puntos+' PTS';['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{const e=$(id);if(e)e.textContent=p;});}
-function showToast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900);}
-function loaderShow(){const l=$('loader');if(l){l.style.display='flex';l.classList.remove('hide');}}
-function loaderHide(){const l=$('loader');if(l){l.classList.add('hide');setTimeout(()=>l.style.display='none',350);}}
-function showErr(id,msg){const e=$(id);if(!e)return;e.textContent=msg;e.style.display=msg?'block':'none';}
-function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+// ═══════════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════════
+function showScreen(id){
+  ['s-login','s-swiper','s-promos','s-contests','s-profile'].forEach(s=>{
+    const e=$(s);
+    if(e)e.classList.remove('active');
+  });
+  const t=$(id);
+  if(t)t.classList.add('active');
+}
 
+function goTab(t){
+  showScreen('s-'+t);
+  if(t==='promos') renderPromos();
+  if(t==='contests') renderConcursos();
+  if(t==='profile') renderProfile();
+}
+
+function goMain(){
+  showScreen('s-swiper');
+  updateProgressCircles();
+}
+
+function updatePts(){
+  const p=st.puntos+' PTS';
+  ['sw-pts','promo-pts','contest-pts','prof-pts'].forEach(id=>{
+    const e=$(id);
+    if(e)e.textContent=p;
+  });
+}
+
+function showToast(msg){
+  const t=$('toast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1900);
+}
+
+function loaderShow(){
+  const l=$('loader');
+  if(l){
+    l.style.display='flex';
+    l.classList.remove('hide');
+  }
+}
+
+function loaderHide(){
+  const l=$('loader');
+  if(l){
+    l.classList.add('hide');
+    setTimeout(()=>l.style.display='none',350);
+  }
+}
+
+function showErr(id,msg){
+  const e=$(id);
+  if(!e)return;
+  e.textContent=msg;
+  e.style.display=msg?'block':'none';
+}
+
+function escH(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Continúa en el siguiente mensaje...// ═══════════════════════════════════════════════
+//  PROGRESS CIRCLES Y LÍMITES
+// ═══════════════════════════════════════════════
 function updateProgressCircles(){
   const likeProgress = $('like-progress');
   const superProgress = $('super-progress');
@@ -368,7 +466,6 @@ function updateProgressCircles(){
   const likeOffset = circleCircumference * (1 - likePercent);
   likeProgress.querySelector('circle').style.strokeDashoffset = likeOffset;
   
-  // Aplicar estilos según likes restantes
   if(st.likesRestantes <= 0) {
     btnLike.classList.add('disabled');
     btnLike.style.background = '#C0157A';
@@ -391,7 +488,6 @@ function updateProgressCircles(){
   const superOffset = circleCircumference * (1 - superPercent);
   superProgress.querySelector('circle').style.strokeDashoffset = superOffset;
   
-  // Aplicar estilos según supers restantes
   if(st.superRestantes <= 0) {
     btnSuper.classList.add('disabled');
     btnSuper.style.background = '#FFD700';
@@ -414,7 +510,6 @@ function showLimitPopup(isSuperLike, remaining){
   const popup = $('limit-popup');
   if(!popup) return;
   
-  // Solo mostrar en la primera vez de la sesión
   const key = isSuperLike ? 'super' : 'like';
   if(popupShown[key]) return;
   popupShown[key] = true;
@@ -482,6 +577,9 @@ function iniciarCountdown(){
   }, 1000);
 }
 
+// ═══════════════════════════════════════════════
+//  GEOLOCALIZACIÓN
+// ═══════════════════════════════════════════════
 async function obtenerGeo(){
   try {
     const pos = await new Promise((resolve, reject) => {
@@ -504,7 +602,7 @@ async function obtenerGeo(){
 }
 
 // ═══════════════════════════════════════════════
-//  INIT & MEMORIA DE AUTOCOMPLETADO
+//  INIT
 // ═══════════════════════════════════════════════
 async function init(){
   const savedEmail = localStorage.getItem('dep_saved_email');
@@ -513,56 +611,90 @@ async function init(){
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
   }
 
-  try{
-    const r=await api({action:'por_cookie',cookie:st.uid});
-    if(r.ok&&r.usuario) await procesarLoginExitoso(r.usuario);
-  }catch(e){}
   loaderHide();
   setupOTPInputs();
   obtenerGeo();
 }
 
 // ═══════════════════════════════════════════════
-//  FLUJO DE LOGIN Y REGISTRO (CON OTP)
+//  LOGIN Y REGISTRO
 // ═══════════════════════════════════════════════
-function mostrarRegistro() {$('step-auth').style.display='none';$('step-otp').style.display='none';$('step-register').style.display='flex';showErr('login-err','');}
-function mostrarLogin() {$('step-register').style.display='none';$('step-otp').style.display='none';$('step-auth').style.display='flex';showErr('reg-err','');}
+function mostrarRegistro() {
+  $('step-auth').style.display='none';
+  $('step-otp').style.display='none';
+  $('step-register').style.display='flex';
+  showErr('login-err','');
+}
+
+function mostrarLogin() {
+  $('step-register').style.display='none';
+  $('step-otp').style.display='none';
+  $('step-auth').style.display='flex';
+  showErr('reg-err','');
+}
 
 async function hacerLogin() {
   const email = $('inp-email').value.trim();
   const pass = $('inp-password').value;
+  
   if(!email || !pass) return showErr('login-err', 'Ingresa correo y contraseña');
-  $('btn-login').disabled = true; loaderShow();
+  
+  $('btn-login').disabled = true;
+  loaderShow();
+  
   try {
-    const r = await apiPost({action:'login_pass', email, password:pass, cookie_id:st.uid, geo:st.geo, pais:st.pais});
+    const r = await apiPost({
+      action:'login_pass',
+      email,
+      password:pass,
+      cookie:st.sessionId,
+      userAgent:navigator.userAgent,
+      geo:st.geo,
+      pais:st.pais
+    });
+    
     if(!r.ok) throw new Error(r.error);
     
     localStorage.setItem('dep_saved_email', email);
     st.avatarUrl = localStorage.getItem('dep_avatar_'+email);
     
-    await procesarLoginExitoso(r.usuario);
-  } catch(e) { showErr('login-err', e.message); }
-  $('btn-login').disabled = false; loaderHide();
+    await procesarLoginExitoso(email, r.usuario);
+  } catch(e) {
+    showErr('login-err', e.message);
+  }
+  
+  $('btn-login').disabled = false;
+  loaderHide();
 }
 
 async function enviarCodigoRegistro() {
   const nombre = $('reg-nombre').value.trim();
   const email = $('reg-email').value.trim();
   const pass = $('reg-password').value;
+  
   if(!nombre || !email || !pass) return showErr('reg-err', 'Completa todos los campos');
   if(!email.includes('@')) return showErr('reg-err', 'Correo inválido');
 
-  $('btn-register').disabled = true; loaderShow();
+  $('btn-register').disabled = true;
+  loaderShow();
+  
   try {
     const r = await apiPost({action:'enviar_otp', email});
     if(!r.ok) throw new Error(r.error);
+    
     $('step-register').style.display='none';
     $('step-otp').style.display='flex';
     $('otp-email-show').textContent = email;
-    for(let i=0;i<6;i++){$('otp'+i).value='';} $('otp0').focus();
+    
+    for(let i=0;i<6;i++){$('otp'+i).value='';}
+    $('otp0').focus();
     showErr('otp-err','');
-  } catch(e) { showErr('reg-err', e.message); }
-  $('btn-register').disabled = false; loaderHide();
+  } catch(e) {
+    showErr('reg-err', e.message);
+  }
+  
+  $('btn-register').disabled = false;
+  loaderHide();
 }
 
 async function verificarYCrear() {
@@ -573,121 +705,119 @@ async function verificarYCrear() {
   
   if(codigo.length<6) return showErr('otp-err','Introduce los 6 dígitos');
   
-  $('btn-verificar').disabled = true; loaderShow();
+  $('btn-verificar').disabled = true;
+  loaderShow();
+  
   try {
-    const r = await apiPost({action:'registro_otp', email, nombre, password:pass, codigo, cookie_id:st.uid, geo:st.geo, pais:st.pais});
+    const r = await apiPost({
+      action:'registro_otp',
+      email,
+      nombre,
+      password:pass,
+      otp:codigo,
+      cookie:st.sessionId,
+      userAgent:navigator.userAgent,
+      geo:st.geo,
+      pais:st.pais
+    });
+    
     if(!r.ok) throw new Error(r.error);
     
     localStorage.setItem('dep_saved_email', email);
     
-    await procesarLoginExitoso(r.usuario);
-  } catch(e) { showErr('otp-err', e.message); }
-  $('btn-verificar').disabled = false; loaderHide();
+    await procesarLoginExitoso(email, {nombre, puntos_disponibles:0});
+  } catch(e) {
+    showErr('otp-err', e.message);
+  }
+  
+  $('btn-verificar').disabled = false;
+  loaderHide();
 }
 
 function setupOTPInputs(){
   for(let i=0;i<6;i++){
-    const inp=$('otp'+i); if(!inp)continue;
+    const inp=$('otp'+i);
+    if(!inp)continue;
     inp.addEventListener('input',e=>{
       const v=e.target.value.replace(/\D/g,'');
       e.target.value=v.slice(-1);
       if(v&&i<5) $('otp'+(i+1)).focus();
       else if(v&&i===5) setTimeout(verificarYCrear, 200);
     });
-    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!e.target.value&&i>0)$('otp'+(i-1)).focus();});
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Backspace'&&!e.target.value&&i>0)$('otp'+(i-1)).focus();
+    });
   }
 }
 
-async function procesarLoginExitoso(usuario) {
+async function procesarLoginExitoso(email, usuario) {
+  st.email = email;
   st.usuario = usuario;
-  st.puntos = Number(usuario.puntos_disponibles||usuario['puntos_disponibles']||usuario.puntos||0);
-  st.likesRestantes = Number(usuario.likes_restantes||10);
-  st.superRestantes = Number(usuario.super_restantes||3);
-  st.swipeIdx=0; 
+  st.puntos = Number(usuario.puntos_disponibles||0);
+  st.likesRestantes = 10;
+  st.superRestantes = 3;
+  st.swipeIdx = 0;
   
   updatePts();
   showScreen('s-swiper');
   
   await cargarDatos();
   
-  // CRÍTICO: Actualizar después de cargar datos Y después de que el DOM se renderice
   setTimeout(() => {
     updateProgressCircles();
     renderSwiper();
   }, 100);
 }
 
+// ═══════════════════════════════════════════════
+//  CARGAR DATOS
+// ═══════════════════════════════════════════════
 async function cargarDatos(){
-  const email=st.usuario?.id_email||st.usuario?.email||'';
-  const cookie=st.uid;
-  const[rT,rR,rC,rP]=await Promise.all([
-    api({action:'tarjetas',email,cookie}),
-    api({action:'recompensas'}),
-    api({action:'concursos'}),
-    api({action:'preferencias',cookie})
+  const email = st.email;
+  
+  const [rT, rR, rC] = await Promise.all([
+    api({action:'tarjetas', email}),
+    api({action:'recompensas', email}),
+    api({action:'concursos', email})
   ]);
   
   st.tarjetas = rT.tarjetas || [];
   st.recompensas = rR.recompensas || [];
   st.concursos = rC.concursos || [];
-  st.preferencias = rP.preferencias || null;
-  
-  // ORDENAR TARJETAS POR PREFERENCIAS
-  if(st.preferencias) {
-    const catPts = st.preferencias.categorias || {};
-    const marPts = st.preferencias.marcas || {};
-    const detPts = st.preferencias.detalles || {};
-    
-    st.tarjetas.sort((a, b) => {
-      const scoreA = (catPts[a.id_categoria] || 0) + (marPts[a.id_marca] || 0) + (detPts[a.id_detalle] || 0);
-      const scoreB = (catPts[b.id_categoria] || 0) + (marPts[b.id_marca] || 0) + (detPts[b.id_detalle] || 0);
-      return scoreB - scoreA;
-    });
-  }
 }
 
 // ═══════════════════════════════════════════════
-//  SWIPER (CAPAS 300x600 px)
+//  SWIPER
 // ═══════════════════════════════════════════════
 function renderSwiper(){
   const stack=$('card-stack'),empty=$('sw-empty'),btns=$('sw-btns');
-  stack.innerHTML=''; 
+  stack.innerHTML='';
+  
   const pend=st.tarjetas.slice(st.swipeIdx);
   
   if(!pend.length){
-    stack.style.display='none';  // ← OCULTAR EL STACK
+    stack.style.display='none';
     empty.style.display='flex';
     btns.style.display='none';
     iniciarCountdown();
     return;
   }
   
-  stack.style.display='block';  // ← MOSTRAR EL STACK
-  empty.style.display='none';
-  btns.style.display='flex';
-  if(st.countdownInterval) clearInterval(st.countdownInterval);
-  
+  stack.style.display='block';
   empty.style.display='none';
   btns.style.display='flex';
   if(st.countdownInterval) clearInterval(st.countdownInterval);
   
   pend.slice(0,5).reverse().forEach((t,vi)=>{
-    const div=document.createElement('div'); 
-    div.className='swipe-card'; 
+    const div=document.createElement('div');
+    div.className='swipe-card';
+    div.id='sc-'+(t.id_tarjeta||t.id);
+    div.dataset.tarjetaId = t.id_tarjeta||t.id;
     
-    // USAR id O id_tarjeta
-    const tarjetaId = t.id_tarjeta || t.id;
-    div.id='sc-'+tarjetaId;
-    div.dataset.tarjetaId = tarjetaId;
-    
-    // Imagen de fondo
     const imgBg = t.img_tarjeta || t.img || t.imagen || 'https://via.placeholder.com/300x600?text=Falta+Imagen';
-    
-    // Logo
     const logoSrc = t.logo_tarjeta || t.logo;
     const logoHtml = logoSrc ? `<div class="card-logo"><img src="${logoSrc}" alt="Logo"/></div>` : '';
     
-    // Textos - USAR CAMPOS CORRECTOS
     const cardName = t.nombre_marca || t.descripcion || 'Sin marca';
     const cardBrand = t.detalle_categoria || t.nombre || 'Sin detalle';
     
@@ -702,7 +832,7 @@ function renderSwiper(){
       <div class="ind ind-n">Paso ✕</div>
     `;
     
-    const depth=Math.min(4,pend.length-1)-vi; 
+    const depth=Math.min(4,pend.length-1)-vi;
     div.style.zIndex=vi+1;
     if(depth>0) div.style.transform=`scale(${1-depth*.03}) translateY(${depth*5}px)`;
     
@@ -722,7 +852,6 @@ function attachDrag(c){
     if(!drag)return;
     const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
     
-    // BLOQUEAR COMPLETAMENTE swipe derecha si no hay likes
     if(dx > 0 && st.likesRestantes <= 0 && st.superRestantes <= 0) {
       return;
     }
@@ -764,26 +893,29 @@ async function swipeCard(like, superLike){
   
   const card = $('sc-'+tarjetaId);
   
-  // No puntuar si es swipe izquierda (like = false)
+  // Swipe negativo
   if(!like) {
     if(card) card.classList.add('gone');
     st.swipeIdx++;
-    const email=st.usuario?.id_email||st.usuario?.email||'';
+    
     apiPost({
-      action:'swipe', 
-      email, 
-      cookie_id:st.uid, 
-      tarjeta_id:tarjetaId, 
-      like:false, 
-      super_like:false, 
-      geo:st.geo, 
+      action:'swipe',
+      email:st.email,
+      session_id:st.sessionId,
+      tipo:'Rechazado',
+      id_tarjeta:tarjetaId,
+      nombre_categoria:t.nombre_categoria||'',
+      nombre_marca:t.nombre_marca||'',
+      detalle_categoria:t.detalle_categoria||'',
+      geo:st.geo,
       pais:st.pais
     }).catch(()=>{});
+    
     setTimeout(renderSwiper,300);
     return;
   }
   
-  // Validar límites en cliente
+  // Validar límites
   if(superLike && st.superRestantes <= 0) {
     showLimitPopup(true, 0);
     return;
@@ -794,27 +926,29 @@ async function swipeCard(like, superLike){
   }
   
   if(card) card.classList.add('liked');
-  
   st.swipeIdx++;
-  const email=st.usuario?.id_email||st.usuario?.email||'';
   
   showToast(`Procesando...`);
   
   try {
+    const tipo = superLike ? 'Super Amo' : 'Like';
+    
     const r = await apiPost({
-      action:'swipe', 
-      email, 
-      cookie_id:st.uid, 
-      tarjeta_id:tarjetaId, 
-      like:true, 
-      super_like:superLike, 
+      action:'swipe',
+      email:st.email,
+      session_id:st.sessionId,
+      tipo:tipo,
+      id_tarjeta:tarjetaId,
+      nombre_categoria:t.nombre_categoria||'',
+      nombre_marca:t.nombre_marca||'',
+      detalle_categoria:t.detalle_categoria||'',
       geo:st.geo,
       pais:st.pais
     });
     
     if(!r.ok) {
-      if(r.error && r.error.includes('Límite diario alcanzado')) {
-        showLimitPopup(superLike, superLike ? r.super_restantes : r.likes_restantes);
+      if(r.error && r.error.includes('Límite')) {
+        showLimitPopup(superLike, r.limites ? (superLike ? r.limites.supers : r.limites.likes) : 0);
         if(card) {
           card.classList.remove('liked');
           card.style.transform = '';
@@ -825,12 +959,12 @@ async function swipeCard(like, superLike){
       throw new Error(r.error || 'Error desconocido');
     }
     
-    st.puntos = r.puntos_restantes;
-    st.likesRestantes = r.likes_restantes || 0;
-    st.superRestantes = r.super_restantes || 0;
+    st.puntos = r.puntos_totales || st.puntos;
+    st.likesRestantes = r.limites ? r.limites.likes : st.likesRestantes;
+    st.superRestantes = r.limites ? r.limites.supers : st.superRestantes;
     
-    const puntosGanados = superLike ? 2 : 1;
-    updatePts(); 
+    const puntosGanados = r.puntos_ganados || (superLike ? 2 : 1);
+    updatePts();
     updateProgressCircles();
     showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
     showLimitPopup(superLike, superLike ? st.superRestantes : st.likesRestantes);
@@ -847,9 +981,9 @@ async function swipeCard(like, superLike){
   
   setTimeout(renderSwiper, 300);
 }
-  
+
 // ═══════════════════════════════════════════════
-//  RECOMPENSAS Y CANJE
+//  RECOMPENSAS
 // ═══════════════════════════════════════════════
 function renderPromos(){
   const body=$('promos-body');
@@ -878,7 +1012,7 @@ function renderPromos(){
     
     if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
-       clickAction = `onclick="tryUnlock('${emoji}','${escH(titulo)}','${escH(subtitulo)}','${escH(r.instrucciones_canje||'')}','${escH(r.caduca||'')}','${r.id_recompensa||r.id}','recompensa',${pts})"`;
+       clickAction = `onclick="tryUnlock('recompensa','${r.id_recompensa||r.id}',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
@@ -909,6 +1043,9 @@ function renderPromos(){
   body.innerHTML=html;
 }
 
+// ═══════════════════════════════════════════════
+//  CONCURSOS
+// ═══════════════════════════════════════════════
 function renderConcursos(){
   const body=$('contests-body');
   if(!body) return;
@@ -936,7 +1073,7 @@ function renderConcursos(){
 
     if (st.puntos >= pts) {
        statusTag = `<span class="ptag ptag-ok">Participar</span>`;
-       clickAction = `onclick="tryUnlock('${emoji}','${escH(titulo)}','${escH(subtitulo)}','${escH(c.instrucciones_canje||'')}','','${c.id_concurso||c.id}','concurso',${pts})"`;
+       clickAction = `onclick="tryUnlock('concurso','${c.id_concurso||c.id}',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
@@ -967,18 +1104,18 @@ function renderConcursos(){
   body.innerHTML=html;
 }
 
+// ═══════════════════════════════════════════════
+//  CANJE
+// ═══════════════════════════════════════════════
 let pendingCanje={};
-function tryUnlock(emoji, titulo, subtitulo, instrucciones, caduca, id, tipo, pts){
-  pendingCanje = {emoji, titulo, subtitulo, instrucciones, caduca, id, tipo, pts};
+
+function tryUnlock(tipo, id, pts){
+  pendingCanje = {tipo, id, pts};
   const modal = $('conf-modal');
   const msg = $('conf-msg');
   if(!modal || !msg) return;
   
-  msg.innerHTML = `
-    <div style="font-size:16px;font-weight:700;margin-bottom:4px">${escH(titulo)}</div>
-    <div style="font-size:13px;color:#888">${escH(subtitulo)}</div>
-    <div style="margin-top:10px;font-size:14px;font-weight:bold;color:#C0157A">${pts} puntos</div>
-  `;
+  msg.innerHTML = `<div style="margin-top:10px;font-size:14px;font-weight:bold;color:#C0157A">${pts} puntos</div>`;
   modal.style.display='flex';
 }
 
@@ -986,15 +1123,16 @@ async function executeCanje(){
   $('conf-modal').style.display='none';
   loaderShow();
   
-  const email=st.usuario?.id_email||st.usuario?.email||'';
-  
   try {
     const r = await apiPost({
       action:'canje',
-      email,
-      cookie_id:st.uid,
-      recompensa_id:pendingCanje.id,
-      tipo:pendingCanje.tipo
+      email:st.email,
+      session_id:st.sessionId,
+      tipo:pendingCanje.tipo,
+      id_item:pendingCanje.id,
+      puntos_requeridos:pendingCanje.pts,
+      geo:st.geo,
+      pais:st.pais
     });
     
     if(!r.ok) throw new Error(r.error);
@@ -1002,32 +1140,20 @@ async function executeCanje(){
     st.puntos = r.puntos_restantes;
     updatePts();
     
-    // MOSTRAR MODAL CON CONFETTI
     const modal = $('umodal');
     const ico = $('u-ico');
     const title = $('u-title');
     const sub = $('u-sub');
     const code = $('u-code');
     
-    ico.textContent = pendingCanje.emoji;
-    title.textContent = pendingCanje.titulo;
-    
-    // SUBTÍTULO: detalle_categoria + instrucciones + caduca
-    let subtituloCompleto = pendingCanje.subtitulo || '';
-    if(pendingCanje.instrucciones) {
-      subtituloCompleto += (subtituloCompleto ? ' • ' : '') + pendingCanje.instrucciones;
-    }
-    if(pendingCanje.caduca) {
-      subtituloCompleto += (subtituloCompleto ? ' • ' : '') + 'Caduca: ' + pendingCanje.caduca;
-    }
-    
-    sub.textContent = subtituloCompleto;
-    code.textContent = r.codigo;
+    ico.textContent = '🎁';
+    title.textContent = 'Canje exitoso';
+    sub.textContent = 'Presenta este código en el establecimiento';
+    code.textContent = r.codigo_canje.replace('CANJE-','');
     
     modal.style.display='flex';
     startConf();
     
-    // Recargar recompensas/concursos
     if(pendingCanje.tipo === 'recompensa') renderPromos();
     else renderConcursos();
     
@@ -1083,7 +1209,7 @@ function renderProfile(){
   $('prof-pts').textContent=st.puntos+' PTS';
   
   const u=st.usuario||{};
-  const email=u.id_email||u.email||'';
+  const email=st.email||'';
   const nombre=u.nombre||'Usuario';
   
   const avatarHtml = st.avatarUrl 
@@ -1102,7 +1228,7 @@ function renderProfile(){
     </div>
     <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
     
-    <div class="slbl">Completa tu perfil y gana 3 puntos por campo</div>
+    <div class="slbl">Completa tu perfil y gana puntos</div>
     
     <div class="pf-field">
       <label>Nombre completo</label>
@@ -1183,17 +1309,14 @@ function handleAvatarUpload(e){
   
   const reader = new FileReader();
   reader.onload = (ev) => {
-    const email = st.usuario?.id_email || st.usuario?.email || '';
     st.avatarUrl = ev.target.result;
-    localStorage.setItem('dep_avatar_'+email, st.avatarUrl);
+    localStorage.setItem('dep_avatar_'+st.email, st.avatarUrl);
     renderProfile();
   };
   reader.readAsDataURL(file);
 }
 
 async function guardarPerfil(){
-  const email = st.usuario?.id_email || st.usuario?.email || '';
-  
   const mascotas = Array.from(document.querySelectorAll('.pf-mascota:checked'))
     .map(cb => cb.value)
     .join(', ');
@@ -1212,22 +1335,20 @@ async function guardarPerfil(){
   try {
     const r = await apiPost({
       action: 'perfil',
-      email,
-      cookie_id: st.uid,
-      perfil
+      email: st.email,
+      ...perfil
     });
     
     if(!r.ok) throw new Error(r.error);
     
-    if(r.puntos_extra > 0) {
-      st.puntos += r.puntos_extra;
+    if(r.puntos_ganados > 0) {
+      st.puntos = r.puntos_totales;
       updatePts();
-      showToast(`¡+${r.puntos_extra} puntos por completar tu perfil! 🎉`);
+      showToast(`¡+${r.puntos_ganados} puntos por completar tu perfil! 🎉`);
     } else {
       showToast('Perfil actualizado correctamente');
     }
     
-    // Actualizar usuario en memoria
     Object.assign(st.usuario, perfil);
     
   } catch(err) {
@@ -1236,8 +1357,9 @@ async function guardarPerfil(){
   
   loaderHide();
 }
+
 function cerrarSesion(){
-  // Limpiar estado
+  st.email = null;
   st.usuario = null;
   st.puntos = 0;
   st.tarjetas = [];
@@ -1246,26 +1368,22 @@ function cerrarSesion(){
   st.swipeIdx = 0;
   st.likesRestantes = 10;
   st.superRestantes = 3;
-  st.preferencias = null;
   st.avatarUrl = null;
   
-  // Resetear popups
   popupShown = {like: false, super: false};
   
-  // Limpiar countdown si existe
   if(st.countdownInterval) {
     clearInterval(st.countdownInterval);
     st.countdownInterval = null;
   }
   
-  // Limpiar formularios
   if($('inp-password')) $('inp-password').value = '';
   if($('reg-password')) $('reg-password').value = '';
   
-  // Volver a login
   showScreen('s-login');
   showToast('Sesión cerrada correctamente');
 }
+
 // ═══════════════════════════════════════════════
 //  ANIMACIÓN DE CARGA
 // ═══════════════════════════════════════════════
