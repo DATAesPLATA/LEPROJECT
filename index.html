@@ -461,45 +461,63 @@ function updateProgressCircles(){
   
   const circleCircumference = 2 * Math.PI * 32;
   
-  // Like progress
-  const likePercent = (10 - st.likesRestantes) / 10;
+  // ===== LIKES =====
+  const likesUsados = 10 - st.likesRestantes;
+  const likePercent = likesUsados / 10;
   const likeOffset = circleCircumference * (1 - likePercent);
+  
   likeProgress.querySelector('circle').style.strokeDashoffset = likeOffset;
   
+  // Estilos según progreso
   if(st.likesRestantes <= 0) {
+    // Sin likes: disabled
     btnLike.classList.add('disabled');
+    btnLike.classList.add('filled');
     btnLike.style.background = '#C0157A';
     btnLike.style.color = '#fff';
     btnLike.style.borderColor = '#C0157A';
-  } else if(likePercent === 1) {
+  } else if(likesUsados === 10) {
+    // Completó el círculo (10 likes): botón sólido
     btnLike.classList.remove('disabled');
+    btnLike.classList.add('filled');
     btnLike.style.background = '#C0157A';
     btnLike.style.color = '#fff';
     btnLike.style.borderColor = '#C0157A';
   } else {
+    // En progreso: botón blanco con borde
     btnLike.classList.remove('disabled');
+    btnLike.classList.remove('filled');
     btnLike.style.background = '#fff';
     btnLike.style.color = '#C0157A';
     btnLike.style.borderColor = '#C0157A';
   }
   
-  // Super progress
-  const superPercent = (3 - st.superRestantes) / 3;
+  // ===== SUPER LIKES =====
+  const supersUsados = 3 - st.superRestantes;
+  const superPercent = supersUsados / 3;
   const superOffset = circleCircumference * (1 - superPercent);
+  
   superProgress.querySelector('circle').style.strokeDashoffset = superOffset;
   
+  // Estilos según progreso
   if(st.superRestantes <= 0) {
+    // Sin supers: disabled
     btnSuper.classList.add('disabled');
+    btnSuper.classList.add('filled');
     btnSuper.style.background = '#FFD700';
     btnSuper.style.color = '#1A1A1A';
     btnSuper.style.borderColor = '#FFD700';
-  } else if(superPercent === 1) {
+  } else if(supersUsados === 3) {
+    // Completó el círculo (3 supers): botón sólido
     btnSuper.classList.remove('disabled');
+    btnSuper.classList.add('filled');
     btnSuper.style.background = '#FFD700';
     btnSuper.style.color = '#1A1A1A';
     btnSuper.style.borderColor = '#FFD700';
   } else {
+    // En progreso: botón blanco con borde
     btnSuper.classList.remove('disabled');
+    btnSuper.classList.remove('filled');
     btnSuper.style.background = '#fff';
     btnSuper.style.color = '#FFD700';
     btnSuper.style.borderColor = '#FFD700';
@@ -611,7 +629,22 @@ async function init(){
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
   }
 
-  loaderHide();
+  // NUEVO: Intentar login automático si hay email guardado
+  if(savedEmail) {
+    loaderShow();
+    try {
+      const r = await api({action:'por_email', email:savedEmail});
+      if(r.ok && r.usuario) {
+        await procesarLoginExitoso(savedEmail, r.usuario);
+      }
+    } catch(e) {
+      console.log('No se pudo restaurar sesión');
+    }
+    loaderHide();
+  } else {
+    loaderHide();
+  }
+
   setupOTPInputs();
   obtenerGeo();
 }
@@ -754,8 +787,19 @@ async function procesarLoginExitoso(email, usuario) {
   st.email = email;
   st.usuario = usuario;
   st.puntos = Number(usuario.puntos_disponibles||0);
-  st.likesRestantes = 10;
-  st.superRestantes = 3;
+  
+  // NUEVO: Obtener límites reales del servidor
+  try {
+    const rLimites = await api({action:'limites', email:st.email});
+    if(rLimites.ok) {
+      st.likesRestantes = rLimites.limites.likes;
+      st.superRestantes = rLimites.limites.supers;
+    }
+  } catch(e) {
+    st.likesRestantes = 10;
+    st.superRestantes = 3;
+  }
+  
   st.swipeIdx = 0;
   
   updatePts();
