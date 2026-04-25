@@ -358,38 +358,54 @@ function updateProgressCircles(){
   const btnLike = $('btn-like');
   const btnSuper = $('btn-super');
   
+  if(!likeProgress || !superProgress || !btnLike || !btnSuper) return;
+  
   const circleCircumference = 2 * Math.PI * 32;
   
   // Like progress
   const likePercent = (10 - st.likesRestantes) / 10;
   const likeOffset = circleCircumference * (1 - likePercent);
-  if(likeProgress) {
-    likeProgress.querySelector('circle').style.strokeDashoffset = likeOffset;
-  }
-  if(btnLike) {
-    if(st.likesRestantes <= 0) {
-      btnLike.classList.add('disabled');
-      btnLike.classList.add('filled');
-    } else {
-      btnLike.classList.remove('disabled');
-      btnLike.classList.remove('filled');
-    }
+  likeProgress.querySelector('circle').style.strokeDashoffset = likeOffset;
+  
+  // Aplicar estilos según likes restantes
+  if(st.likesRestantes <= 0) {
+    btnLike.classList.add('disabled');
+    btnLike.style.background = '#C0157A';
+    btnLike.style.color = '#fff';
+    btnLike.style.borderColor = '#C0157A';
+  } else if(likePercent === 1) {
+    btnLike.classList.remove('disabled');
+    btnLike.style.background = '#C0157A';
+    btnLike.style.color = '#fff';
+    btnLike.style.borderColor = '#C0157A';
+  } else {
+    btnLike.classList.remove('disabled');
+    btnLike.style.background = '#fff';
+    btnLike.style.color = '#C0157A';
+    btnLike.style.borderColor = '#C0157A';
   }
   
   // Super progress
   const superPercent = (3 - st.superRestantes) / 3;
   const superOffset = circleCircumference * (1 - superPercent);
-  if(superProgress) {
-    superProgress.querySelector('circle').style.strokeDashoffset = superOffset;
-  }
-  if(btnSuper) {
-    if(st.superRestantes <= 0) {
-      btnSuper.classList.add('disabled');
-      btnSuper.classList.add('filled');
-    } else {
-      btnSuper.classList.remove('disabled');
-      btnSuper.classList.remove('filled');
-    }
+  superProgress.querySelector('circle').style.strokeDashoffset = superOffset;
+  
+  // Aplicar estilos según supers restantes
+  if(st.superRestantes <= 0) {
+    btnSuper.classList.add('disabled');
+    btnSuper.style.background = '#FFD700';
+    btnSuper.style.color = '#1A1A1A';
+    btnSuper.style.borderColor = '#FFD700';
+  } else if(superPercent === 1) {
+    btnSuper.classList.remove('disabled');
+    btnSuper.style.background = '#FFD700';
+    btnSuper.style.color = '#1A1A1A';
+    btnSuper.style.borderColor = '#FFD700';
+  } else {
+    btnSuper.classList.remove('disabled');
+    btnSuper.style.background = '#fff';
+    btnSuper.style.color = '#FFD700';
+    btnSuper.style.borderColor = '#FFD700';
   }
 }
 
@@ -1134,8 +1150,12 @@ function renderProfile(){
       </div>
     </div>
     
-    <button class="updbtn" onclick="guardarPerfil()" style="margin-top:20px;background:#C0157A;color:#fff">
+    <button class="btn-mg" onclick="guardarPerfil()" style="margin-top:20px">
       Guardar cambios
+    </button>
+    
+    <button class="updbtn" onclick="cerrarSesion()" style="margin-top:20px;color:#C0157A;border-color:#C0157A">
+      Cerrar sesión
     </button>
   `;
 }
@@ -1203,7 +1223,36 @@ async function guardarPerfil(){
   
   loaderHide();
 }
-
+function cerrarSesion(){
+  // Limpiar estado
+  st.usuario = null;
+  st.puntos = 0;
+  st.tarjetas = [];
+  st.recompensas = [];
+  st.concursos = [];
+  st.swipeIdx = 0;
+  st.likesRestantes = 10;
+  st.superRestantes = 3;
+  st.preferencias = null;
+  st.avatarUrl = null;
+  
+  // Resetear popups
+  popupShown = {like: false, super: false};
+  
+  // Limpiar countdown si existe
+  if(st.countdownInterval) {
+    clearInterval(st.countdownInterval);
+    st.countdownInterval = null;
+  }
+  
+  // Limpiar formularios
+  if($('inp-password')) $('inp-password').value = '';
+  if($('reg-password')) $('reg-password').value = '';
+  
+  // Volver a login
+  showScreen('s-login');
+  showToast('Sesión cerrada correctamente');
+}
 // ═══════════════════════════════════════════════
 //  ANIMACIÓN DE CARGA
 // ═══════════════════════════════════════════════
