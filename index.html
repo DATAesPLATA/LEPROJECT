@@ -138,13 +138,13 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
 .progress-ring{fill:none;stroke-width:3}
 
-.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px 60px;text-align:center;min-height:0;flex:1}
-.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end}
-.beans-celebration img{width:80px;object-fit:contain;animation:breathe 3s ease-in-out infinite}
+.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding:20px 24px;text-align:center;min-height:0;flex:1}
+.beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end;margin:0}
+.beans-celebration img{width:90px;object-fit:contain;animation:breathe 3s ease-in-out infinite}
 .beans-celebration img:first-child{animation-delay:.5s}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .countdown-text{font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.4;margin-bottom:8px}
-.countdown-timer{font-size:32px;font-weight:800;color:#C0157A;letter-spacing:.05em}
+.countdown-timer{font-size:36px;font-weight:800;color:#C0157A;letter-spacing:.05em;line-height:1}
 
 .scrollbody{flex:1;overflow-y:auto;padding:14px;min-height:0}
 .slbl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;margin:16px 0 8px}
@@ -250,18 +250,16 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
     </div>
     <div class="sw-body">
       <div class="card-stack" id="card-stack"></div>
-      <div class="sw-empty" id="sw-empty">
-        <div style="font-size:16px;font-weight:700;text-align:center;line-height:1.4;color:#1A1A1A;margin-bottom:40px">
-        Hoy nos quedamos sin preguntas para ti pero mañana seguimos<br>¡Data es plata!
-        </div>
-        <div class="countdown-timer" id="countdown-timer" style="margin-bottom:30px">00:00:00</div>
-        <div class="beans-celebration">
-          <img src="assets/baile-frijo.gif" alt="Frijo"/>
-          <img src="assets/baile-lito.gif" alt="Lito"/>
-        </div>
+    <div class="sw-empty" id="sw-empty">
+      <div style="font-size:15px;font-weight:700;text-align:center;line-height:1.5;color:#1A1A1A;max-width:280px">
+        Hoy nos quedamos sin preguntas para ti pero mañana seguimos ¡Data es plata!
       </div>
-        <div style="font-size:16px;font-weight:700;text-align:center;line-height:1.4">Hoy nos quedamos sin preguntas para ti pero mañana seguimos<br>¡Data es plata!</div>
+      <div class="countdown-timer" id="countdown-timer">00:00:00</div>
+      <div class="beans-celebration">
+        <img src="assets/baile-frijo.gif" alt="Frijo"/>
+        <img src="assets/baile-lito.gif" alt="Lito"/>
       </div>
+    </div>
       <div class="sw-btns" id="sw-btns">
         <button class="sw-btn no" onclick="swipeCard(false)">✕</button>
         <button class="sw-btn super" id="btn-super" onclick="swipeCard(true, true)">
