@@ -138,7 +138,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
 .progress-ring{fill:none;stroke-width:3}
 
-.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px;padding:24px 24px 60px;text-align:center;min-height:0;flex:1;overflow-y:auto}
+.sw-empty{display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px;padding:24px 24px 60px;text-align:center;flex:1}
 .beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end;margin:0}
 .beans-celebration img{width:90px;object-fit:contain;animation:breathe 3s ease-in-out infinite}
 .beans-celebration img:first-child{animation-delay:.5s}
@@ -649,11 +649,17 @@ function renderSwiper(){
   const pend=st.tarjetas.slice(st.swipeIdx);
   
   if(!pend.length){
+    stack.style.display='none';  // ← OCULTAR EL STACK
     empty.style.display='flex';
     btns.style.display='none';
     iniciarCountdown();
     return;
   }
+  
+  stack.style.display='block';  // ← MOSTRAR EL STACK
+  empty.style.display='none';
+  btns.style.display='flex';
+  if(st.countdownInterval) clearInterval(st.countdownInterval);
   
   empty.style.display='none';
   btns.style.display='flex';
