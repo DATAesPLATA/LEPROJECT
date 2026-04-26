@@ -622,28 +622,30 @@ async function obtenerGeo(){
 //  INIT
 // ═══════════════════════════════════════════════
 async function init(){
+async function init(){
   const savedEmail = localStorage.getItem('dep_saved_email');
   if(savedEmail) {
     $('inp-email').value = savedEmail;
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
   }
 
-  // NUEVO: Intentar login automático si hay email guardado
-  if(savedEmail) {
-    loaderShow();
-    try {
-      const r = await api({action:'por_email', email:savedEmail});
+  // ← SOLO autologin si NO estamos en la pantalla de login
+  const sessionId = localStorage.getItem('dep_session_id');
+  if(sessionId){
+    try{
+      const r = await apiPost({action:'validar_session', session_id:sessionId});
       if(r.ok && r.usuario) {
-        await procesarLoginExitoso(savedEmail, r.usuario);
+        await procesarLoginExitoso(r.usuario);
+      } else {
+        // Session inválida, limpiar
+        localStorage.removeItem('dep_session_id');
       }
-    } catch(e) {
-      console.log('No se pudo restaurar sesión');
+    }catch(e){
+      localStorage.removeItem('dep_session_id');
     }
-    loaderHide();
-  } else {
-    loaderHide();
   }
-
+  
+  loaderHide();
   setupOTPInputs();
   obtenerGeo();
 }
@@ -1558,10 +1560,16 @@ function cerrarSesion(){
   showScreen('s-login');
   showToast('Sesión cerrada correctamente');
 
-  // ← CRÍTICO: ELIMINAR sessionId del localStorage
+  // ← CRÍTICO: ELIMINAR sessionId
   localStorage.removeItem('dep_session_id');
+  st.sessionId = null;
+  st.email = null;
+  
+  // Volver a login
+  showScreen('s-login');
+  showToast('Sesión cerrada correctamente');
 }
-
+  
 // ═══════════════════════════════════════════════
 //  ANIMACIÓN DE CARGA
 // ═══════════════════════════════════════════════
