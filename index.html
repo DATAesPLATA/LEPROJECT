@@ -49,13 +49,14 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-top-row{display:flex;align-items:center;justify-content:space-between;width:100%}
 .sw-geo{font-size:11px;color:#ccc;font-weight:400}
 .sw-title{font-size:13px;font-weight:700;color:#fff}
-.sw-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 16px 10px;gap:10px;overflow:hidden;min-height:0}
+.sw-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 16px 10px;gap:8px;overflow:hidden;min-height:0} 
+.sw-hint{font-size:11px;color:#888;text-align:center;max-width:300px;line-height:1.3;margin-bottom:4px}
 
 .card-stack{
   position:relative;
   width:300px;
-  height:570px;
-  max-height:65vh;
+  height:540px;
+  max-height:62vh;
   flex-shrink:0;
 }
 .swipe-card{
@@ -79,6 +80,9 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   background-position:center;
   background-color:#eee;
   z-index:1;
+  object-fit:cover;
+  width:100%;
+  height:100%;
 }
 .card-logo{
   position:absolute;
@@ -102,18 +106,18 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 }
 .card-info{
   position:absolute;
-  bottom:0;
+  top:0;
   left:0;
   width:100%;
-  background:linear-gradient(to top, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0));
-  padding:40px 20px 20px;
+  background:linear-gradient(to bottom, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, rgba(255,255,255,0));
+  padding:20px 20px 40px;
   z-index:2;
 }
 .card-name{
   font-family:'Roboto', sans-serif;
   font-weight:700;
   color:#000000;
-  font-size:22px;
+  font-size:24px;
   margin-bottom:4px;
   line-height:1.1;
 }
@@ -121,7 +125,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   font-family:'Roboto', sans-serif;
   font-weight:400;
   color:#666666;
-  font-size:15px;
+  font-size:17px;
   line-height:1.4;
 }
 
@@ -132,7 +136,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);position:relative;transition:all .3s}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
 .sw-btn.super{border-color:#FFD700;color:#FFD700}
-.sw-btn.disabled{opacity:0.4;cursor:not-allowed;pointer-events:none}
+.sw-btn.disabled{cursor:not-allowed;pointer-events:none}
 .sw-btn.filled{background:#C0157A;color:#fff}
 .sw-btn.super.filled{background:#FFD700;color:#1A1A1A}
 .circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}.progress-ring{fill:none;stroke-width:4}
@@ -248,7 +252,8 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
         <span class="bpts" id="sw-pts">0 PTS</span>
       </div>
     </div>
-    <div class="sw-body">
+    <div class="sw-body"> 
+      <div class="sw-hint">Elige bien, tus recompensas y concursos serán personalizados</div>  
       <div class="card-stack" id="card-stack"></div>
     <div class="sw-empty" id="sw-empty">
       <div style="font-size:15px;font-weight:700;text-align:center;line-height:1.5;color:#1A1A1A;max-width:280px">
@@ -870,8 +875,14 @@ function renderSwiper(){
     const cardName = t.nombre_marca || t.descripcion || 'Sin marca';
     const cardBrand = t.detalle_categoria || t.nombre || 'Sin detalle';
     
+// Detectar tipo de contenido
+    const esVideo = imgBg.match(/\.(mp4|webm|mov)$/i);
+    const bgHtml = esVideo 
+      ? `<video class="card-bg" autoplay loop muted playsinline><source src="${imgBg}" type="video/mp4"></video>`
+      : `<div class="card-bg" style="background-image:url('${imgBg}')"></div>`;
+
     div.innerHTML=`
-      <div class="card-bg" style="background-image:url('${imgBg}')"></div>
+      ${bgHtml}
       ${logoHtml}
       <div class="card-info">
         <div class="card-name">${escH(cardName)}</div>
@@ -1546,6 +1557,9 @@ function cerrarSesion(){
   
   showScreen('s-login');
   showToast('Sesión cerrada correctamente');
+
+  // ← CRÍTICO: ELIMINAR sessionId del localStorage
+  localStorage.removeItem('dep_session_id');
 }
 
 // ═══════════════════════════════════════════════
