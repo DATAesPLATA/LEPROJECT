@@ -459,72 +459,59 @@ function updateProgressCircles(){
   
   if(!likeProgress || !superProgress || !btnLike || !btnSuper) return;
   
-  const circleCircumference = 2 * Math.PI * 32;
+  const circleCircumference = 2 * Math.PI * 32; // ~201
   
   // ===== LIKES =====
   const likesUsados = 10 - st.likesRestantes;
   const likePercent = likesUsados / 10;
-  const likeOffset = circleCircumference * (1 - likePercent);
   
-  likeProgress.querySelector('circle').style.strokeDashoffset = likeOffset;
+  // Offset: empieza en circunferencia completa (201) y va a 0
+  const likeOffset = circleCircumference - (circleCircumference * likePercent);
   
-  // Estilos según progreso
+  const likeCircle = likeProgress.querySelector('circle');
+  likeCircle.style.strokeDasharray = circleCircumference;
+  likeCircle.style.strokeDashoffset = likeOffset;
+  
+  // Estilos del botón
   if(st.likesRestantes <= 0) {
-    // Sin likes: disabled
+    // Agotado: disabled
     btnLike.classList.add('disabled');
     btnLike.classList.add('filled');
-    btnLike.style.background = '#C0157A';
-    btnLike.style.color = '#fff';
-    btnLike.style.borderColor = '#C0157A';
   } else if(likesUsados === 10) {
-    // Completó el círculo (10 likes): botón sólido
+    // 100% completo
     btnLike.classList.remove('disabled');
     btnLike.classList.add('filled');
-    btnLike.style.background = '#C0157A';
-    btnLike.style.color = '#fff';
-    btnLike.style.borderColor = '#C0157A';
   } else {
-    // En progreso: botón blanco con borde
+    // En progreso
     btnLike.classList.remove('disabled');
     btnLike.classList.remove('filled');
-    btnLike.style.background = '#fff';
-    btnLike.style.color = '#C0157A';
-    btnLike.style.borderColor = '#C0157A';
   }
   
   // ===== SUPER LIKES =====
   const supersUsados = 3 - st.superRestantes;
   const superPercent = supersUsados / 3;
-  const superOffset = circleCircumference * (1 - superPercent);
   
-  superProgress.querySelector('circle').style.strokeDashoffset = superOffset;
+  const superOffset = circleCircumference - (circleCircumference * superPercent);
   
-  // Estilos según progreso
+  const superCircle = superProgress.querySelector('circle');
+  superCircle.style.strokeDasharray = circleCircumference;
+  superCircle.style.strokeDashoffset = superOffset;
+  
+  // Estilos del botón
   if(st.superRestantes <= 0) {
-    // Sin supers: disabled
+    // Agotado: disabled
     btnSuper.classList.add('disabled');
     btnSuper.classList.add('filled');
-    btnSuper.style.background = '#FFD700';
-    btnSuper.style.color = '#1A1A1A';
-    btnSuper.style.borderColor = '#FFD700';
   } else if(supersUsados === 3) {
-    // Completó el círculo (3 supers): botón sólido
+    // 100% completo
     btnSuper.classList.remove('disabled');
     btnSuper.classList.add('filled');
-    btnSuper.style.background = '#FFD700';
-    btnSuper.style.color = '#1A1A1A';
-    btnSuper.style.borderColor = '#FFD700';
   } else {
-    // En progreso: botón blanco con borde
+    // En progreso
     btnSuper.classList.remove('disabled');
     btnSuper.classList.remove('filled');
-    btnSuper.style.background = '#fff';
-    btnSuper.style.color = '#FFD700';
-    btnSuper.style.borderColor = '#FFD700';
   }
-}
-
-function showLimitPopup(isSuperLike, remaining){
+}function showLimitPopup(isSuperLike, remaining){
   const popup = $('limit-popup');
   if(!popup) return;
   
