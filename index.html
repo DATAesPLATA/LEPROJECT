@@ -647,7 +647,7 @@ async function init(){
         st.superRestantes = 3;
       }
       
-      const rUsuario = await api({action:'usuario', email:savedSessionEmail});
+      const rUsuario = await api({action:'por_cookie', cookie:sessionId});
       if(rUsuario.ok && rUsuario.usuario) {
         st.usuario = rUsuario.usuario;
         st.puntos = Number(rUsuario.usuario.puntos_disponibles||0);
