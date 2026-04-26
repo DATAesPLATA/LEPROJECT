@@ -628,19 +628,27 @@ async function init(){
     st.avatarUrl = localStorage.getItem('dep_avatar_'+savedEmail);
   }
 
-  // ← SOLO autologin si NO estamos en la pantalla de login
   const sessionId = localStorage.getItem('dep_session_id');
-  if(sessionId){
+  const savedSessionEmail = localStorage.getItem('dep_session_email');
+  
+  if(sessionId && savedSessionEmail){
     try{
-      const r = await apiPost({action:'validar_session', session_id:sessionId});
+      const r = await apiPost({
+        action:'verificar_session', 
+        session_id:sessionId,
+        email:savedSessionEmail
+      });
+      
       if(r.ok && r.usuario) {
         await procesarLoginExitoso(r.usuario);
       } else {
         // Session inválida, limpiar
         localStorage.removeItem('dep_session_id');
+        localStorage.removeItem('dep_session_email');
       }
     }catch(e){
-      localStorage.removeItem('dep_session_id');
+      // Error de red, mantener sesión local
+      console.log('Error verificando sesión, manteniendo local');
     }
   }
   
@@ -648,7 +656,7 @@ async function init(){
   setupOTPInputs();
   obtenerGeo();
 }
-
+  
 // ═══════════════════════════════════════════════
 //  LOGIN Y REGISTRO
 // ═══════════════════════════════════════════════
