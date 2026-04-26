@@ -156,6 +156,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .ptag{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;text-transform:uppercase}
 .ptag-ok{background:#4CAF50;color:#fff;border:2px solid #4CAF50;box-shadow:0 2px 6px rgba(76,175,80,0.3);font-weight:700;padding:6px 14px}
 .ptag-lk{background:#f5f5f5;color:#888}
+.ptag-canjeado{background:#FFD700;color:#000;border:2px solid #FFD700;box-shadow:0 2px 6px rgba(255,215,0,0.3);font-weight:700;padding:6px 14px}
 
 .ph{display:flex;align-items:center;gap:14px;padding:14px;background:#1A1A1A;border-radius:14px;margin-bottom:14px}
 .av{width:52px;height:52px;border-radius:50%;background:#C0157A;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;flex-shrink:0}
@@ -367,12 +368,15 @@ const st={
   tarjetas: [],
   recompensas: [],
   concursos: [],
+  canjesRealizados: [], // ← NUEVO
   swipeIdx: 0,
   avatarUrl: null,
   likesRestantes: 10,
   superRestantes: 3,
   geo: '',
   pais: '',
+  latitud: null, // ← NUEVO
+  longitud: null, // ← NUEVO
   countdownInterval: null
 };
 
@@ -591,11 +595,15 @@ async function obtenerGeo(){
       navigator.geolocation.getCurrentPosition(resolve, reject);
     });
     const {latitude, longitude} = pos.coords;
+    st.latitud = latitude;    // ← NUEVO
+    st.longitud = longitude;   // ← NUEVO
+    
     const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
     const data = await r.json();
     const ciudad = data.address.city || data.address.town || data.address.village || data.address.state || 'Ubicación';
     st.pais = data.address.country_code ? data.address.country_code.toUpperCase() : '';
     st.geo = `${ciudad}, ${st.pais}`;
+    
     const geoEl = $('sw-geo');
     if(geoEl) geoEl.textContent = `📍 ${st.geo}`;
   } catch(e) {
@@ -670,7 +678,11 @@ async function hacerLogin() {
       cookie:st.sessionId,
       userAgent:navigator.userAgent,
       geo:st.geo,
-      pais:st.pais
+      pais:st.pais,
+      latitud:st.latitud,
+      longitud:st.longitud
+
+      
     });
     
     if(!r.ok) throw new Error(r.error);
@@ -738,7 +750,10 @@ async function verificarYCrear() {
       cookie:st.sessionId,
       userAgent:navigator.userAgent,
       geo:st.geo,
-      pais:st.pais
+      pais:st.pais,
+      latitud:st.latitud,
+      longitud:st.longitud
+
     });
     
     if(!r.ok) throw new Error(r.error);
@@ -806,17 +821,19 @@ async function procesarLoginExitoso(email, usuario) {
 async function cargarDatos(){
   const email = st.email;
   
-  const [rT, rR, rC] = await Promise.all([
+  const [rT, rR, rC, rCanjes] = await Promise.all([
     api({action:'tarjetas', email}),
     api({action:'recompensas', email}),
-    api({action:'concursos', email})
+    api({action:'concursos', email}),
+    api({action:'canjes_usuario', email}) // ← NUEVO
   ]);
   
   st.tarjetas = rT.tarjetas || [];
   st.recompensas = rR.recompensas || [];
   st.concursos = rC.concursos || [];
+  st.canjesRealizados = rCanjes.canjes || []; // ← NUEVO
 }
-
+  
 // ═══════════════════════════════════════════════
 //  SWIPER
 // ═══════════════════════════════════════════════
@@ -939,7 +956,10 @@ async function swipeCard(like, superLike){
       nombre_marca:t.nombre_marca||'',
       detalle_categoria:t.detalle_categoria||'',
       geo:st.geo,
-      pais:st.pais
+      pais:st.pais,
+      latitud:st.latitud,
+      longitud:st.longitud
+
     }).catch(()=>{});
     
     setTimeout(renderSwiper,300);
@@ -974,7 +994,10 @@ async function swipeCard(like, superLike){
       nombre_marca:t.nombre_marca||'',
       detalle_categoria:t.detalle_categoria||'',
       geo:st.geo,
-      pais:st.pais
+      pais:st.pais,
+      latitud:st.latitud,
+      longitud:st.longitud
+
     });
     
     if(!r.ok) {
@@ -1041,9 +1064,14 @@ function renderPromos(){
     
     let clickAction = '', statusTag = '', barWidth = '';
     
-    if (st.puntos >= pts) {
-       statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
-       clickAction = `onclick="tryUnlock('recompensa','${r.id_recompensa||r.id}',${pts})"`;
+const yaCanje = st.canjesRealizados.some(c => c.id_item === (r.id_recompensa||r.id));
+
+if (yaCanje) {
+  statusTag = `<span class="ptag ptag-canjeado">Ver detalles</span>`;
+  clickAction = `onclick="verDetalleCanje('${r.id_recompensa||r.id}')"`;
+} else if (st.puntos >= pts) {
+   statusTag = `<span class="ptag ptag-ok">Canjear</span>`;
+   clickAction = `onclick="tryUnlock('recompensa','${r.id_recompensa||r.id}',${pts})"`;
        barWidth = `width:100%;background:#C0157A`;
     } else {
        statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
@@ -1102,15 +1130,21 @@ function renderConcursos(){
     
     let clickAction = '', statusTag = '', barWidth = '';
 
-    if (st.puntos >= pts) {
-       statusTag = `<span class="ptag ptag-ok">Participar</span>`;
-       clickAction = `onclick="tryUnlock('concurso','${c.id_concurso||c.id}',${pts})"`;
-       barWidth = `width:100%;background:#C0157A`;
-    } else {
-       statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
-       clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
-       barWidth = `width:${pct}%;background:#C0157A`;
-    }
+const yaCanje = st.canjesRealizados.some(cj => cj.id_item === (c.id_concurso||c.id));
+
+if (yaCanje) {
+  statusTag = `<span class="ptag ptag-canjeado">Ver detalles</span>`;
+  clickAction = `onclick="verDetalleCanje('${c.id_concurso||c.id}')"`;
+  barWidth = `width:100%;background:#FFD700`;
+} else if (st.puntos >= pts) {
+   statusTag = `<span class="ptag ptag-ok">Participar</span>`;
+   clickAction = `onclick="tryUnlock('concurso','${c.id_concurso||c.id}',${pts})"`;
+   barWidth = `width:100%;background:#C0157A`;
+} else {
+   statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
+   clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
+   barWidth = `width:${pct}%;background:#C0157A`;
+}
     
     html += `
       <div class="pc" ${clickAction}>
@@ -1163,7 +1197,9 @@ async function executeCanje(){
       id_item:pendingCanje.id,
       puntos_requeridos:pendingCanje.pts,
       geo:st.geo,
-      pais:st.pais
+      pais:st.pais,
+      latitud:st.latitud,
+      longitud:st.longitud
     });
     
     if(!r.ok) throw new Error(r.error);
@@ -1195,6 +1231,24 @@ async function executeCanje(){
   loaderHide();
 }
 
+  function verDetalleCanje(idItem){
+  const canje = st.canjesRealizados.find(c => c.id_item === idItem);
+  if(!canje) return;
+  
+  const modal = $('umodal');
+  const ico = $('u-ico');
+  const title = $('u-title');
+  const sub = $('u-sub');
+  const code = $('u-code');
+  
+  ico.textContent = '🎁';
+  title.textContent = 'Tu código de canje';
+  sub.textContent = 'Presenta este código en el establecimiento';
+  code.textContent = canje.codigo_canje;
+  
+  modal.style.display='flex';
+}
+  
 let confInterval;
 function startConf(){
   const cvs=$('conf-cvs');
