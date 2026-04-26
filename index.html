@@ -647,7 +647,7 @@ async function init(){
         st.superRestantes = 3;
       }
       
-      const rUsuario = await api({action:'por_cookie', cookie:sessionId});
+      const rUsuario = await api({action:'por_email', email:savedSessionEmail});
       if(rUsuario.ok && rUsuario.usuario) {
         st.usuario = rUsuario.usuario;
         st.puntos = Number(rUsuario.usuario.puntos_disponibles||0);
@@ -704,7 +704,7 @@ async function hacerLogin() {
       action:'login_pass',
       email,
       password:pass,
-      cookie:st.sessionId,
+      cookie_id:st.sessionId,
       userAgent:navigator.userAgent,
       geo:st.geo,
       pais:st.pais,
@@ -776,7 +776,7 @@ async function verificarYCrear() {
       nombre,
       password:pass,
       otp:codigo,
-      cookie:st.sessionId,
+      cookie_id:st.sessionId,
       userAgent:navigator.userAgent,
       geo:st.geo,
       pais:st.pais,
