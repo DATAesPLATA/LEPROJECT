@@ -789,20 +789,22 @@ async function procesarLoginExitoso(email, usuario) {
   st.email = email;
   st.usuario = usuario;
   st.puntos = Number(usuario.puntos_disponibles||0);
+  st.swipeIdx = 0;
   
-  // NUEVO: Obtener límites reales del servidor
+  // CARGAR LÍMITES REALES DESDE EL SERVIDOR
   try {
-    const rLimites = await api({action:'limites', email:st.email});
+    const rLimites = await api({action:'limites', email:email});
     if(rLimites.ok) {
       st.likesRestantes = rLimites.limites.likes;
       st.superRestantes = rLimites.limites.supers;
+    } else {
+      st.likesRestantes = 10;
+      st.superRestantes = 3;
     }
   } catch(e) {
     st.likesRestantes = 10;
     st.superRestantes = 3;
   }
-  
-  st.swipeIdx = 0;
   
   updatePts();
   showScreen('s-swiper');
@@ -814,8 +816,8 @@ async function procesarLoginExitoso(email, usuario) {
     renderSwiper();
   }, 100);
 }
-
-// ═══════════════════════════════════════════════
+  
+  // ═══════════════════════════════════════════════
 //  CARGAR DATOS
 // ═══════════════════════════════════════════════
 async function cargarDatos(){
@@ -1207,6 +1209,14 @@ async function executeCanje(){
     st.puntos = r.puntos_restantes;
     updatePts();
     
+    // ← NUEVO: AÑADIR EL CANJE A LA LISTA LOCAL
+    st.canjesRealizados.push({
+      id_item: pendingCanje.id,
+      codigo_canje: r.codigo_canje,
+      tipo: pendingCanje.tipo
+    });
+    
+    // MOSTRAR MODAL CON CONFETTI
     const modal = $('umodal');
     const ico = $('u-ico');
     const title = $('u-title');
@@ -1216,11 +1226,12 @@ async function executeCanje(){
     ico.textContent = '🎁';
     title.textContent = 'Canje exitoso';
     sub.textContent = 'Presenta este código en el establecimiento';
-    code.textContent = r.codigo_canje.replace('CANJE-','');
+    code.textContent = r.codigo_canje; // ← QUITAR .replace('CANJE-','') porque ahora es Data$-XX11
     
     modal.style.display='flex';
     startConf();
     
+    // ← NUEVO: RE-RENDERIZAR INMEDIATAMENTE
     if(pendingCanje.tipo === 'recompensa') renderPromos();
     else renderConcursos();
     
@@ -1230,7 +1241,7 @@ async function executeCanje(){
   
   loaderHide();
 }
-
+  
   function verDetalleCanje(idItem){
   const canje = st.canjesRealizados.find(c => c.id_item === idItem);
   if(!canje) return;
