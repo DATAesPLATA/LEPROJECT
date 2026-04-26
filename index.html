@@ -910,7 +910,7 @@ function renderSwiper(){
 // Detectar tipo de contenido
     const esVideo = imgBg.match(/\.(mp4|webm|mov)$/i);
     const bgHtml = esVideo 
-      ? `<video class="card-bg" autoplay loop muted playsinline><source src="${imgBg}" type="video/mp4"></video>`
+      ? `<video class="card-bg" autoplay loop playsinline><source src="${imgBg}" type="video/mp4"></video>`
       : `<div class="card-bg" style="background-image:url('${imgBg}')"></div>`;
 
     div.innerHTML=`
