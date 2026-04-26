@@ -640,7 +640,7 @@ async function init(){
       });
       
       if(r.ok && r.usuario) {
-        await procesarLoginExitoso(r.usuario);
+        await procesarLoginExitoso(savedSessionEmail, r.usuario);
       } else {
         // Session inválida, limpiar
         localStorage.removeItem('dep_session_id');
@@ -801,6 +801,7 @@ function setupOTPInputs(){
 async function procesarLoginExitoso(email, usuario) {
   st.email = email;
   st.usuario = usuario;
+  st.sessionId = usuario.session_id; // ← AÑADE ESTA LÍNEA
   st.puntos = Number(usuario.puntos_disponibles||0);
   st.swipeIdx = 0;
   
