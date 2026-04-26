@@ -632,23 +632,39 @@ async function init(){
   const savedSessionEmail = localStorage.getItem('dep_session_email');
   
   if(sessionId && savedSessionEmail){
+    // Restaurar sesión directamente desde datos locales
+    st.email = savedSessionEmail;
+    st.sessionId = sessionId;
+    
     try{
-      const r = await apiPost({
-        action:'verificar_session', 
-        session_id:sessionId,
-        email:savedSessionEmail
-      });
-      
-      if(r.ok && r.usuario) {
-        await procesarLoginExitoso(savedSessionEmail, r.usuario);
+      // Cargar datos del usuario desde el backend
+      const rLimites = await api({action:'limites', email:savedSessionEmail});
+      if(rLimites.ok) {
+        st.likesRestantes = rLimites.limites.likes;
+        st.superRestantes = rLimites.limites.supers;
       } else {
-        // Session inválida, limpiar
-        localStorage.removeItem('dep_session_id');
-        localStorage.removeItem('dep_session_email');
+        st.likesRestantes = 10;
+        st.superRestantes = 3;
+      }
+      
+      const rUsuario = await api({action:'usuario', email:savedSessionEmail});
+      if(rUsuario.ok && rUsuario.usuario) {
+        st.usuario = rUsuario.usuario;
+        st.puntos = Number(rUsuario.usuario.puntos_disponibles||0);
+        st.swipeIdx = 0;
+        
+        updatePts();
+        showScreen('s-swiper');
+        
+        await cargarDatos();
+        
+        setTimeout(() => {
+          updateProgressCircles();
+          renderSwiper();
+        }, 100);
       }
     }catch(e){
-      // Error de red, mantener sesión local
-      console.log('Error verificando sesión, manteniendo local');
+      console.log('Error cargando datos de sesión:', e);
     }
   }
   
