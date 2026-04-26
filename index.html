@@ -804,6 +804,12 @@ async function procesarLoginExitoso(email, usuario) {
   st.puntos = Number(usuario.puntos_disponibles||0);
   st.swipeIdx = 0;
   
+  // Guardar session en localStorage
+  if(st.sessionId) {
+    localStorage.setItem('dep_session_id', st.sessionId);
+    localStorage.setItem('dep_session_email', st.email);
+  }
+  
   // ← ESTO DEBE ESTAR AQUÍ
   try {
     const rLimites = await api({action:'limites', email:email});
@@ -1569,6 +1575,7 @@ function cerrarSesion(){
 
   // ← CRÍTICO: ELIMINAR sessionId
   localStorage.removeItem('dep_session_id');
+  localStorage.removeItem('dep_session_email');
   st.sessionId = null;
   st.email = null;
   
