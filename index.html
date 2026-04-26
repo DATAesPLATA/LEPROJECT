@@ -135,7 +135,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn.disabled{opacity:0.4;cursor:not-allowed;pointer-events:none}
 .sw-btn.filled{background:#C0157A;color:#fff}
 .sw-btn.super.filled{background:#FFD700;color:#1A1A1A}
-.circular-progress{position:absolute;top:-4px;left:-4px;width:70px;height:70px;transform:rotate(-90deg);pointer-events:none}
+.circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
 .progress-ring{fill:none;stroke-width:3}
 
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px;padding:24px 24px 60px;text-align:center;flex:1}
@@ -463,7 +463,7 @@ function updateProgressCircles(){
   
   if(!likeProgress || !superProgress || !btnLike || !btnSuper) return;
   
-  const circleCircumference = 2 * Math.PI * 33; // Radio ajustado de 32 a 33
+  const circleCircumference = 2 * Math.PI * 32;
   
   // ===== LIKES =====
   const likesUsados = 10 - st.likesRestantes;
