@@ -125,9 +125,9 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   line-height:1.4;
 }
 
-.ind{position:absolute;top:16px;font-size:14px;font-weight:700;padding:6px 14px;border-radius:20px;opacity:0;transition:opacity .1s;z-index:4}
-.ind-y{right:16px;background:#C0157A;color:#fff}
-.ind-n{left:16px;background:#1A1A1A;color:#fff}
+.ind{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-size:28px;font-weight:800;padding:16px 32px;border-radius:30px;opacity:0;transition:opacity .1s;z-index:4;box-shadow:0 8px 24px rgba(0,0,0,0.3);letter-spacing:1px}
+.ind-y{background:#C0157A;color:#fff}
+.ind-n{background:#1A1A1A;color:#fff}
 .sw-btns{display:flex;gap:12px;flex-shrink:0;margin-top:10px;justify-content:center;align-items:center;width:100%}
 .sw-btn{width:62px;height:62px;border-radius:50%;border:1.5px solid #1A1A1A;background:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.05);position:relative;transition:all .3s}
 .sw-btn.yes{border-color:#C0157A;color:#C0157A}
@@ -135,7 +135,7 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn.disabled{opacity:0.4;cursor:not-allowed;pointer-events:none}
 .sw-btn.filled{background:#C0157A;color:#fff}
 .sw-btn.super.filled{background:#FFD700;color:#1A1A1A}
-.circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}
+.circular-progress{position:absolute;top:-4px;left:-4px;width:70px;height:70px;transform:rotate(-90deg);pointer-events:none}
 .progress-ring{fill:none;stroke-width:3}
 
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px;padding:24px 24px 60px;text-align:center;flex:1}
@@ -463,7 +463,7 @@ function updateProgressCircles(){
   
   if(!likeProgress || !superProgress || !btnLike || !btnSuper) return;
   
-  const circleCircumference = 2 * Math.PI * 32; // ~201
+  const circleCircumference = 2 * Math.PI * 33; // Radio ajustado de 32 a 33
   
   // ===== LIKES =====
   const likesUsados = 10 - st.likesRestantes;
@@ -1081,24 +1081,59 @@ if (yaCanje) {
        barWidth = `width:${pct}%;background:#C0157A`;
     }
     
-    html += `
-      <div class="pc" ${clickAction}>
-        <div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">
-          ${emoji}
-        </div>
-        <div class="pci-info">
-          <div class="pci-name">${escH(titulo)}</div>
-          <div class="pci-meta">${escH(subtitulo)}</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-            <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
-              <div style="${barWidth};height:100%;border-radius:5px"></div>
-            </div>
-            <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
-          </div>
-        </div>
-        ${statusTag}
+const yaCanje = st.canjesRealizados.some(c => c.id_item === (r.id_recompensa||r.id));
+
+// Calcular días hasta caducidad
+let diasRestantes = '';
+if (yaCanje && r.caduca) {
+  try {
+    const fechaCaduca = new Date(r.caduca);
+    const hoy = new Date();
+    const diffTime = fechaCaduca - hoy;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays > 0) {
+      diasRestantes = `<div style="font-size:11px;font-weight:600;color:#FF6B35;margin-top:6px">⏰ Caduca en ${diffDays} día${diffDays > 1 ? 's' : ''}</div>`;
+    } else if (diffDays === 0) {
+      diasRestantes = `<div style="font-size:11px;font-weight:600;color:#FF0000;margin-top:6px">⏰ Caduca HOY</div>`;
+    } else {
+      diasRestantes = `<div style="font-size:11px;font-weight:600;color:#999;margin-top:6px">❌ Caducado</div>`;
+    }
+  } catch(e) {
+    diasRestantes = '';
+  }
+}
+
+// Decidir qué mostrar: barra de progreso o cuenta regresiva
+let contenidoInfo = '';
+if (yaCanje) {
+  // YA CANJEADO: Mostrar días restantes en vez de barra
+  contenidoInfo = diasRestantes;
+} else {
+  // NO CANJEADO: Mostrar barra de progreso
+  contenidoInfo = `
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
+        <div style="${barWidth};height:100%;border-radius:5px"></div>
       </div>
-    `;
+      <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
+    </div>
+  `;
+}
+
+html += `
+  <div class="pc" ${clickAction}>
+    <div class="pci" style="background:${st.puntos>=pts?'#FFF5FA':'#f9f9f9'}">
+      ${emoji}
+    </div>
+    <div class="pci-info">
+      <div class="pci-name">${escH(titulo)}</div>
+      <div class="pci-meta">${escH(subtitulo)}</div>
+      ${contenidoInfo}
+    </div>
+    ${statusTag}
+  </div>
+`;
   });
   
   body.innerHTML=html;
@@ -1130,23 +1165,62 @@ function renderConcursos(){
     const titulo = c.nombre_marca || 'Sin marca';
     const subtitulo = c.detalle_categoria || '';
     
+    const yaCanje = st.canjesRealizados.some(cj => cj.id_item === (c.id_concurso||c.id));
+    
+    // Calcular días hasta sorteo
+    let diasRestantes = '';
+    if (yaCanje && c.fecha_sorteo) {
+      try {
+        const fechaSorteo = new Date(c.fecha_sorteo);
+        const hoy = new Date();
+        const diffTime = fechaSorteo - hoy;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays > 0) {
+          diasRestantes = `<div style="font-size:11px;font-weight:600;color:#FF6B35;margin-top:6px">🎲 Sorteo en ${diffDays} día${diffDays > 1 ? 's' : ''}</div>`;
+        } else if (diffDays === 0) {
+          diasRestantes = `<div style="font-size:11px;font-weight:600;color:#FF0000;margin-top:6px">🎲 Sorteo HOY</div>`;
+        } else {
+          diasRestantes = `<div style="font-size:11px;font-weight:600;color:#999;margin-top:6px">✅ Sorteo realizado</div>`;
+        }
+      } catch(e) {
+        diasRestantes = '';
+      }
+    }
+    
     let clickAction = '', statusTag = '', barWidth = '';
+    let contenidoInfo = '';
 
-const yaCanje = st.canjesRealizados.some(cj => cj.id_item === (c.id_concurso||c.id));
-
-if (yaCanje) {
-  statusTag = `<span class="ptag ptag-canjeado">Ver detalles</span>`;
-  clickAction = `onclick="verDetalleCanje('${c.id_concurso||c.id}')"`;
-  barWidth = `width:100%;background:#FFD700`;
-} else if (st.puntos >= pts) {
-   statusTag = `<span class="ptag ptag-ok">Participar</span>`;
-   clickAction = `onclick="tryUnlock('concurso','${c.id_concurso||c.id}',${pts})"`;
-   barWidth = `width:100%;background:#C0157A`;
-} else {
-   statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
-   clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
-   barWidth = `width:${pct}%;background:#C0157A`;
-}
+    if (yaCanje) {
+      statusTag = `<span class="ptag ptag-canjeado">Ver detalles</span>`;
+      clickAction = `onclick="verDetalleCanje('${c.id_concurso||c.id}')"`;
+      barWidth = `width:100%;background:#FFD700`;
+      contenidoInfo = diasRestantes;
+    } else if (st.puntos >= pts) {
+       statusTag = `<span class="ptag ptag-ok">Participar</span>`;
+       clickAction = `onclick="tryUnlock('concurso','${c.id_concurso||c.id}',${pts})"`;
+       barWidth = `width:100%;background:#C0157A`;
+       contenidoInfo = `
+         <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+           <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
+             <div style="${barWidth};height:100%;border-radius:5px"></div>
+           </div>
+           <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
+         </div>
+       `;
+    } else {
+       statusTag = `<span class="ptag ptag-lk">🔒 Faltan ${faltan} pts</span>`;
+       clickAction = `onclick="$('pts-num').textContent='${faltan}';$('pts-modal').style.display='flex'"`;
+       barWidth = `width:${pct}%;background:#C0157A`;
+       contenidoInfo = `
+         <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+           <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
+             <div style="${barWidth};height:100%;border-radius:5px"></div>
+           </div>
+           <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
+         </div>
+       `;
+    }
     
     html += `
       <div class="pc" ${clickAction}>
@@ -1156,12 +1230,7 @@ if (yaCanje) {
         <div class="pci-info">
           <div class="pci-name">${escH(titulo)}</div>
           <div class="pci-meta">${escH(subtitulo)}</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-            <div style="flex:1;height:6px;background:#eee;border-radius:5px;overflow:hidden">
-              <div style="${barWidth};height:100%;border-radius:5px"></div>
-            </div>
-            <div style="font-size:10px;font-weight:bold;color:#888">${pct}%</div>
-          </div>
+          ${contenidoInfo}
         </div>
         ${statusTag}
       </div>
@@ -1170,7 +1239,7 @@ if (yaCanje) {
   
   body.innerHTML=html;
 }
-
+  
 // ═══════════════════════════════════════════════
 //  CANJE
 // ═══════════════════════════════════════════════
