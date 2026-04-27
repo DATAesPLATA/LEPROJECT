@@ -904,8 +904,9 @@ function renderSwiper(){
     const logoSrc = t.logo_tarjeta || t.logo;
     const logoHtml = logoSrc ? `<div class="card-logo"><img src="${logoSrc}" alt="Logo"/></div>` : '';
     
-    const cardName = t.nombre_marca || t.descripcion || 'Sin marca';
-    const cardBrand = t.detalle_categoria || t.nombre || 'Sin detalle';
+// Textos - PRIORIZAR titulo/subtitulo si existen
+    const cardName = t.titulo_tarjeta || t.nombre_marca || t.descripcion || 'Sin título';
+    const cardBrand = t.subtitulo_tarjeta || t.detalle_categoria || t.nombre || 'Sin subtítulo';
     
 // Detectar tipo de contenido
     const esVideo = imgBg.match(/\.(mp4|webm|mov)$/i);
