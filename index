@@ -411,7 +411,7 @@ const st={
     faltas: 0,
     feverActivo: false,
     feverSwipes: 0
-  }
+  },
   // CONTROL DE FALTAS
   swipeTimestamps: [],
   videoStartTime: null,
@@ -877,25 +877,31 @@ function attachDrag(c){
 async function swipeCard(esLike){
   if(st.swipeIdx >= st.tarjetas.length) return;
   
-  // DETECTOR DE SPEED-SWIPING
-const ahora = Date.now();
-st.swipeTimestamps.push(ahora);
-
-// Mantener solo los últimos 3 timestamps
-if(st.swipeTimestamps.length > 3) {
-  st.swipeTimestamps.shift();
-}
-
-// Si hay 3 swipes en menos de 1.5 segundos
-if(st.swipeTimestamps.length === 3) {
-  const diff = st.swipeTimestamps[2] - st.swipeTimestamps[0];
-  if(diff < 1500) {
-    registrarFaltaCliente('speed-swiping');
-    st.swipeTimestamps = []; // Reset
-    return; // Bloquear el swipe
-  }
-}
+// DETECTOR DE SPEED-SWIPING
+  const ahora = Date.now();
+  st.swipeTimestamps.push(ahora);
   
+  // Mantener solo los últimos 3 timestamps
+  if(st.swipeTimestamps.length > 3) {
+    st.swipeTimestamps.shift();
+  }
+  
+  // Si hay 3 swipes en menos de 1.5 segundos
+  if(st.swipeTimestamps.length === 3) {
+    const diff = st.swipeTimestamps[2] - st.swipeTimestamps[0];
+    if(diff < 1500) {
+      registrarFaltaCliente('speed-swiping');
+      st.swipeTimestamps = []; // Reset
+      return; // Bloquear el swipe
+    }
+  }
+  
+  // DETECTOR DE ABANDONO DE VIDEO
+  if(!verificarTiempoVideo()) {
+  showToast('⚠️ Debes ver al menos 3s del video');
+  return;
+}
+
   const t = st.tarjetas[st.swipeIdx];
   const tarjetaId = t.id_tarjeta || t.id;
   
@@ -1058,12 +1064,7 @@ function verificarTiempoVideo(){
     popup.remove();
   }, 3000);
 }
-  // DETECTOR DE ABANDONO DE VIDEO
-if(!verificarTiempoVideo()) {
-  showToast('⚠️ Debes ver al menos 3s del video');
-  return;
-}
-  
+
 function actualizarUInivel(){
   const emojiEl = $('nivel-emoji');
   const labelEl = $('nivel-label');
