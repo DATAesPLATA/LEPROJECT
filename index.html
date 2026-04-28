@@ -51,6 +51,13 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-title{font-size:13px;font-weight:700;color:#fff}
 .sw-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 16px 10px;gap:8px;overflow:hidden;min-height:0} 
 .sw-hint{font-size:15px;color:#888;text-align:center;max-width:300px;line-height:1.3;margin-bottom:4px}
+.nivel-badge{font-size:48px;line-height:1;margin-bottom:8px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2))}
+.nivel-progress{width:100%;max-width:300px;margin-bottom:8px}
+.nivel-bar-container{width:100%;height:8px;background:#eee;border-radius:10px;overflow:hidden;position:relative}
+.nivel-bar-fill{height:100%;background:linear-gradient(90deg,#C0157A,#FF1493);border-radius:10px;transition:width 0.3s ease}
+.nivel-info{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:300px;font-size:11px;margin-top:4px}
+.nivel-label{font-weight:700;color:#1A1A1A}
+.nivel-stats{color:#888;font-weight:600}
 
 .card-stack{
   position:relative;
@@ -252,9 +259,18 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
         <span class="bpts" id="sw-pts">0 PTS</span>
       </div>
     </div>
-    <div class="sw-body"> 
-      <div class="sw-hint">Elige bien, tus recompensas y concursos serán personalizados</div>  
-      <div class="card-stack" id="card-stack"></div>
+<div class="sw-body">
+  <div class="nivel-badge" id="nivel-emoji">🥉</div>
+  <div class="nivel-progress">
+    <div class="nivel-bar-container">
+      <div class="nivel-bar-fill" id="nivel-bar" style="width:0%"></div>
+    </div>
+    <div class="nivel-info">
+      <span class="nivel-label" id="nivel-label">BRONCE → PLATA</span>
+      <span class="nivel-stats" id="nivel-stats">✓ 0/5 | ⚠️ 0/3</span>
+    </div>
+  </div>
+  <div class="card-stack" id="card-stack"></div>
     <div class="sw-empty" id="sw-empty">
       <div style="font-size:15px;font-weight:700;text-align:center;line-height:1.5;color:#1A1A1A;max-width:280px">
         Hoy nos quedamos sin preguntas para ti pero mañana seguimos <br> ¡Data es plata!
@@ -267,19 +283,11 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
     </div>
       <div class="sw-btns" id="sw-btns">
         <button class="sw-btn no" onclick="swipeCard(false)">✕</button>
-        <button class="sw-btn super" id="btn-super" onclick="swipeCard(true, true)">
-          <svg class="circular-progress" id="super-progress">
-            <circle class="progress-ring" cx="34" cy="34" r="31" stroke="#FFD700" stroke-dasharray="201" stroke-dashoffset="0"/>
-          </svg>
-          <span style="font-size:18px">⭐</span>
-          <span style="position:absolute;top:-4px;right:-4px;background:#FFD700;color:#1A1A1A;font-size:9px;padding:2px 4px;border-radius:10px;font-weight:bold">x2</span>
-        </button>
-        <button class="sw-btn yes" id="btn-like" onclick="swipeCard(true, false)">
-          <svg class="circular-progress" id="like-progress">
-            <circle class="progress-ring" cx="34" cy="34" r="31" stroke="#C0157A" stroke-dasharray="201" stroke-dashoffset="0"/>
-          </svg>
-          ♥
-        </button>
+<button class="sw-btn super" onclick="swipeCard(true)">
+  <span style="font-size:20px">⭐</span>
+  <span style="position:absolute;top:-4px;right:-4px;background:#FFD700;color:#1A1A1A;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:bold" id="multi-badge">x1</span>
+</button>
+<button class="sw-btn yes" onclick="swipeCard(true)">♥</button>
       </div>
     </div>
     <div class="bnav">
@@ -372,16 +380,23 @@ const st={
   tarjetas: [],
   recompensas: [],
   concursos: [],
-  canjesRealizados: [], // ← NUEVO
+  canjesRealizados: [],
   swipeIdx: 0,
   avatarUrl: null,
-  likesRestantes: 10,
-  superRestantes: 3,
   geo: '',
   pais: '',
-  latitud: null, // ← NUEVO
-  longitud: null, // ← NUEVO
-  countdownInterval: null
+  latitud: null,
+  longitud: null,
+  countdownInterval: null,
+  // NIVEL Y GAMIFICACIÓN
+  nivel: {
+    actual: 'bronce',
+    multiplicador: 1,
+    exitos: 0,
+    faltas: 0,
+    feverActivo: false,
+    feverSwipes: 0
+  }
 };
 
 const $=id=>document.getElementById(id);
@@ -454,140 +469,6 @@ function showErr(id,msg){
 
 function escH(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// Continúa en el siguiente mensaje...// ═══════════════════════════════════════════════
-//  PROGRESS CIRCLES Y LÍMITES
-// ═══════════════════════════════════════════════
-function updateProgressCircles(){
-  const likeProgress = $('like-progress');
-  const superProgress = $('super-progress');
-  const btnLike = $('btn-like');
-  const btnSuper = $('btn-super');
-  
-  if(!likeProgress || !superProgress || !btnLike || !btnSuper) return;
-  
-  const circleCircumference = 2 * Math.PI * 31;
-  
-  // ===== LIKES =====
-  const likesUsados = 10 - st.likesRestantes;
-  const likePercent = likesUsados / 10;
-  
-  // Offset: empieza en circunferencia completa (201) y va a 0
-  const likeOffset = circleCircumference - (circleCircumference * likePercent);
-  
-  const likeCircle = likeProgress.querySelector('circle');
-  likeCircle.style.strokeDasharray = circleCircumference;
-  likeCircle.style.strokeDashoffset = likeOffset;
-  
-  // Estilos del botón
-  if(st.likesRestantes <= 0) {
-    // Agotado: disabled
-    btnLike.classList.add('disabled');
-    btnLike.classList.add('filled');
-  } else if(likesUsados === 10) {
-    // 100% completo
-    btnLike.classList.remove('disabled');
-    btnLike.classList.add('filled');
-  } else {
-    // En progreso
-    btnLike.classList.remove('disabled');
-    btnLike.classList.remove('filled');
-  }
-  
-  // ===== SUPER LIKES =====
-  const supersUsados = 3 - st.superRestantes;
-  const superPercent = supersUsados / 3;
-  
-  const superOffset = circleCircumference - (circleCircumference * superPercent);
-  
-  const superCircle = superProgress.querySelector('circle');
-  superCircle.style.strokeDasharray = circleCircumference;
-  superCircle.style.strokeDashoffset = superOffset;
-  
-  // Estilos del botón
-  if(st.superRestantes <= 0) {
-    // Agotado: disabled
-    btnSuper.classList.add('disabled');
-    btnSuper.classList.add('filled');
-  } else if(supersUsados === 3) {
-    // 100% completo
-    btnSuper.classList.remove('disabled');
-    btnSuper.classList.add('filled');
-  } else {
-    // En progreso
-    btnSuper.classList.remove('disabled');
-    btnSuper.classList.remove('filled');
-  }
-}function showLimitPopup(isSuperLike, remaining){
-  const popup = $('limit-popup');
-  if(!popup) return;
-  
-  const key = isSuperLike ? 'super' : 'like';
-  if(popupShown[key]) return;
-  popupShown[key] = true;
-  
-  popup.className = 'limit-popup';
-  
-  if(remaining > 0) {
-    if(isSuperLike) {
-      popup.classList.add('super-bg');
-      popup.textContent = `Aprovecha tus Super Amo, te quedan ${remaining} hoy ⭐`;
-    } else {
-      popup.classList.add('like-bg');
-      popup.textContent = `Aprovecha tus likes, te quedan ${remaining} hoy ♥`;
-    }
-  } else {
-    const horasHastaReset = calcularHorasHastaReset();
-    if(isSuperLike) {
-      popup.classList.add('super-bg');
-      popup.textContent = `En ${horasHastaReset} horas, podrás seguir opinando ⭐`;
-    } else {
-      popup.classList.add('like-bg');
-      popup.textContent = `En ${horasHastaReset} horas, podrás seguir opinando ♥`;
-    }
-  }
-  
-  popup.classList.add('show');
-  setTimeout(() => popup.classList.remove('show'), 2000);
-}
-
-function calcularHorasHastaReset(){
-  const ahora = new Date();
-  const manana = new Date(ahora);
-  manana.setDate(manana.getDate() + 1);
-  manana.setHours(0, 1, 0, 0);
-  const diff = manana - ahora;
-  const horas = Math.ceil(diff / (1000 * 60 * 60));
-  return horas;
-}
-
-function iniciarCountdown(){
-  if(st.countdownInterval) clearInterval(st.countdownInterval);
-  
-  const timer = $('countdown-timer');
-  if(!timer) return;
-  
-  st.countdownInterval = setInterval(() => {
-    const ahora = new Date();
-    const manana = new Date(ahora);
-    manana.setDate(manana.getDate() + 1);
-    manana.setHours(0, 1, 0, 0);
-    
-    const diff = manana - ahora;
-    
-    if(diff <= 0) {
-      clearInterval(st.countdownInterval);
-      timer.textContent = '00:00:00';
-      return;
-    }
-    
-    const horas = Math.floor(diff / (1000 * 60 * 60));
-    const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const segundos = Math.floor((diff % (1000 * 60)) / 1000);
-    
-    timer.textContent = `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}:${String(segundos).padStart(2,'0')}`;
-  }, 1000);
 }
 
 // ═══════════════════════════════════════════════
