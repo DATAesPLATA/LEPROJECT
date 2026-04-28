@@ -206,6 +206,16 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 
 .pts-modal,.umodal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:24px}
 .pts-box,.ubox{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:300px;text-align:center}
+
+  @keyframes fever-popup{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+  50%{transform:translate(-50%,-50%) scale(1.1)}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+}
+ @keyframes pulse-fever{
+  0%,100%{opacity:1;transform:scaleY(1)}
+  50%{opacity:0.8;transform:scaleY(1.2)}
+}
 </style>
 </head>
 <body>
@@ -854,8 +864,8 @@ function attachDrag(c){
   document.addEventListener('touchend',end);
 }
 
-async function swipeCard(like, superLike){
-  if(st.swipeIdx>=st.tarjetas.length) return;
+async function swipeCard(esLike){
+  if(st.swipeIdx >= st.tarjetas.length) return;
   
   const t = st.tarjetas[st.swipeIdx];
   const tarjetaId = t.id_tarjeta || t.id;
@@ -867,92 +877,69 @@ async function swipeCard(like, superLike){
   
   const card = $('sc-'+tarjetaId);
   
-  // Swipe negativo
-  if(!like) {
-    if(card) card.classList.add('gone');
-    st.swipeIdx++;
-    
-    apiPost({
-      action:'swipe',
-      email:st.email,
-      session_id:st.sessionId,
-      tipo:'Rechazado',
-      id_tarjeta:tarjetaId,
-      nombre_categoria:t.nombre_categoria||'',
-      nombre_marca:t.nombre_marca||'',
-      detalle_categoria:t.detalle_categoria||'',
-      geo:st.geo,
-      pais:st.pais,
-      latitud:st.latitud,
-      longitud:st.longitud
-
-    }).catch(()=>{});
-    
-    setTimeout(renderSwiper,300);
-    return;
+  // Animación de swipe
+  if(card) {
+    card.classList.add(esLike ? 'liked' : 'gone');
   }
   
-  // Validar límites
-  if(superLike && st.superRestantes <= 0) {
-    showLimitPopup(true, 0);
-    return;
-  }
-  if(!superLike && st.likesRestantes <= 0) {
-    showLimitPopup(false, 0);
-    return;
-  }
-  
-  if(card) card.classList.add('liked');
   st.swipeIdx++;
   
-  showToast(`Procesando...`);
+  const tipo = esLike ? 'like' : 'dislike';
+  
+  showToast('Procesando...');
   
   try {
-    const tipo = superLike ? 'Super Amo' : 'Like';
-    
     const r = await apiPost({
       action:'swipe',
-      email:st.email,
-      session_id:st.sessionId,
-      tipo:tipo,
-      id_tarjeta:tarjetaId,
-      nombre_categoria:t.nombre_categoria||'',
-      nombre_marca:t.nombre_marca||'',
-      detalle_categoria:t.detalle_categoria||'',
-      geo:st.geo,
-      pais:st.pais,
-      latitud:st.latitud,
-      longitud:st.longitud
-
+      email: st.email,
+      session_id: st.sessionId,
+      id_tarjeta: tarjetaId,
+      tipo: tipo,
+      nombre_marca: t.nombre_marca || '',
+      nombre_categoria: t.nombre_categoria || '',
+      detalle_categoria: t.detalle_categoria || '',
+      geo: st.geo,
+      pais: st.pais,
+      latitud: st.latitud,
+      longitud: st.longitud
     });
     
     if(!r.ok) {
-      if(r.error && r.error.includes('Límite')) {
-        showLimitPopup(superLike, r.limites ? (superLike ? r.limites.supers : r.limites.likes) : 0);
-        if(card) {
-          card.classList.remove('liked');
-          card.style.transform = '';
-        }
-        st.swipeIdx--;
-        return;
-      }
       throw new Error(r.error || 'Error desconocido');
     }
     
-    st.puntos = r.puntos_totales || st.puntos;
-    st.likesRestantes = r.limites ? r.limites.likes : st.likesRestantes;
-    st.superRestantes = r.limites ? r.limites.supers : st.superRestantes;
-    
-    const puntosGanados = r.puntos_ganados || (superLike ? 2 : 1);
+    // Actualizar puntos
+    st.puntos += r.puntos_ganados;
     updatePts();
-    updateProgressCircles();
-    showToast(`+${puntosGanados} punto${puntosGanados>1?'s':''} 🫘`);
-    showLimitPopup(superLike, superLike ? st.superRestantes : st.likesRestantes);
+    
+    // Actualizar nivel
+    if(r.nivel_actual) {
+      st.nivel.actual = r.nivel_actual;
+      st.nivel.multiplicador = r.multiplicador || 1;
+      actualizarUInivel();
+    }
+    
+    // Actualizar badge de multiplicador
+    const multiBadge = $('multi-badge');
+    if(multiBadge) {
+      multiBadge.textContent = 'x' + (r.multiplicador || 1);
+    }
+    
+    // Mostrar puntos ganados
+    const emoji = r.es_fever ? '👹' : '🫘';
+    showToast(`+${r.puntos_ganados} punto${r.puntos_ganados>1?'s':''} ${emoji}`);
+    
+    // Si activó FEVER, mostrar alerta
+    if(r.es_fever && !st.nivel.feverActivo) {
+      st.nivel.feverActivo = true;
+      st.nivel.feverSwipes = 10;
+      mostrarFeverActivado();
+    }
     
   } catch(err) {
     showToast('Error: ' + err.message);
     if(card) {
-      card.classList.remove('liked');
+      card.classList.remove('liked', 'gone');
       card.style.transform = '';
     }
     st.swipeIdx--;
@@ -962,6 +949,105 @@ async function swipeCard(like, superLike){
   setTimeout(renderSwiper, 300);
 }
 
+function actualizarUInivel(){
+  const emojiEl = $('nivel-emoji');
+  const labelEl = $('nivel-label');
+  const statsEl = $('nivel-stats');
+  const barEl = $('nivel-bar');
+  
+  if(!emojiEl || !labelEl || !statsEl || !barEl) return;
+  
+  // Emojis por nivel
+  const emojis = {
+    'bronce': '🥉',
+    'plata': '🥈',
+    'oro': '🥇',
+    'diamante': '💎',
+    'fever': '👹'
+  };
+  
+  // Labels de progreso
+  const labels = {
+    'bronce': 'BRONCE → PLATA',
+    'plata': 'PLATA → ORO',
+    'oro': 'ORO → DIAMANTE',
+    'diamante': 'DIAMANTE',
+    'fever': 'FEVER MODE'
+  };
+  
+  // Límites para subir
+  const limitesExito = {
+    'bronce': 5,
+    'plata': 5,
+    'oro': 1, // Éxito especial
+    'diamante': 0
+  };
+  
+  // Límites de faltas
+  const limitesFalta = {
+    'bronce': 0,
+    'plata': 3,
+    'oro': 3,
+    'diamante': 1
+  };
+  
+  const nivelActual = st.nivel.feverActivo ? 'fever' : st.nivel.actual;
+  
+  emojiEl.textContent = emojis[nivelActual] || '🥉';
+  labelEl.textContent = labels[nivelActual] || 'NIVEL';
+  
+  const exitosLimite = limitesExito[st.nivel.actual] || 5;
+  const faltasLimite = limitesFalta[st.nivel.actual] || 3;
+  
+  statsEl.textContent = `✓ ${st.nivel.exitos}/${exitosLimite} | ⚠️ ${st.nivel.faltas}/${faltasLimite}`;
+  
+  // Barra de progreso (basada en éxitos)
+  const progreso = exitosLimite > 0 ? (st.nivel.exitos / exitosLimite) * 100 : 0;
+  barEl.style.width = Math.min(progreso, 100) + '%';
+  
+  // Si está en FEVER, barra dorada y pulsante
+  if(st.nivel.feverActivo) {
+    barEl.style.background = 'linear-gradient(90deg, #FFD700, #FFA500)';
+    barEl.style.animation = 'pulse-fever 0.5s infinite';
+  } else {
+    barEl.style.background = 'linear-gradient(90deg, #C0157A, #FF1493)';
+    barEl.style.animation = 'none';
+  }
+}
+
+  function mostrarFeverActivado(){
+  // Vibración en móvil
+  if(navigator.vibrate) {
+    navigator.vibrate([200, 100, 200, 100, 400]);
+  }
+  
+  // Popup temporal
+  const popup = document.createElement('div');
+  popup.style.cssText = `
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#1A1A1A;
+    color:#FFD700;
+    padding:30px 40px;
+    border-radius:20px;
+    font-size:32px;
+    font-weight:900;
+    text-align:center;
+    z-index:300;
+    box-shadow:0 0 40px #FFD700;
+    animation:fever-popup 0.5s ease-out;
+  `;
+  popup.innerHTML = '👹<br>FEVER MODE<br><span style="font-size:18px">10 swipes x10 pts</span>';
+  
+  document.body.appendChild(popup);
+  
+  setTimeout(() => {
+    popup.remove();
+  }, 2000);
+}
+  
 // ═══════════════════════════════════════════════
 //  RECOMPENSAS
 // ═══════════════════════════════════════════════
