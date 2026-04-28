@@ -972,6 +972,8 @@ async function swipeCard(esLike){
     return;
   }
 
+  const card = $('sc-'+tarjetaId);
+  
   // Verificar tipo de tarjeta
   const tipoTarjeta = t.tipo_tarjeta || 'normal';
   
@@ -999,8 +1001,6 @@ async function swipeCard(esLike){
     return;
   }
   
-  const card = $('sc-'+tarjetaId);
-
   // Si es CONTRADICCIÓN, verificar coherencia
   if(tipoTarjeta === 'contradiccion') {
     const contradiccion = detectarContradiccion(t, esLike);
