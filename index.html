@@ -943,27 +943,25 @@ async function swipeCard(esLike){
   const ahora = Date.now();
   st.swipeTimestamps.push(ahora);
   
-  // Mantener solo los últimos 3 timestamps
   if(st.swipeTimestamps.length > 3) {
     st.swipeTimestamps.shift();
   }
   
-  // Si hay 3 swipes en menos de 1.5 segundos
   if(st.swipeTimestamps.length === 3) {
     const diff = st.swipeTimestamps[2] - st.swipeTimestamps[0];
     if(diff < 1500) {
       registrarFaltaCliente('speed-swiping');
-      st.swipeTimestamps = []; // Reset
-      return; // Bloquear el swipe
+      st.swipeTimestamps = [];
+      return;
     }
   }
   
   // DETECTOR DE ABANDONO DE VIDEO
   if(!verificarTiempoVideo()) {
-  showToast('⚠️ Debes ver al menos 3s del video');
-  return;
-}
-
+    showToast('⚠️ Debes ver al menos 3s del video');
+    return;
+  }
+  
   const t = st.tarjetas[st.swipeIdx];
   const tarjetaId = t.id_tarjeta || t.id;
   
@@ -971,8 +969,8 @@ async function swipeCard(esLike){
     showToast('Error: Falta tarjeta_id');
     return;
   }
-
-  const card = $('sc-'+tarjetaId);
+  
+  const card = $('sc-'+tarjetaId);  // ← AQUÍ VA const card (UNA SOLA VEZ)
   
   // Verificar tipo de tarjeta
   const tipoTarjeta = t.tipo_tarjeta || 'normal';
@@ -992,7 +990,6 @@ async function swipeCard(esLike){
     if(!esCorrecta) {
       registrarFaltaCliente('fallo-control');
     } else {
-      // ÉXITO - Registrar en backend
       await registrarExitoCliente('normal');
     }
     if(card) card.classList.add(esLike ? 'liked' : 'gone');
@@ -1014,7 +1011,7 @@ async function swipeCard(esLike){
     return;
   }
   
-  // Animación de swipe
+  // Animación de swipe NORMAL (solo para tarjetas normales)
   if(card) {
     card.classList.add(esLike ? 'liked' : 'gone');
   }
@@ -1072,18 +1069,20 @@ async function swipeCard(esLike){
       st.nivel.feverSwipes = 10;
       mostrarFeverActivado();
     }
+    
     // Guardar respuesta para detectar contradicciones futuras
     st.ultimasRespuestas.push({
-        id: tarjetaId,
-        titulo: t.titulo_tarjeta || t.nombre_marca,
-        respuesta: tipo,
-        swipeNum: st.swipeIdx
+      id: tarjetaId,
+      titulo: t.titulo_tarjeta || t.nombre_marca,
+      respuesta: tipo,
+      swipeNum: st.swipeIdx
     });
     
     // Mantener solo últimas 50 respuestas
     if(st.ultimasRespuestas.length > 50) {
       st.ultimasRespuestas.shift();
-    }   
+    }
+    
   } catch(err) {
     showToast('Error: ' + err.message);
     if(card) {
@@ -1096,8 +1095,8 @@ async function swipeCard(esLike){
   
   setTimeout(renderSwiper, 300);
 }
-
-async function validarRespuestaControl(tarjeta, respuestaUsuario){
+  
+  async function validarRespuestaControl(tarjeta, respuestaUsuario){
   // Obtener respuesta correcta desde backend
   try {
     const r = await apiPost({
