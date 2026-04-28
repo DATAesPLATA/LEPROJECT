@@ -227,6 +227,11 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   50%{transform:translate(-50%,-50%) scale(1.1)}
   100%{transform:translate(-50%,-50%) scale(1);opacity:1}
 }
+
+.card-contradiccion{
+  border:3px solid #FF9800;
+  box-shadow:0 0 20px rgba(255,152,0,0.4);
+}
   
 </style>
 </head>
@@ -423,7 +428,8 @@ const st={
   swipeTimestamps: [],
   videoStartTime: null,
   swipesDesdeControl: 0,
-  swipesDesdeIntruso: 0
+  swipesDesdeIntruso: 0,
+  ultimasRespuestas: [] // Para detectar contradicciones
 };
 
 const $=id=>document.getElementById(id);
@@ -801,6 +807,31 @@ function renderSwiper(){
   empty.style.display='none';
   btns.style.display='flex';
   if(st.countdownInterval) clearInterval(st.countdownInterval);
+
+// Verificar si toca tarjeta especial
+  const especial = debeIntercalarTarjetaEspecial();
+  
+  if(especial && especial.tipo === 'contradiccion' && st.ultimasRespuestas.length >= 5) {
+    // Seleccionar una respuesta aleatoria de las últimas 20
+    const pool = st.ultimasRespuestas.slice(-20);
+    const randomPrev = pool[Math.floor(Math.random() * pool.length)];
+    
+    // Crear tarjeta de contradicción
+    const tarjetaContradiccion = {
+      id_tarjeta: 'contradiccion-' + Date.now(),
+      tipo_tarjeta: 'contradiccion',
+      titulo_tarjeta: randomPrev.titulo,
+      subtitulo_tarjeta: `Hace ${st.swipeIdx - randomPrev.swipeNum} tarjetas dijiste que ${randomPrev.respuesta === 'like' ? 'SÍ' : 'NO'}`,
+      emoji_tarjeta: '🔄',
+      img_tarjeta: 'https://via.placeholder.com/300x600/FF9800/FFFFFF?text=CONTRADICCIÓN',
+      nombre_marca: randomPrev.titulo,
+      nombre_categoria: 'Verificación',
+      detalle_categoria: 'Confirma tu respuesta anterior'
+    };
+    
+    // Insertar al principio
+    pend.unshift(tarjetaContradiccion);
+  }
   
   pend.slice(0,5).reverse().forEach((t,vi)=>{
     const div=document.createElement('div');
@@ -846,17 +877,21 @@ function debeIntercalarTarjetaEspecial(){
   st.swipesDesdeIntruso++;
   st.swipesDesdeControl++;
   
-  // Prioridad: Intruso cada 20 swipes
+  // Prioridad 1: Intruso absurdo cada 20 swipes
   if(st.swipesDesdeIntruso >= 20) {
     st.swipesDesdeIntruso = 0;
     return {tipo: 'intruso'};
   }
   
-  // Control cada 10-15 swipes (aleatorio)
-  const limiteControl = 10 + Math.floor(Math.random() * 6); // 10-15
-  if(st.swipesDesdeControl >= limiteControl) {
+  // Prioridad 2: Control de memoria cada 15 swipes
+  if(st.swipesDesdeControl >= 15) {
     st.swipesDesdeControl = 0;
     return {tipo: 'control'};
+  }
+  
+  // Prioridad 3: Contradicción cada 30 swipes (después de 10 swipes mínimo)
+  if(st.swipeIdx >= 10 && st.swipeIdx % 30 === 0) {
+    return {tipo: 'contradiccion'};
   }
   
   return null; // Normal
@@ -965,6 +1000,19 @@ async function swipeCard(esLike){
   }
   
   const card = $('sc-'+tarjetaId);
+
+  // Si es CONTRADICCIÓN, verificar coherencia
+  if(tipoTarjeta === 'contradiccion') {
+    const contradiccion = detectarContradiccion(t, esLike);
+    if(contradiccion) {
+      mostrarPopupContradiccion(contradiccion.tarjetaOriginal, contradiccion.swipeAnterior);
+      registrarFaltaCliente('contradiccion');
+    }
+    if(card) card.classList.add(esLike ? 'liked' : 'gone');
+    st.swipeIdx++;
+    setTimeout(renderSwiper, 300);
+    return;
+  }
   
   // Animación de swipe
   if(card) {
@@ -1024,7 +1072,18 @@ async function swipeCard(esLike){
       st.nivel.feverSwipes = 10;
       mostrarFeverActivado();
     }
+    // Guardar respuesta para detectar contradicciones futuras
+    st.ultimasRespuestas.push({
+        id: tarjetaId,
+        titulo: t.titulo_tarjeta || t.nombre_marca,
+        respuesta: tipo,
+        swipeNum: st.swipeIdx
+    });
     
+    // Mantener solo últimas 50 respuestas
+    if(st.ultimasRespuestas.length > 50) {
+      st.ultimasRespuestas.shift();
+    }   
   } catch(err) {
     showToast('Error: ' + err.message);
     if(card) {
@@ -1052,6 +1111,67 @@ async function validarRespuestaControl(tarjeta, respuestaUsuario){
     console.error('Error validando control:', e);
     return true; // En caso de error, dar por válida
   }
+}
+
+function detectarContradiccion(tarjetaActual, respuestaActual){
+  // Buscar en las últimas 50 respuestas si ya respondió esta misma tarjeta
+  const tituloActual = tarjetaActual.titulo_tarjeta || tarjetaActual.nombre_marca;
+  
+  for(let i = st.ultimasRespuestas.length - 1; i >= 0; i--) {
+    const respuestaPrevia = st.ultimasRespuestas[i];
+    
+    // Si es la misma tarjeta (por título o id)
+    if(respuestaPrevia.titulo === tituloActual || respuestaPrevia.id === tarjetaActual.id_tarjeta) {
+      
+      // Comparar respuestas
+      const respuestaAnterior = respuestaPrevia.respuesta;
+      const respuestaNueva = respuestaActual ? 'like' : 'dislike';
+      
+      if(respuestaAnterior !== respuestaNueva) {
+        return {
+          tarjetaOriginal: tituloActual,
+          swipeAnterior: respuestaPrevia.swipeNum,
+          respuestaAnterior: respuestaAnterior,
+          respuestaNueva: respuestaNueva
+        };
+      }
+    }
+  }
+  
+  return null; // No hay contradicción
+}
+
+function mostrarPopupContradiccion(titulo, swipeAnterior){
+  const popup = document.createElement('div');
+  popup.style.cssText = `
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#FF9800;
+    color:#fff;
+    padding:24px 30px;
+    border-radius:16px;
+    font-size:15px;
+    font-weight:700;
+    text-align:center;
+    z-index:300;
+    box-shadow:0 0 30px rgba(255,152,0,0.5);
+    max-width:280px;
+    line-height:1.4;
+  `;
+  popup.innerHTML = `⚠️ <b>Alerta incoherencia</b><br><br>Strike 1<br><br><span style="font-size:12px;font-weight:400">Hace ${st.swipeIdx - swipeAnterior} tarjetas dijiste algo diferente sobre:<br>"${titulo}"</span>`;
+  
+  document.body.appendChild(popup);
+  
+  // Vibración de advertencia
+  if(navigator.vibrate) {
+    navigator.vibrate([200, 100, 200]);
+  }
+  
+  setTimeout(() => {
+    popup.remove();
+  }, 4000);
 }
   
 function verificarTiempoVideo(){
