@@ -528,21 +528,22 @@ async function init(){
     st.sessionId = sessionId;
     
     try{
-      // Cargar datos del usuario desde el backend
-      const rLimites = await api({action:'limites', email:savedSessionEmail});
-      if(rLimites.ok) {
-        st.likesRestantes = rLimites.limites.likes;
-        st.superRestantes = rLimites.limites.supers;
-      } else {
-        st.likesRestantes = 10;
-        st.superRestantes = 3;
-      }
-      
       const rUsuario = await api({action:'por_email', email:savedSessionEmail});
       if(rUsuario.ok && rUsuario.usuario) {
         st.usuario = rUsuario.usuario;
         st.puntos = Number(rUsuario.usuario.puntos_disponibles||0);
         st.swipeIdx = 0;
+        
+        // CARGAR NIVEL
+        const rNivel = await apiPost({action:'get_nivel', email:savedSessionEmail});
+        if(rNivel.ok && rNivel.nivel) {
+          st.nivel.actual = rNivel.nivel.nivel_actual || 'bronce';
+          st.nivel.multiplicador = Number(rNivel.nivel.multiplicador_actual) || 1;
+          st.nivel.exitos = Number(rNivel.nivel.exitos_acumulados) || 0;
+          st.nivel.faltas = Number(rNivel.nivel.faltas_acumuladas) || 0;
+          st.nivel.feverActivo = rNivel.nivel.fever_activo || false;
+          st.nivel.feverSwipes = Number(rNivel.nivel.fever_swipes_restantes) || 0;
+        }
         
         updatePts();
         showScreen('s-swiper');
@@ -550,7 +551,7 @@ async function init(){
         await cargarDatos();
         
         setTimeout(() => {
-          updateProgressCircles();
+          actualizarUInivel();
           renderSwiper();
         }, 100);
       }
@@ -708,7 +709,7 @@ function setupOTPInputs(){
 async function procesarLoginExitoso(email, usuario) {
   st.email = email;
   st.usuario = usuario;
-  st.sessionId = usuario.session_id; // ← AÑADE ESTA LÍNEA
+  st.sessionId = usuario.session_id;
   st.puntos = Number(usuario.puntos_disponibles||0);
   st.swipeIdx = 0;
   
@@ -718,20 +719,19 @@ async function procesarLoginExitoso(email, usuario) {
     localStorage.setItem('dep_session_email', st.email);
   }
   
-  // ← ESTO DEBE ESTAR AQUÍ
+  // CARGAR NIVEL DEL USUARIO
   try {
-    const rLimites = await api({action:'limites', email:email});
-    if(rLimites.ok) {
-      st.likesRestantes = rLimites.limites.likes;
-      st.superRestantes = rLimites.limites.supers;
-    } else {
-      st.likesRestantes = 10;
-      st.superRestantes = 3;
+    const rNivel = await apiPost({action:'get_nivel', email:email});
+    if(rNivel.ok && rNivel.nivel) {
+      st.nivel.actual = rNivel.nivel.nivel_actual || 'bronce';
+      st.nivel.multiplicador = Number(rNivel.nivel.multiplicador_actual) || 1;
+      st.nivel.exitos = Number(rNivel.nivel.exitos_acumulados) || 0;
+      st.nivel.faltas = Number(rNivel.nivel.faltas_acumuladas) || 0;
+      st.nivel.feverActivo = rNivel.nivel.fever_activo || false;
+      st.nivel.feverSwipes = Number(rNivel.nivel.fever_swipes_restantes) || 0;
     }
   } catch(e) {
-    console.error('Error cargando límites:', e);
-    st.likesRestantes = 10;
-    st.superRestantes = 3;
+    console.error('Error cargando nivel:', e);
   }
   
   updatePts();
@@ -740,10 +740,10 @@ async function procesarLoginExitoso(email, usuario) {
   await cargarDatos();
   
   setTimeout(() => {
-    updateProgressCircles();
+    actualizarUInivel();
     renderSwiper();
   }, 100);
-}  
+}
   // ═══════════════════════════════════════════════
 //  CARGAR DATOS
 // ═══════════════════════════════════════════════
@@ -1534,41 +1534,46 @@ async function guardarPerfil(){
 }
 
 function cerrarSesion(){
-  st.email = null;
+  // Limpiar estado
   st.usuario = null;
+  st.email = null;
+  st.sessionId = null;
   st.puntos = 0;
   st.tarjetas = [];
   st.recompensas = [];
   st.concursos = [];
   st.swipeIdx = 0;
-  st.likesRestantes = 10;
-  st.superRestantes = 3;
+  st.preferencias = null;
   st.avatarUrl = null;
   
-  popupShown = {like: false, super: false};
+  // Resetear nivel
+  st.nivel = {
+    actual: 'bronce',
+    multiplicador: 1,
+    exitos: 0,
+    faltas: 0,
+    feverActivo: false,
+    feverSwipes: 0
+  };
   
+  // Limpiar countdown si existe
   if(st.countdownInterval) {
     clearInterval(st.countdownInterval);
     st.countdownInterval = null;
   }
   
-  if($('inp-password')) $('inp-password').value = '';
-  if($('reg-password')) $('reg-password').value = '';
-  
-  showScreen('s-login');
-  showToast('Sesión cerrada correctamente');
-
-  // ← CRÍTICO: ELIMINAR sessionId
+  // CRÍTICO: ELIMINAR sessionId
   localStorage.removeItem('dep_session_id');
   localStorage.removeItem('dep_session_email');
-  st.sessionId = null;
-  st.email = null;
+  
+  // Limpiar formularios
+  if($('inp-password')) $('inp-password').value = '';
+  if($('reg-password')) $('reg-password').value = '';
   
   // Volver a login
   showScreen('s-login');
   showToast('Sesión cerrada correctamente');
-}
-  
+}  
 // ═══════════════════════════════════════════════
 //  ANIMACIÓN DE CARGA
 // ═══════════════════════════════════════════════
