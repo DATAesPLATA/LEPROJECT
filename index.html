@@ -221,6 +221,13 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   10%,30%,50%,70%,90%{transform:translate(-55%,-50%)}
   20%,40%,60%,80%{transform:translate(-45%,-50%)}
 }
+
+@keyframes scale-up{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+  50%{transform:translate(-50%,-50%) scale(1.1)}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+}
+  
 </style>
 </head>
 <body>
@@ -834,7 +841,27 @@ const bgHtml = esVideo
     stack.appendChild(div);
   });
 }
-
+  
+function debeIntercalarTarjetaEspecial(){
+  st.swipesDesdeIntruso++;
+  st.swipesDesdeControl++;
+  
+  // Prioridad: Intruso cada 20 swipes
+  if(st.swipesDesdeIntruso >= 20) {
+    st.swipesDesdeIntruso = 0;
+    return {tipo: 'intruso'};
+  }
+  
+  // Control cada 10-15 swipes (aleatorio)
+  const limiteControl = 10 + Math.floor(Math.random() * 6); // 10-15
+  if(st.swipesDesdeControl >= limiteControl) {
+    st.swipesDesdeControl = 0;
+    return {tipo: 'control'};
+  }
+  
+  return null; // Normal
+}
+  
 function attachDrag(c){
   let sx=0,drag=false;
   const start=e=>{
@@ -907,6 +934,33 @@ async function swipeCard(esLike){
   
   if(!tarjetaId) {
     showToast('Error: Falta tarjeta_id');
+    return;
+  }
+
+  // Verificar tipo de tarjeta
+  const tipoTarjeta = t.tipo_tarjeta || 'normal';
+  
+  // Si es INTRUSO y dio LIKE = FALTA
+  if(tipoTarjeta === 'intruso' && esLike) {
+    registrarFaltaCliente('tarjeta-intruso');
+    if(card) card.classList.add('gone');
+    st.swipeIdx++;
+    setTimeout(renderSwiper, 300);
+    return;
+  }
+  
+  // Si es CONTROL, validar respuesta
+  if(tipoTarjeta === 'control') {
+    const esCorrecta = await validarRespuestaControl(t, esLike);
+    if(!esCorrecta) {
+      registrarFaltaCliente('fallo-control');
+    } else {
+      // ÉXITO - Registrar en backend
+      await registrarExitoCliente('normal');
+    }
+    if(card) card.classList.add(esLike ? 'liked' : 'gone');
+    st.swipeIdx++;
+    setTimeout(renderSwiper, 300);
     return;
   }
   
@@ -983,6 +1037,22 @@ async function swipeCard(esLike){
   
   setTimeout(renderSwiper, 300);
 }
+
+async function validarRespuestaControl(tarjeta, respuestaUsuario){
+  // Obtener respuesta correcta desde backend
+  try {
+    const r = await apiPost({
+      action: 'validar_control',
+      id_control: tarjeta.id_control || tarjeta.id_tarjeta,
+      respuesta: respuestaUsuario ? 'like' : 'dislike'
+    });
+    
+    return r.ok && r.correcta;
+  } catch(e) {
+    console.error('Error validando control:', e);
+    return true; // En caso de error, dar por válida
+  }
+}
   
 function verificarTiempoVideo(){
   if(!st.videoStartTime) return true; // No es video
@@ -1026,6 +1096,44 @@ function verificarTiempoVideo(){
     console.error('Error registrando falta:', e);
   }
 }
+
+  async function registrarExitoCliente(tipoExito){
+  showToast('✅ ¡Correcto!');
+  
+  try {
+    const r = await apiPost({
+      action: 'registrar_exito',
+      email: st.email,
+      tipo_exito: tipoExito
+    });
+    
+    if(r.ok) {
+      st.nivel.exitos = r.exitos_actuales || 0;
+      st.nivel.faltas = 0; // Reset al subir
+      
+      // Si subió de nivel
+      if(r.subio) {
+        st.nivel.actual = r.nivel_nuevo;
+        st.nivel.multiplicador = r.multiplicador_nuevo || 1;
+        actualizarUInivel();
+        
+        mostrarAlertaSubida(r.nivel_anterior, r.nivel_nuevo);
+      } else {
+        actualizarUInivel();
+      }
+      
+      // Verificar si activó FEVER
+      if(r.fever_activado) {
+        st.nivel.feverActivo = true;
+        st.nivel.feverSwipes = 10;
+        mostrarFeverActivado();
+      }
+    }
+  } catch(e) {
+    console.error('Error registrando éxito:', e);
+  }
+}
+  
   function mostrarAlertaBajada(nivelAnterior, nivelNuevo){
   const emojis = {
     'diamante': '💎',
@@ -1065,6 +1173,45 @@ function verificarTiempoVideo(){
   }, 3000);
 }
 
+function mostrarAlertaSubida(nivelAnterior, nivelNuevo){
+  const emojis = {
+    'bronce': '🥉',
+    'plata': '🥈',
+    'oro': '🥇',
+    'diamante': '💎'
+  };
+  
+  const popup = document.createElement('div');
+  popup.style.cssText = `
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#4CAF50;
+    color:#fff;
+    padding:30px 40px;
+    border-radius:20px;
+    font-size:24px;
+    font-weight:900;
+    text-align:center;
+    z-index:300;
+    box-shadow:0 0 40px rgba(76,175,80,0.5);
+    animation:scale-up 0.5s ease-out;
+  `;
+  popup.innerHTML = `🎉 ¡SUBISTE DE NIVEL!<br><br>${emojis[nivelAnterior]} → ${emojis[nivelNuevo]}`;
+  
+  document.body.appendChild(popup);
+  
+  // Vibración celebratoria
+  if(navigator.vibrate) {
+    navigator.vibrate([100, 50, 100, 50, 200]);
+  }
+  
+  setTimeout(() => {
+    popup.remove();
+  }, 3000);
+}
+  
 function actualizarUInivel(){
   const emojiEl = $('nivel-emoji');
   const labelEl = $('nivel-label');
