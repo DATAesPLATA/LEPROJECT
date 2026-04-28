@@ -146,7 +146,6 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
 .sw-btn.disabled{cursor:not-allowed;pointer-events:none}
 .sw-btn.filled{background:#C0157A;color:#fff}
 .sw-btn.super.filled{background:#FFD700;color:#1A1A1A}
-.circular-progress{position:absolute;top:-3px;left:-3px;width:68px;height:68px;transform:rotate(-90deg)}.progress-ring{fill:none;stroke-width:4}
 
 .sw-empty{display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:30px;padding:24px 24px 60px;text-align:center;flex:1}
 .beans-celebration{display:flex;gap:20px;justify-content:center;align-items:flex-end;margin:0}
@@ -434,9 +433,6 @@ const st={
 
 const $=id=>document.getElementById(id);
 
-// Variable para controlar popups
-let popupShown = {like: false, super: false};
-
 // ═══════════════════════════════════════════════
 //  UTILIDADES
 // ═══════════════════════════════════════════════
@@ -458,7 +454,6 @@ function goTab(t){
 
 function goMain(){
   showScreen('s-swiper');
-  updateProgressCircles();
 }
 
 function updatePts(){
@@ -907,11 +902,7 @@ function attachDrag(c){
   const move=e=>{
     if(!drag)return;
     const dx=(e.touches?e.touches[0].clientX:e.clientX)-sx;
-    
-    if(dx > 0 && st.likesRestantes <= 0 && st.superRestantes <= 0) {
-      return;
-    }
-    
+        
     c.style.transform=`translateX(${dx}px) rotate(${dx*.06}deg)`;
     const iy=c.querySelector('.ind-y'),in_=c.querySelector('.ind-n');
     if(iy)iy.style.opacity=dx>28?Math.min((dx-28)/40,1):0;
