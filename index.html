@@ -216,6 +216,11 @@ html,body{height:100%;background:#e0e0e0;font-family:-apple-system,BlinkMacSyste
   0%,100%{opacity:1;transform:scaleY(1)}
   50%{opacity:0.8;transform:scaleY(1.2)}
 }
+  @keyframes shake{
+  0%,100%{transform:translate(-50%,-50%)}
+  10%,30%,50%,70%,90%{transform:translate(-55%,-50%)}
+  20%,40%,60%,80%{transform:translate(-45%,-50%)}
+}
 </style>
 </head>
 <body>
@@ -407,6 +412,11 @@ const st={
     feverActivo: false,
     feverSwipes: 0
   }
+  // CONTROL DE FALTAS
+  swipeTimestamps: [],
+  videoStartTime: null,
+  swipesDesdeControl: 0,
+  swipesDesdeIntruso: 0
 };
 
 const $=id=>document.getElementById(id);
@@ -800,10 +810,10 @@ function renderSwiper(){
     const cardBrand = t.subtitulo_tarjeta || t.detalle_categoria || t.nombre || 'Sin subtítulo';
     
 // Detectar tipo de contenido
-    const esVideo = imgBg.match(/\.(mp4|webm|mov)$/i);
-    const bgHtml = esVideo 
-      ? `<video class="card-bg" autoplay loop playsinline><source src="${imgBg}" type="video/mp4"></video>`
-      : `<div class="card-bg" style="background-image:url('${imgBg}')"></div>`;
+const esVideo = imgBg.match(/\.(mp4|webm|mov)$/i);
+const bgHtml = esVideo 
+  ? `<video class="card-bg" autoplay loop playsinline onplay="st.videoStartTime=Date.now()"><source src="${imgBg}" type="video/mp4"></video>`
+  : `<div class="card-bg" style="background-image:url('${imgBg}')"></div>`;
 
     div.innerHTML=`
       ${bgHtml}
@@ -866,6 +876,25 @@ function attachDrag(c){
 
 async function swipeCard(esLike){
   if(st.swipeIdx >= st.tarjetas.length) return;
+  
+  // DETECTOR DE SPEED-SWIPING
+const ahora = Date.now();
+st.swipeTimestamps.push(ahora);
+
+// Mantener solo los últimos 3 timestamps
+if(st.swipeTimestamps.length > 3) {
+  st.swipeTimestamps.shift();
+}
+
+// Si hay 3 swipes en menos de 1.5 segundos
+if(st.swipeTimestamps.length === 3) {
+  const diff = st.swipeTimestamps[2] - st.swipeTimestamps[0];
+  if(diff < 1500) {
+    registrarFaltaCliente('speed-swiping');
+    st.swipeTimestamps = []; // Reset
+    return; // Bloquear el swipe
+  }
+}
   
   const t = st.tarjetas[st.swipeIdx];
   const tarjetaId = t.id_tarjeta || t.id;
@@ -948,7 +977,93 @@ async function swipeCard(esLike){
   
   setTimeout(renderSwiper, 300);
 }
-
+  
+function verificarTiempoVideo(){
+  if(!st.videoStartTime) return true; // No es video
+  
+  const tiempoVisto = (Date.now() - st.videoStartTime) / 1000; // segundos
+  
+  if(tiempoVisto < 3) {
+    registrarFaltaCliente('abandono-video');
+    st.videoStartTime = null;
+    return false; // Bloquear swipe
+  }
+  
+  st.videoStartTime = null;
+  return true; // OK
+}
+  async function registrarFaltaCliente(tipoFalta){
+  showToast('⚠️ Falta detectada: ' + tipoFalta);
+  
+  try {
+    const r = await apiPost({
+      action: 'registrar_falta',
+      email: st.email,
+      tipo_falta: tipoFalta
+    });
+    
+    if(r.ok) {
+      st.nivel.faltas = r.faltas_actuales || 0;
+      
+      // Si bajó de nivel
+      if(r.bajo) {
+        st.nivel.actual = r.nivel_nuevo;
+        st.nivel.multiplicador = r.multiplicador_nuevo || 1;
+        actualizarUInivel();
+        
+        mostrarAlertaBajada(r.nivel_anterior, r.nivel_nuevo);
+      } else {
+        actualizarUInivel();
+      }
+    }
+  } catch(e) {
+    console.error('Error registrando falta:', e);
+  }
+}
+  function mostrarAlertaBajada(nivelAnterior, nivelNuevo){
+  const emojis = {
+    'diamante': '💎',
+    'oro': '🥇',
+    'plata': '🥈',
+    'bronce': '🥉'
+  };
+  
+  const popup = document.createElement('div');
+  popup.style.cssText = `
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#FF4444;
+    color:#fff;
+    padding:30px 40px;
+    border-radius:20px;
+    font-size:24px;
+    font-weight:900;
+    text-align:center;
+    z-index:300;
+    box-shadow:0 0 40px rgba(255,68,68,0.5);
+    animation:shake 0.5s ease-out;
+  `;
+  popup.innerHTML = `⚠️ BAJASTE DE NIVEL<br><br>${emojis[nivelAnterior]} → ${emojis[nivelNuevo]}`;
+  
+  document.body.appendChild(popup);
+  
+  // Vibración fuerte
+  if(navigator.vibrate) {
+    navigator.vibrate([300, 100, 300]);
+  }
+  
+  setTimeout(() => {
+    popup.remove();
+  }, 3000);
+}
+  // DETECTOR DE ABANDONO DE VIDEO
+if(!verificarTiempoVideo()) {
+  showToast('⚠️ Debes ver al menos 3s del video');
+  return;
+}
+  
 function actualizarUInivel(){
   const emojiEl = $('nivel-emoji');
   const labelEl = $('nivel-label');
