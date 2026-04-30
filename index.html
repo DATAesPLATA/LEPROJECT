@@ -1028,20 +1028,23 @@ async function swipeCard(esLike){
   
   try {
     const r = await apiPost({
-      action:'swipe',
-      email: st.email,
-      cookie_id: st.cookieId,
-      session_id: st.sessionId,
-      id_tarjeta: tarjetaId,
-      tipo: tipo,
-      nombre_marca: t.nombre_marca || '',
-      nombre_categoria: t.nombre_categoria || '',
-      detalle_categoria: t.detalle_categoria || '',
-      geo: st.geo,
-      pais: st.pais,
-      latitud: st.latitud,
-      longitud: st.longitud
-    });
+  action:'swipe',
+  email: st.email,
+  cookie_id: st.cookieId,
+  session_id: st.sessionId,
+  id_tarjeta: tarjetaId,
+  tipo: tipo,
+  nombre_marca: t.nombre_marca || '',
+  nombre_categoria: t.nombre_categoria || '',
+  detalle_categoria: t.detalle_categoria || '',
+  tipo_tarjeta: t.tipo_tarjeta || 'normal',           // ← NUEVO
+  marca_relacionada_1: t.marca_relacionada_1 || '',   // ← NUEVO
+  marca_relacionada_2: t.marca_relacionada_2 || '',   // ← NUEVO
+  geo: st.geo,
+  pais: st.pais,
+  latitud: st.latitud,
+  longitud: st.longitud
+});
     
     if(!r.ok) {
       throw new Error(r.error || 'Error desconocido');
