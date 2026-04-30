@@ -549,7 +549,8 @@ async function init(){
   if(savedSessionEmail){
     // Restaurar sesión directamente desde datos locales
     st.email = savedSessionEmail;
-    st.sessionId = genSessionId();  // Generar nuevo session_id al restaurar
+    const savedSessionId = localStorage.getItem('dep_session_id');
+    st.sessionId = savedSessionId || genSessionId();
     
     try{
       const rUsuario = await api({action:'por_email', email:savedSessionEmail});
@@ -711,7 +712,7 @@ async function verificarYCrear() {
     
     localStorage.setItem('dep_saved_email', email);
     
-    await procesarLoginExitoso(email, {nombre, puntos_disponibles:0});
+    await procesarLoginExitoso(email, r.usuario);
   } catch(e) {
     showErr('otp-err', e.message);
   }
@@ -1675,10 +1676,9 @@ async function executeCanje(){
     st.puntos = r.puntos_restantes;
     updatePts();
     
-    // ← NUEVO: AÑADIR EL CANJE A LA LISTA LOCAL
     st.canjesRealizados.push({
       id_item: pendingCanje.id,
-      codigo_canje: r.codigo_canje,
+      codigo_canje: r.codigo,
       tipo: pendingCanje.tipo
     });
     
